@@ -24,7 +24,7 @@ public abstract class RaceCarBase extends CarBase {
      */
     protected RaceCarBase() {
         try {
-            URL url = new URL("x-res:///res/lines.txt");
+            URL url = new URL("x-res:///res/lines.data");
             InputStream is = url.openStream();
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);

@@ -1,0 +1,111 @@
+<project name="pve" default="jar" basedir=".">
+
+    <!-- ここから環境設定 -->
+    <!--
+    環境変数から値を取得して設定するようにしている。 
+    処理される環境変数は以下のものだが、指定しなければデフォルトの値が使われる。
+    * PVE_LIB_PATH
+        - Acerola3D関係のJARファイルとDLL(Windows)やjnilib(MacOSX)やso(Linux)
+          を読み込む場所
+        - それとecj-3.6.2.jar,tools.jarも。
+        - デフォルトは${basedir}/lib/
+    -->
+
+    <property environment="env"/>
+    <!-- Acerola3D関係のJARファイルを読み込む場所の設定 -->
+    <condition property="my.lib.path" value="${env.PVE_LIB_PATH}">
+        <isset property="env.PVE_LIB_PATH"/>
+    </condition>
+    <condition property="my.lib.path" value="${basedir}/lib/">
+        <not><isset property="my.lib.path"/></not>
+    </condition>
+
+    <!-- 環境設定、ここまで -->
+
+    <path id="my.class.path">
+        <fileset dir="${my.lib.path}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="my.exec.class.path">
+        <fileset dir="${my.lib.path}">
+            <include name="*.jar"/>
+        </fileset>
+        <pathelement location="lib/ecj-3.6.2.jar"/>
+        <pathelement location="lib/tools.jar"/>
+        <pathelement location="dist/pve-api.jar"/>
+        <pathelement location="dist/pve-res.jar"/>
+    </path>
+
+    <target name="compile">
+        <mkdir dir="build"/>
+        <javac srcdir="src" destdir="build" encoding="utf-8" debug="on">
+            <classpath refid="my.class.path"/>
+            <compilerarg value="-Xlint:unchecked" />
+        </javac>
+    </target>
+
+    <target name="jar" depends="jar-api,jar-res">
+    </target>
+
+    <target name="jar-api" depends="compile">
+        <jar jarfile="dist/pve-api.jar" basedir="build"
+             manifest="dist/Manifest"/>
+    </target>
+
+    <target name="jar-res">
+        <jar destfile="dist/pve-res.jar">
+            <fileset dir=".">
+                <include name="res/**"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="clean">
+        <delete dir="." includeEmptyDirs="true">
+            <include name="build/**"/>
+            <exclude name="build/.gitignore"/>
+            <exclude name="build"/>
+        </delete>
+        <delete file="dist/pve-api.jar"/>
+        <delete file="dist/pve-res.jar"/>
+        <delete>
+            <fileset dir="." includes="**/*~" defaultexcludes="no"/>
+        </delete>
+    </target>
+
+    <target name="CarRace" depends="jar">
+        <java classname="com.github.hiuprocon.pve.CarRace" fork="true">
+            <classpath refid="my.exec.class.path"/>
+            <jvmarg value="-Djava.library.path=${my.lib.path}"/>
+            <!-- <arg value="test.TestCar01"/> -->
+        </java>
+    </target>
+    <target name="CarRace-sm" depends="jar">
+        <java classname="com.github.hiuprocon.pve.CarRace" fork="true">
+            <classpath refid="my.exec.class.path"/>
+            <jvmarg value="-Djava.library.path=${my.lib.path}"/>
+            <jvmarg value="-Djava.security.manager"/>
+            <jvmarg value="-Djava.security.policy=pve.policy"/>
+            <!-- <arg value="test.TestCar01"/> -->
+        </java>
+    </target>
+
+    <target name="CarBattle" depends="jar">
+        <java classname="com.github.hiuprocon.pve.CarBattle" fork="true">
+            <classpath refid="my.exec.class.path"/>
+            <jvmarg value="-Djava.library.path=${my.lib.path}"/>
+            <!-- <arg value="test.TestCar02"/> -->
+            <!-- <arg value="test.TestCar02"/> -->
+        </java>
+    </target>
+
+    <target name="RaceTest" depends="jar">
+        <java classname="com.github.hiuprocon.pve.RaceTest" fork="true">
+            <classpath refid="my.exec.class.path"/>
+            <jvmarg value="-Djava.library.path=${my.lib.path}"/>
+        </java>
+    </target>
+
+</project>
