@@ -45,7 +45,7 @@ public class SimpleIDE extends JDialog implements ActionListener {
     public SimpleIDE(Frame owner) {
         super(owner);
         PropertiesControl pc = new PropertiesControl("UTF-8");
-        messages = ResourceBundle.getBundle("Messages",pc);
+        messages = ResourceBundle.getBundle("com.github.hiuprocon.pve.ui.Messages",pc);
 
         //compiler = ToolProvider.getSystemJavaCompiler();
         try {

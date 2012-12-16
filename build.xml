@@ -44,6 +44,14 @@
             <classpath refid="my.class.path"/>
             <compilerarg value="-Xlint:unchecked" />
         </javac>
+        <copy file="src/test_cr/Messages.properties" todir="build/test_cr"/> 
+        <copy file="src/test_cr/Messages_en_US.properties" todir="build/test_cr"/> 
+        <copy file="src/test_cr/Messages_ja_JP.properties" todir="build/text_cr"/> 
+        <copy file="src/test_cr/Messages_th_TH.properties" todir="build/text_cr"/> 
+        <copy file="src/com/github/hiuprocon/pve/ui/Messages.properties" todir="build/com/github/hiuprocon/pve/ui"/> 
+        <copy file="src/com/github/hiuprocon/pve/ui/Messages_en_US.properties" todir="build/com/github/hiuprocon/pve/ui"/> 
+        <copy file="src/com/github/hiuprocon/pve/ui/Messages_ja_JP.properties" todir="build/com/github/hiuprocon/pve/ui"/> 
+        <copy file="src/com/github/hiuprocon/pve/ui/Messages_th_TH.properties" todir="build/com/github/hiuprocon/pve/ui"/> 
     </target>
 
     <target name="jar" depends="jar-api,jar-res">
@@ -76,14 +84,14 @@
     </target>
 
     <target name="CarRace" depends="jar">
-        <java classname="com.github.hiuprocon.pve.CarRace" fork="true">
+        <java classname="test_cr.CarRace" fork="true">
             <classpath refid="my.exec.class.path"/>
             <jvmarg value="-Djava.library.path=${my.lib.path}"/>
             <!-- <arg value="test.TestCar01"/> -->
         </java>
     </target>
     <target name="CarRace-sm" depends="jar">
-        <java classname="com.github.hiuprocon.pve.CarRace" fork="true">
+        <java classname="test_cr.CarRace" fork="true">
             <classpath refid="my.exec.class.path"/>
             <jvmarg value="-Djava.library.path=${my.lib.path}"/>
             <jvmarg value="-Djava.security.manager"/>
@@ -93,7 +101,7 @@
     </target>
 
     <target name="CarBattle" depends="jar">
-        <java classname="com.github.hiuprocon.pve.CarBattle" fork="true">
+        <java classname="test_cb.CarBattle" fork="true">
             <classpath refid="my.exec.class.path"/>
             <jvmarg value="-Djava.library.path=${my.lib.path}"/>
             <!-- <arg value="test.TestCar02"/> -->
@@ -102,7 +110,7 @@
     </target>
 
     <target name="RaceTest" depends="jar">
-        <java classname="com.github.hiuprocon.pve.RaceTest" fork="true">
+        <java classname="test_rt.RaceTest" fork="true">
             <classpath refid="my.exec.class.path"/>
             <jvmarg value="-Djava.library.path=${my.lib.path}"/>
         </java>
