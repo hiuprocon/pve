@@ -3,6 +3,8 @@ package test;
 import com.github.hiuprocon.pve.*;
 import javax.vecmath.Vector3d;
 
+import test_cr.RaceCarBase;
+
 public class TestCar01 extends RaceCarBase {
     public void exec() {
         Vector3d loc = getLoc();//現在の車の座標
