@@ -27,9 +27,13 @@ public abstract class RaceCarBase {
      * RaceCarBaseのコンストラクタです。
      */
     protected RaceCarBase() {
-    	car = new CarBase();
+    	car = new CarBase() {
+    		public void exec() {
+    			RaceCarBase.this.exec();
+    		}
+    	};
         try {
-            URL url = new URL("x-res:///res/lines.data");
+            URL url = new URL("x-res:///res/lines.txt");
             InputStream is = url.openStream();
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);

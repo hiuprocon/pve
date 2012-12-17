@@ -20,7 +20,11 @@ public abstract class BattleCarBase {
      * BattleCarBaseのコンストラクタです。
      */
     protected BattleCarBase() {
-    	car = new CarBase();
+    	car = new CarBase() {
+    		public void exec() {
+    			BattleCarBase.this.exec();
+    		}
+    	};
     }
 
     /**
