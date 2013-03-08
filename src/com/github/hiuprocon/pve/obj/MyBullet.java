@@ -2,23 +2,19 @@ package com.github.hiuprocon.pve.obj;
 
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.dynamics.*;
+import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.bulletphysics.linearmath.MotionState;
 import com.bulletphysics.linearmath.Transform;
-import com.github.hiuprocon.pve.core.A3CollisionObject;
-import com.github.hiuprocon.pve.core.A3MotionState;
-import com.github.hiuprocon.pve.core.ActiveObject;
-import com.github.hiuprocon.pve.core.COType;
-import com.github.hiuprocon.pve.core.PhysicalWorld;
-
+import com.github.hiuprocon.pve.core.*;
 import javax.vecmath.*;
 import jp.sourceforge.acerola3d.a3.*;
 
 //弾丸を表すクラス
-public class MyBullet extends A3CollisionObject implements ActiveObject {
+public class MyBullet extends PVEObject implements ActiveObject {
     Vector3d l = new Vector3d();
     Vector3d v = new Vector3d();
-    public MyBullet(Vector3d l,Vector3d v,PhysicalWorld pw) {
-        super(l,new Vector3d(),COType.KINEMATIC,pw);
+    public MyBullet(Vector3d l,Vector3d v) {
+        super(l,new Vector3d(),ObjType.KINEMATIC);
         this.l.set(l);
         this.v.set(v);
     }
@@ -38,7 +34,7 @@ static int gaha;
         return new A3MotionState(a3,transform);
     }
     //球状の剛体を作る
-    public RigidBody makeCollisionObject(Object...args) {
+    public RigidBody makeRigidBody(Object...args) {
         CollisionShape shape = new SphereShape(0.2f);
         Vector3f localInertia = new Vector3f(0,0,0);
         shape.calculateLocalInertia(1.0f,localInertia);
@@ -51,6 +47,10 @@ static int gaha;
         return rb;
     }
 
+    public TypedConstraint makeConstraint(Object...args) {
+    	return null;
+    }
+
     boolean initGrav = false;
     public void beforeExec() {
         ;
@@ -60,7 +60,7 @@ static int gaha;
         //this.setLoc2(l.x,l.y,l.z);
         if (initGrav==false) {
             ((RigidBody)body).setGravity(new Vector3f());
-            this.setLoc2(l.x,l.y,l.z);
+            this.setLoc(l.x,l.y,l.z);
             this.setVel(v.x,v.y,v.z);
             initGrav=true;
         }

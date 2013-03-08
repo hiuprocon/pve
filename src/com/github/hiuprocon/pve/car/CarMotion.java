@@ -11,15 +11,13 @@ import javax.vecmath.*;
 import javax.media.j3d.*;
 
 class CarMotion implements Motion {
-    DynamicsWorld dynamicsWorld;
-
     RigidBody carChassis;
     VehicleRaycaster vehicleRayCaster;
     RaycastVehicle vehicle;
     Transform rootTransform = new Transform();
 
-    public CarMotion(MotionState ms,DynamicsWorld dw) {
-        dynamicsWorld = dw;
+    public CarMotion(MotionState ms,DefaultVehicleRaycaster vehicleRayCaster) {
+    	this.vehicleRayCaster = vehicleRayCaster;
 
         //Transform tr = new Transform();
         //tr.setIdentity();
@@ -42,13 +40,12 @@ class CarMotion implements Motion {
         {
             VehicleTuning tuning = new VehicleTuning();
 
-            vehicleRayCaster = new DefaultVehicleRaycaster(dynamicsWorld);
             vehicle = new RaycastVehicle(tuning, carChassis, vehicleRayCaster);
 
             //無効化の禁止
             carChassis.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
 
-            dynamicsWorld.addVehicle(vehicle);
+            //dynamicsWorld.addVehicle(vehicle);
 
             //座標系の設定
             int rightIndex = 0;

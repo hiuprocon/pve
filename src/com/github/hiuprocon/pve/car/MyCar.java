@@ -2,31 +2,32 @@ package com.github.hiuprocon.pve.car;
 
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3d;
-import com.bulletphysics.collision.dispatch.CollisionObject;
+import com.bulletphysics.dynamics.RigidBody;
 import com.bulletphysics.linearmath.MotionState;
 import com.bulletphysics.linearmath.Transform;
-import com.github.hiuprocon.pve.core.A3CollisionObject;
-import com.github.hiuprocon.pve.core.COType;
-import com.github.hiuprocon.pve.core.PhysicalWorld;
-
+import com.bulletphysics.dynamics.vehicle.*;
+import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
+import com.github.hiuprocon.pve.core.*;
 import jp.sourceforge.acerola3d.a3.*;
 
 //car
-public class MyCar extends A3CollisionObject {
+public class MyCar extends PVEObject {
     String a3url;
     CarMotion motion;
+    RaycastVehicle vehicle;
     public CarBase carBase;
-    public MyCar(Vector3d l,Vector3d r,String a3url,PhysicalWorld pw) {
-        super(l,r,COType.DYNAMIC,pw,a3url);
+    public MyCar(Vector3d l,Vector3d r,String a3url,DefaultVehicleRaycaster dvr) {
+        super(l,r,ObjType.DYNAMIC,a3url,dvr);
         //this.a3url = a3url;
         //group = 1;
         //mask = 3;
-        a3.setUserData("車");
     }
 
     public A3Object makeA3Object(Object...args) throws Exception {
         a3url = (String)args[0];
-        return new Action3D(a3url);
+        Action3D myA3 = new Action3D(a3url);
+        myA3.setUserData("車");
+        return myA3;
     }
     public MotionState makeMotionState(Vector3d l,Vector3d r) {
         Transform transform = new Transform();
@@ -36,13 +37,17 @@ public class MyCar extends A3CollisionObject {
         MotionState ms = new CarMotionState(transform);
         return ms;
     }
-    public CollisionObject makeCollisionObject(Object...args) {
+    public RigidBody makeRigidBody(Object...args) {
         //motionState.setAutoUpdate(false);//MotionデータでコントロールするのでAutoUpdate不要
-        motion = new CarMotion(motionState,pw.dynamicsWorld);
+        motion = new CarMotion(motionState,(DefaultVehicleRaycaster)args[1]);
+        vehicle = motion.vehicle;
         ((CarMotionState)motionState).setCarMotion(motion);
         ((Action3D)a3).setMotion("default",motion);
         ((Action3D)a3).transControlUsingRootBone(true);//rootの骨の情報でA3Objectの変換を制御
         return motion.carChassis;
+    }
+    public TypedConstraint makeConstraint(Object...args) {
+    	return vehicle;
     }
     public void setCarBase(CarBase cb) {
         carBase = cb;

@@ -2,27 +2,23 @@ package com.github.hiuprocon.pve.obj;
 
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.dynamics.*;
+import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.bulletphysics.linearmath.MotionState;
 import com.bulletphysics.linearmath.Transform;
-import com.github.hiuprocon.pve.core.A3CollisionObject;
-import com.github.hiuprocon.pve.core.A3MotionState;
-import com.github.hiuprocon.pve.core.COType;
-import com.github.hiuprocon.pve.core.PhysicalWorld;
-
+import com.github.hiuprocon.pve.core.*;
 import javax.vecmath.*;
-
 import jp.sourceforge.acerola3d.a3.*;
 
 //地面を表すクラス
-public class MyGround3 extends A3CollisionObject {
+public class MyGround3 extends PVEObject {
     static CollisionShape groundShape;
-    public MyGround3(PhysicalWorld pw) {
-        super(new Vector3d(0,0,0),new Vector3d(),COType.STATIC,pw);
-        a3.setUserData("地面3");
+    public MyGround3() {
+        super(new Vector3d(0,0,0),new Vector3d(),ObjType.STATIC);
     }
 
     public A3Object makeA3Object(Object...args) throws Exception {
         VRML vrml = new VRML("x-rzip:x-res:///res/BattleField01.a3!/base.wrl");
+        vrml.setUserData("地面3");
         return vrml;
     }
     public MotionState makeMotionState(Vector3d l,Vector3d r) {
@@ -33,11 +29,15 @@ public class MyGround3 extends A3CollisionObject {
         return new A3MotionState(a3,transform);
     }
     //地面用の剛体を作る
-    public RigidBody makeCollisionObject(Object...args) {
+    public RigidBody makeRigidBody(Object...args) {
         if (groundShape==null)
             groundShape = Util.makeBvhTriangleMeshShape(a3.getNode());
         RigidBodyConstructionInfo cInfo = new RigidBodyConstructionInfo(0.0f, motionState, groundShape, new Vector3f());
         RigidBody body = new RigidBody(cInfo);
         return body;
+    }
+
+    public TypedConstraint makeConstraint(Object...args) {
+    	return null;
     }
 }

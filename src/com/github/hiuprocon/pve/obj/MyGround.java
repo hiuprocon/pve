@@ -2,21 +2,17 @@ package com.github.hiuprocon.pve.obj;
 
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.dynamics.*;
+import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.bulletphysics.linearmath.MotionState;
 import com.bulletphysics.linearmath.Transform;
-import com.github.hiuprocon.pve.core.A3CollisionObject;
-import com.github.hiuprocon.pve.core.A3MotionState;
-import com.github.hiuprocon.pve.core.COType;
-import com.github.hiuprocon.pve.core.PhysicalWorld;
-
+import com.github.hiuprocon.pve.core.*;
 import javax.vecmath.*;
-
 import jp.sourceforge.acerola3d.a3.*;
 
 //地面を表すクラス
-class MyGround extends A3CollisionObject {
-    public MyGround(PhysicalWorld pw) {
-        super(new Vector3d(0.0,-50.0,0.0),new Vector3d(),COType.STATIC,pw);
+class MyGround extends PVEObject {
+    public MyGround() {
+        super(new Vector3d(0.0,-50.0,0.0),new Vector3d(),ObjType.STATIC);
     }
 
     public A3Object makeA3Object(Object...args) throws Exception {
@@ -33,7 +29,7 @@ class MyGround extends A3CollisionObject {
         return new A3MotionState(a3,transform);
     }
     //地面用の剛体を作る
-    public RigidBody makeCollisionObject(Object...args) {
+    public RigidBody makeRigidBody(Object...args) {
         CollisionShape groundShape =
             new BoxShape(new Vector3f(50.0f,50.0f,50.0f));
         Vector3f localInertia = new Vector3f(0,0,0);
@@ -42,5 +38,8 @@ class MyGround extends A3CollisionObject {
                 groundShape,localInertia);
         RigidBody groundBody = new RigidBody(groundRBInfo);
         return groundBody;
+    }
+    public TypedConstraint makeConstraint(Object...args) {
+    	return null;
     }
 }

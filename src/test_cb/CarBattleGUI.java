@@ -98,7 +98,8 @@ class CarBattleGUI extends JFrame implements ActionListener {
 
         HBox displayBox = new HBox();
         baseBox.myAdd(displayBox,1);
-        mainCanvas = A3Canvas.createA3Canvas(400,400);
+        mainCanvas = (A3Canvas)impl.world.getMainCanvas();
+        mainCanvas.setSize(400,400);
         mainCanvas.setCameraLocImmediately(0,50,20);
         mainCanvas.setCameraLookAtPointImmediately(0,0,0);
         a3csController = new A3CSController(60.0);

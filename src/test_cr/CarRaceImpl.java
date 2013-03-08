@@ -15,15 +15,15 @@ import com.github.hiuprocon.pve.car.CarBase;
 import com.github.hiuprocon.pve.car.CarSim;
 import com.github.hiuprocon.pve.car.MyCar;
 import com.github.hiuprocon.pve.car.MyCheckPoint;
-import com.github.hiuprocon.pve.core.A3CollisionObject;
+import com.github.hiuprocon.pve.core.PVEObject;
 import com.github.hiuprocon.pve.core.ActiveObject;
 import com.github.hiuprocon.pve.core.CollisionListener;
-import com.github.hiuprocon.pve.core.PhysicalWorld;
+import com.github.hiuprocon.pve.core.PVEWorld;
 import com.github.hiuprocon.pve.obj.MyBullet;
 import com.github.hiuprocon.pve.obj.MyGround2;
 
 class CarRaceImpl implements Runnable, CollisionListener, CarSim {
-    PhysicalWorld pw;
+    PVEWorld world;
     Preferences prefs;
     RaceCarBase car;
     String carClasspath;
@@ -50,18 +50,17 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
         workDirURL = prefs.get("workDirURL",null);
         checkPointStack = new ArrayDeque<MyCheckPoint>();
 
-        pw = new PhysicalWorld();
-        pw.pause();
+        world = new PVEWorld(PVEWorld.A3CANVAS);
+        world.pause();
         simRunning = false;
-        pw.addTask(this);
-        pw.addCollisionListener(this);
+        world.addTask(this);
+        world.addCollisionListener(this);
 
         gui = new CarRaceGUI(this,carClass);
         gui.pack();
         gui.setVisible(true);
 
-        pw.setMainCanvas(gui.mainCanvas);
-        pw.addSubCanvas(gui.carCanvas);
+        world.addSubCanvas(gui.carCanvas);
     }
     //clearの処理
     void clearBattle() {
@@ -69,7 +68,7 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
             throw new IllegalStateException();
         if (battleRunning)
             throw new IllegalStateException();
-        pw.clear();
+        world.clear();
         activeObjects.clear();
         car = null;
         classLoader = null;
@@ -83,8 +82,8 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
             throw new IllegalStateException();
         if (battleRunning)
             throw new IllegalStateException();
-        MyGround2 g = new MyGround2(pw);
-        pw.add(g);
+        MyGround2 g = new MyGround2();
+        world.add(g);
         //MyGround g = new MyGround(pw);
         //pw.add(g);
 
@@ -93,32 +92,34 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
         Vector3d loc = new Vector3d();
         Vector3d rot = new Vector3d();
         loc.set(  0,  4,-25);rot.set(0,0,0);
-        cps[ 0] = new MyCheckPoint(loc,rot,pw);cps[ 0].a3.setUserData("cp00");
+        cps[ 0] = new MyCheckPoint(loc,rot);
         loc.set(-37,  4,-56);rot.set(0,1.57,0);
-        cps[ 1] = new MyCheckPoint(loc,rot,pw);cps[ 1].a3.setUserData("cp01");
+        cps[ 1] = new MyCheckPoint(loc,rot);
         loc.set(-76,  4,  9);rot.set(0,0.78,0);
-        cps[ 2] = new MyCheckPoint(loc,rot,pw);cps[ 2].a3.setUserData("cp02");
+        cps[ 2] = new MyCheckPoint(loc,rot);
         loc.set(-21,  4, 20);rot.set(0,0,0);
-        cps[ 3] = new MyCheckPoint(loc,rot,pw);cps[ 3].a3.setUserData("cp03");
+        cps[ 3] = new MyCheckPoint(loc,rot);
         loc.set(-54,  4, 35);rot.set(0,0,0);
-        cps[ 4] = new MyCheckPoint(loc,rot,pw);cps[ 4].a3.setUserData("cp04");
+        cps[ 4] = new MyCheckPoint(loc,rot);
         loc.set(-16,  4, 35);rot.set(0,-0.78,0);
-        cps[ 5] = new MyCheckPoint(loc,rot,pw);cps[ 5].a3.setUserData("cp05");
+        cps[ 5] = new MyCheckPoint(loc,rot);
         loc.set(-23,  4,-39);rot.set(0,1.57,0);
-        cps[ 6] = new MyCheckPoint(loc,rot,pw);cps[ 6].a3.setUserData("cp06");
+        cps[ 6] = new MyCheckPoint(loc,rot);
         loc.set(-43,  4,  0);rot.set(0,1.57,0);
-        cps[ 7] = new MyCheckPoint(loc,rot,pw);cps[ 7].a3.setUserData("cp07");
+        cps[ 7] = new MyCheckPoint(loc,rot);
         loc.set(-53,  4,-38);rot.set(0,1.57,0);
-        cps[ 8] = new MyCheckPoint(loc,rot,pw);cps[ 8].a3.setUserData("cp08");
+        cps[ 8] = new MyCheckPoint(loc,rot);
         loc.set(-65,  9, 11);rot.set(0,0,0);
-        cps[ 9] = new MyCheckPoint(loc,rot,pw);cps[ 9].a3.setUserData("cp09");
+        cps[ 9] = new MyCheckPoint(loc,rot);
         loc.set(-40,  4, 55);rot.set(0,1.57,0);
-        cps[10] = new MyCheckPoint(loc,rot,pw);cps[10].a3.setUserData("cp10");
+        cps[10] = new MyCheckPoint(loc,rot);
         loc.set(  0,  4, 10);rot.set(0,0,0);
-        cps[11] = new MyCheckPoint(loc,rot,pw);cps[11].a3.setUserData("cp11");
+        cps[11] = new MyCheckPoint(loc,rot);
 
-        for (int i=0;i<NUM;i++)
-            pw.add(cps[i]);
+        for (int i=0;i<NUM;i++) {
+            world.add(cps[i]);
+            cps[i].a3.setUserData(String.format("cp%02d",i));
+        }
 
         classLoader = makeClassLoader(carClasspath);
 
@@ -135,9 +136,9 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
         }
 
         //下の行の3.1という数値は本来PI=3.141592...ジンバルロック対策でわざと誤差を入れた
-        car.car.init(new Vector3d( 0,0.8,-1),new Vector3d(0,3.1,0),"x-res:///res/stk_tux.a3",pw,this);
+        car.car.init(new Vector3d( 0,0.8,-1),new Vector3d(0,3.1,0),"x-res:///res/stk_tux.a3",world,this);
 
-        pw.add(car.car.car);
+        world.add(car.car.car);
         gui.setCar(car.car);
         activeObjects.add(car.car);
         gui.updateCarInfo(car.car);
@@ -183,12 +184,12 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
             //throw new IllegalStateException();
         }
         if (battleRunning) {
-            pw.resume();
+            world.resume();
             simRunning = true;
         } else {
             clearBattle();
             initBattle();
-            pw.resume();
+            world.resume();
             simRunning = true;
             gui.setParamEditable(false);
             battleRunning = true;
@@ -198,17 +199,17 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
         if (!battleRunning)
             return;
         if (simRunning) {
-            pw.pause();
+            world.pause();
             simRunning = false;
         } else {
-            pw.resume();
+            world.resume();
             simRunning = true;
         }
     }
     void stopBattle() {
         battleRunning = false;
         //clearBattle();
-        pw.pause();
+        world.pause();
         simRunning = false;
         gui.setParamEditable(true);
     }
@@ -234,10 +235,10 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
     }
 
     @Override
-    public void collided(A3CollisionObject a, A3CollisionObject b) {
+    public void collided(PVEObject a, PVEObject b) {
         if ((a instanceof MyCheckPoint)||(b instanceof MyCheckPoint)) {
             MyCheckPoint cp = null;
-            A3CollisionObject other = null;
+            PVEObject other = null;
             if (a instanceof MyCheckPoint) {
                 cp = (MyCheckPoint)a;
                 other = b;
@@ -248,7 +249,7 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
             if (other instanceof MyCar) {
                 if (checkPointStack.peek()!=cp) {
                     checkPointStack.push(cp);
-                    String t = String.format("%4.2f",pw.getTime());
+                    String t = String.format("%4.2f",world.getTime());
                     System.out.println(cp.a3.getUserData()+":"+t);
                 }
                 if (cp==cps[NUM-1]) {
@@ -280,11 +281,18 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
             o.exec();
         }
         gui.updateCarInfo(car.car);
-        gui.updateTime(pw.getTime());
+        gui.updateTime(world.getTime());
+//GAHA
+if (debugCount>50){
+//cps[0].setLoc(0,4,-30);
+debugCount=0;
+}
+debugCount++;
     }
+int debugCount=0;
 
     void finishBattle() {
-        pw.pause();
+        world.pause();
         simRunning = false;
         boolean goal=true;
         for (int i=0;i<NUM;i++) {
@@ -299,7 +307,7 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
             }
         }
         String message = goal ? "goal":"fail";
-        message = message+"\ntime:"+String.format("%4.2f",pw.getTime());
+        message = message+"\ntime:"+String.format("%4.2f",world.getTime());
         JOptionPane.showMessageDialog(gui,message);
 
         stopBattle();
@@ -319,6 +327,6 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
             prefs.put("workDir",workDir);
     }
     void fastForward(boolean b) {
-        pw.fastForward(b);
+        world.fastForward(b);
     }
 }

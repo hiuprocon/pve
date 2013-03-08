@@ -1,34 +1,29 @@
 package com.github.hiuprocon.pve.car;
 
 import javax.vecmath.*;
-import jp.sourceforge.acerola3d.a3.A3Object;
-import jp.sourceforge.acerola3d.a3.Util;
-import jp.sourceforge.acerola3d.a3.VRML;
-import com.bulletphysics.collision.dispatch.CollisionFlags;
-import com.bulletphysics.collision.dispatch.CollisionObject;
-import com.bulletphysics.collision.dispatch.GhostObject;
+import jp.sourceforge.acerola3d.a3.*;
 import com.bulletphysics.collision.shapes.BoxShape;
 import com.bulletphysics.collision.shapes.CollisionShape;
 import com.bulletphysics.dynamics.RigidBody;
 import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
+import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.bulletphysics.linearmath.MotionState;
 import com.bulletphysics.linearmath.Transform;
-import com.github.hiuprocon.pve.core.A3CollisionObject;
+import com.github.hiuprocon.pve.core.PVEObject;
 import com.github.hiuprocon.pve.core.A3MotionState;
-import com.github.hiuprocon.pve.core.COType;
-import com.github.hiuprocon.pve.core.PhysicalWorld;
+import com.github.hiuprocon.pve.core.ObjType;
 
-public class MyCheckPoint extends A3CollisionObject {
-    public MyCheckPoint(Vector3d l,Vector3d r,PhysicalWorld pw) {
-        super(l,r,COType.GHOST,pw);
+public class MyCheckPoint extends PVEObject {
+    public MyCheckPoint(Vector3d l,Vector3d r) {
+        super(l,r,ObjType.GHOST);
         //group = 2;
         //mask = 2;
-        a3.setUserData("CheckPoint");
     }
 
     public A3Object makeA3Object(Object...args) throws Exception {
         VRML vrml = new VRML("x-rzip:x-res:///res/ClearBlocks2.a3!/blockBlack.wrl");
         vrml.setScale(8);
+        vrml.setUserData("CheckPoint");
         return vrml;
     }
     public MotionState makeMotionState(Vector3d l,Vector3d r) {
@@ -38,7 +33,21 @@ public class MyCheckPoint extends A3CollisionObject {
         transform.setRotation(new Quat4f(Util.euler2quat(r)));
         return new A3MotionState(a3,transform);
     }
-    public CollisionObject makeCollisionObject_BAK(Object...args) {
+
+    public RigidBody makeRigidBody(Object...args) {
+        //CollisionShape shape = Util.makeConvexHullShape(a3.getNode());
+        CollisionShape shape = new BoxShape(new Vector3f(4,4,2));
+        Vector3f localInertia = new Vector3f(0,0,0);
+        shape.calculateLocalInertia(0.0f,localInertia);
+        RigidBodyConstructionInfo rbcInfo =
+            new RigidBodyConstructionInfo(0.0f,motionState,shape,localInertia);
+        RigidBody rb = new RigidBody(rbcInfo);
+        return rb;
+    }
+
+    /*
+    //GhostObjectバージョンl
+    public RigidBody makeRigidBody_BAK(Object...args) {
         //CollisionShape shape = Util.makeConvexHullShape(a3.getNode());
         CollisionShape shape = new BoxShape(new Vector3f(40,40,20));
         GhostObject body = new GhostObject();
@@ -50,17 +59,8 @@ public class MyCheckPoint extends A3CollisionObject {
         a3.setQuat(Util.matrix2quat(t.basis));
         return body;
     }
-
-    //なんかこっちでもOKぽいぞ。どうする？
-    public CollisionObject makeCollisionObject(Object...args) {
-        //CollisionShape shape = Util.makeConvexHullShape(a3.getNode());
-        CollisionShape shape = new BoxShape(new Vector3f(4,4,2));
-        Vector3f localInertia = new Vector3f(0,0,0);
-        shape.calculateLocalInertia(1.0f,localInertia);
-        RigidBodyConstructionInfo rbcInfo =
-            new RigidBodyConstructionInfo(1.0f,motionState,shape,localInertia);
-        RigidBody rb = new RigidBody(rbcInfo);
-        rb.setCollisionFlags(CollisionFlags.NO_CONTACT_RESPONSE);//ここがポイント
-        return rb;
+    */
+    public TypedConstraint makeConstraint(Object...args) {
+    	return null;
     }
 }

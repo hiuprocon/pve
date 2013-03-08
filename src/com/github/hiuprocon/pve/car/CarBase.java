@@ -5,7 +5,7 @@ import javax.vecmath.*;
 import jp.sourceforge.acerola3d.a3.Util;
 import com.bulletphysics.linearmath.Transform;
 import com.github.hiuprocon.pve.core.ActiveObject;
-import com.github.hiuprocon.pve.core.PhysicalWorld;
+import com.github.hiuprocon.pve.core.PVEWorld;
 import com.github.hiuprocon.pve.obj.MyBullet;
 
 /**
@@ -18,7 +18,7 @@ import com.github.hiuprocon.pve.obj.MyBullet;
 public class CarBase implements ActiveObject {
     static int carIDCount=0; 
     public MyCar car;
-    PhysicalWorld pw;
+    PVEWorld world;
     CarSim carSim;
     int carID;
     int energy = 100;
@@ -29,10 +29,10 @@ public class CarBase implements ActiveObject {
     public CarBase() {
         carID=carIDCount++;
     }
-    public final void init(Vector3d loc,Vector3d rot,String a3url,PhysicalWorld pw,CarSim cs) {
-        this.pw = pw;
+    public final void init(Vector3d loc,Vector3d rot,String a3url,PVEWorld world,CarSim cs) {
+        this.world = world;
         carSim = cs;
-        car = new MyCar(loc,rot,a3url,pw);
+        car = new MyCar(loc,rot,a3url,world.createDefaultVehicleRaycaster());
         car.setCarBase(this);
     }
 
@@ -177,8 +177,8 @@ public class CarBase implements ActiveObject {
         l.add(new Vector3d(0.0,0.2,0.0));
         d.scale(1.5);//計算上0.85より少し上なら良いはずだけど???
         l.add(d);
-        MyBullet b = new MyBullet(l,v,pw);
-        pw.add(b);
+        MyBullet b = new MyBullet(l,v);
+        world.add(b);
         carSim.addActiveObject(b);
     }
 
@@ -216,7 +216,7 @@ public class CarBase implements ActiveObject {
      * シミュレーション開始からの時間(秒)を返します。
      */
     public double getTime() {
-        return pw.getTime();
+        return world.getTime();
     }
     /**
      * この車をコントロールするプログラムを記述するメソッドです。
@@ -230,7 +230,7 @@ public class CarBase implements ActiveObject {
     public void beforeExec() {
         Vector3d loc = getLoc();
         vel.sub(loc,oldLoc);
-        vel.scale(1.0/pw.stepTime);
+        vel.scale(1.0/world.stepTime);
         oldLoc = loc;
     }
     /**

@@ -8,18 +8,31 @@ import com.bulletphysics.dynamics.*;
 import com.bulletphysics.dynamics.constraintsolver.ConstraintSolver;
 import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSolver;
 import com.bulletphysics.linearmath.*;
+import com.bulletphysics.dynamics.vehicle.DefaultVehicleRaycaster;
+import com.bulletphysics.dynamics.vehicle.RaycastVehicle;
 
 import java.util.*;
 import javax.vecmath.*;
 import jp.sourceforge.acerola3d.a3.*;
 
 //物理計算をしてくれるクラス
-public class PhysicalWorld implements Runnable {
-    static int MAX_PROXIES = 1024;
+public class PVEWorld implements Runnable {
+	enum CanvasType {
+		A3CANVAS,
+		JA3CANVAS,
+		A3WINDOW,
+		JA3WINDOW
+	}
+    public static CanvasType A3CANVAS = CanvasType.A3CANVAS;
+    public static CanvasType JA3CANVAS = CanvasType.JA3CANVAS;
+    public static CanvasType A3WINDOW = CanvasType.A3WINDOW;
+    public static CanvasType JA3WINDOW = CanvasType.JA3WINDOW;
+
+	static int MAX_PROXIES = 1024;
     public DiscreteDynamicsWorld dynamicsWorld;
-    ArrayList<A3CollisionObject> objects = new ArrayList<A3CollisionObject>();
-    ArrayList<A3CollisionObject> newObjects = new ArrayList<A3CollisionObject>();
-    ArrayList<A3CollisionObject> delObjects = new ArrayList<A3CollisionObject>();
+    ArrayList<PVEObject> objects = new ArrayList<PVEObject>();
+    ArrayList<PVEObject> newObjects = new ArrayList<PVEObject>();
+    ArrayList<PVEObject> delObjects = new ArrayList<PVEObject>();
     A3CanvasInterface mainCanvas;
     ArrayList<A3CanvasInterface> subCanvases = new ArrayList<A3CanvasInterface>();
     ArrayList<CollisionListener> collisionListeners = new ArrayList<CollisionListener>();
@@ -32,10 +45,11 @@ public class PhysicalWorld implements Runnable {
     final long waitTime = 33;
 
     //物理世界の初期化
-    public PhysicalWorld() {
+    public PVEWorld(CanvasType canvasType) {
         //mainCanvas = new A3Window(500,500);
 
         makeDynamicsWorld();
+        createMainCanvas(canvasType);
 
         time = 0.0;
         Thread t = new Thread(this);
@@ -64,16 +78,24 @@ public class PhysicalWorld implements Runnable {
         dynamicsWorld.setGravity(new Vector3f(0,-10,0));
     }
 
-    public void setMainCanvas(A3CanvasInterface c) {
-        if (mainCanvas==null) {
-            mainCanvas = c;
-            mainCanvas.setUpdateInterval(waitTime);
-            for (A3CollisionObject o : objects) {
-                mainCanvas.add(o.a3);
-            }
-        } else {
-            System.out.println("Error: has already set mainCanvas!");
+    void createMainCanvas(CanvasType canvasType) {
+    	if (canvasType == A3CANVAS) {
+    		mainCanvas = A3Canvas.createA3Canvas(300,300);
+    	} else if (canvasType == JA3CANVAS) {
+    		mainCanvas = JA3Canvas.createJA3Canvas(300,300);
+    	} else if (canvasType == A3WINDOW) {
+    		mainCanvas = new A3Window(300,300);
+    	} else if (canvasType == JA3WINDOW) {
+    		mainCanvas = new JA3Window(300,300);
+    	}
+        mainCanvas.setUpdateInterval(waitTime);
+        for (PVEObject o : objects) {
+            mainCanvas.add(o.a3);
         }
+    }
+
+    public A3CanvasInterface getMainCanvas() {
+    	return mainCanvas;
     }
 
     public void addSubCanvas(A3CanvasInterface c) {
@@ -81,14 +103,15 @@ public class PhysicalWorld implements Runnable {
     }
 
     //新規の剛体を加える
-    public void add(A3CollisionObject rb) {
+    public void add(PVEObject rb) {
+        rb.init(this);
         synchronized (newObjects) {
             newObjects.add(rb);
         }
     }
 
     //既存の剛体を削除
-    public void del(A3CollisionObject rb) {
+    public void del(PVEObject rb) {
         synchronized (delObjects) {
             delObjects.add(rb);
         }
@@ -111,8 +134,8 @@ public class PhysicalWorld implements Runnable {
             //for (A3CollisionObject co : objects)
             //    mainCanvas.del(co.a3);
         }
-        for (A3CollisionObject co : objects) {
-            if (co.coType==COType.GHOST) {
+        for (PVEObject co : objects) {
+            if (co.coType==ObjType.GHOST) {
                 dynamicsWorld.removeCollisionObject(co.body);
             } else {
                 dynamicsWorld.removeRigidBody((RigidBody)co.body);
@@ -139,50 +162,47 @@ public class PhysicalWorld implements Runnable {
                 }
             }
             synchronized (newObjects) {
-                for (A3CollisionObject co : newObjects) {
-                    //if (rb instanceof MyCar)
-                    //    dynamicsWorld.removeVehicle(((MyCar)rb).motion.vehicle);
-                    if (co.coType==COType.GHOST) {
-                        dynamicsWorld.addCollisionObject(co.body,co.group,co.mask);
-                    } else {
-                        dynamicsWorld.addRigidBody((RigidBody)co.body,co.group,co.mask);
-                    }
-                    if (mainCanvas!=null) {
+                for (PVEObject co : newObjects) {
+                	if (co.constraint!=null)
+                		if (co.constraint instanceof RaycastVehicle)
+                			dynamicsWorld.addVehicle((RaycastVehicle)co.constraint);
+                		else
+                			dynamicsWorld.addConstraint(co.constraint);
+                    dynamicsWorld.addRigidBody(co.body,co.group,co.mask);
+                    if (mainCanvas!=null)
                         mainCanvas.add(co.a3);
-                    }
                     objects.add(co);
                 }
                 newObjects.clear();
             }
 
             synchronized (delObjects) {
-                for (A3CollisionObject co : delObjects) {
-                    //if (rb instanceof MyCar)
-                    //    dynamicsWorld.addVehicle(((MyCar)rb).motion.vehicle);
-                    if (co.coType==COType.GHOST) {
-                        dynamicsWorld.removeCollisionObject(co.body);
-                    } else {
-                        dynamicsWorld.removeRigidBody((RigidBody)co.body);
-                    }
-                    if (mainCanvas!=null) {
+                for (PVEObject co : delObjects) {
+                	if (co.constraint!=null)
+                		if (co.constraint instanceof RaycastVehicle)
+                			dynamicsWorld.removeVehicle((RaycastVehicle)co.constraint);
+                		else
+                			dynamicsWorld.removeConstraint(co.constraint);
+                    dynamicsWorld.removeRigidBody(co.body);
+                    if (mainCanvas!=null)
                         mainCanvas.del(co.a3);
-                    }
                    objects.remove(co);
                 }
                 delObjects.clear();
             }
 
-            for (A3CollisionObject co : objects) {
+            for (PVEObject co : objects) {
                 if ((co.locRequest==null)&&(co.quatRequest==null))
                     continue;
                 Transform t = new Transform();
+                t = co.motionState.getWorldTransform(t);
                 if (co.locRequest!=null)
                     t.origin.set(co.locRequest);
                 if (co.quatRequest!=null)
                     t.setRotation(new Quat4f(co.quatRequest));
                 co.motionState.setWorldTransform(t);
-                if (co.coType==COType.DYNAMIC)
-                    co.changeCOType(COType.KINEMATIC_TEMP);
+                if (co.coType==ObjType.DYNAMIC)
+                    co.setKinematicTemp();
             }
 
 //System.out.println("PhysicalWorld:-----gaha-----1");
@@ -193,7 +213,7 @@ public class PhysicalWorld implements Runnable {
 //System.out.println("PhysicalWorld:-----gaha-----2");
 
             //車の車輪の更新。dynamicsWorld.setSimulation()の更新時間が1/60で割り切れない時とかに特に必要
-            for (A3CollisionObject co : objects) {
+            for (PVEObject co : objects) {
             	co.postSimulation();
             }
             
@@ -224,28 +244,24 @@ public class PhysicalWorld implements Runnable {
                 //ロックしすぎ？
                 synchronized (collisionListeners) {
                     for (CollisionListener cl : collisionListeners) {
-                        cl.collided(((A3CollisionObject)obA.getUserPointer()),((A3CollisionObject)obB.getUserPointer()));
+                        cl.collided(((PVEObject)obA.getUserPointer()),((PVEObject)obB.getUserPointer()));
                     }
                 }
             }
 
 
-            for (A3CollisionObject co : objects) {
+            for (PVEObject co : objects) {
                 if (co.locRequest==null && co.quatRequest==null)
                     continue;
-                if (co.coType==COType.KINEMATIC_TEMP){
-                    co.changeCOType(COType.DYNAMIC);
-                }
+              	co.resetKinematicTemp();
                 co.locRequest=null;
                 co.quatRequest=null;
             }
 
-            for (A3CollisionObject co : objects) {
+            for (PVEObject co : objects) {
                 if (co.velRequest==null)
                     continue;
-                if (co.coType!=COType.GHOST) {
-                    ((RigidBody)co.body).setLinearVelocity(co.velRequest);
-                }
+                co.body.setLinearVelocity(co.velRequest);
                 co.velRequest=null;
             }
 
@@ -301,5 +317,9 @@ public class PhysicalWorld implements Runnable {
     */
     public void fastForward(boolean b) {
         fastForward = b;
+    }
+
+    public DefaultVehicleRaycaster createDefaultVehicleRaycaster() {
+    	return new DefaultVehicleRaycaster(dynamicsWorld);
     }
 }

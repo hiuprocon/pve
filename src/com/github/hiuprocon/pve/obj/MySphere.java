@@ -2,21 +2,17 @@ package com.github.hiuprocon.pve.obj;
 
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.dynamics.*;
+import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.bulletphysics.linearmath.MotionState;
 import com.bulletphysics.linearmath.Transform;
-import com.github.hiuprocon.pve.core.A3CollisionObject;
-import com.github.hiuprocon.pve.core.A3MotionState;
-import com.github.hiuprocon.pve.core.COType;
-import com.github.hiuprocon.pve.core.PhysicalWorld;
-
+import com.github.hiuprocon.pve.core.*;
 import javax.vecmath.*;
-
 import jp.sourceforge.acerola3d.a3.*;
 
 //球を表すクラス
-public class MySphere extends A3CollisionObject {
-    public MySphere(double x,double y,double z,PhysicalWorld pw) {
-        super(new Vector3d(x,y,z),new Vector3d(),COType.DYNAMIC,pw);
+public class MySphere extends PVEObject {
+    public MySphere(double x,double y,double z) {
+        super(new Vector3d(x,y,z),new Vector3d(),ObjType.DYNAMIC);
     }
 
     public A3Object makeA3Object(Object...args) throws Exception {
@@ -30,7 +26,7 @@ public class MySphere extends A3CollisionObject {
         return new A3MotionState(a3,transform);
     }
     //球状の剛体を作る
-    public RigidBody makeCollisionObject(Object...args) {
+    public RigidBody makeRigidBody(Object...args) {
         CollisionShape shape = new SphereShape(1.0f);
         Vector3f localInertia = new Vector3f(0,0,0);
         shape.calculateLocalInertia(1.0f,localInertia);
@@ -39,5 +35,8 @@ public class MySphere extends A3CollisionObject {
                                               shape,localInertia);
         RigidBody rb = new RigidBody(rbcInfo);
         return rb;
+    }
+    public TypedConstraint makeConstraint(Object...args) {
+    	return null;
     }
 }

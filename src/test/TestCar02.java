@@ -1,12 +1,8 @@
 package test;
 
 import java.util.ArrayList;
-
 import javax.vecmath.Vector3d;
-
 import test_cb.BattleCarBase;
-
-import com.github.hiuprocon.pve.*;
 import com.github.hiuprocon.pve.car.CarData;
 
 /**

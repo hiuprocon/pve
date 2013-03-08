@@ -105,7 +105,8 @@ class CarRaceGUI extends JFrame implements ActionListener {
 
         HBox displayBox = new HBox();
         baseBox.myAdd(displayBox,1);
-        mainCanvas = A3Canvas.createA3Canvas(400,400);
+        mainCanvas = (A3Canvas)impl.world.getMainCanvas();
+        mainCanvas.setSize(400,400);
         mainCanvas.setCameraLocImmediately(0.0,150.0,0.0);
         mainCanvas.setCameraLookAtPointImmediately(-50.0,0.0,1.0);
         a3csController = new A3CSController(150.0);

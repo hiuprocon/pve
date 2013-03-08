@@ -15,10 +15,10 @@ import javax.vecmath.Vector3d;
 import com.github.hiuprocon.pve.car.CarBase;
 import com.github.hiuprocon.pve.car.CarSim;
 import com.github.hiuprocon.pve.car.MyCar;
-import com.github.hiuprocon.pve.core.A3CollisionObject;
+import com.github.hiuprocon.pve.core.PVEObject;
 import com.github.hiuprocon.pve.core.ActiveObject;
 import com.github.hiuprocon.pve.core.CollisionListener;
-import com.github.hiuprocon.pve.core.PhysicalWorld;
+import com.github.hiuprocon.pve.core.PVEWorld;
 import com.github.hiuprocon.pve.obj.MyBox;
 import com.github.hiuprocon.pve.obj.MyBullet;
 import com.github.hiuprocon.pve.obj.MyGround2;
@@ -28,7 +28,7 @@ import com.github.hiuprocon.pve.obj.MySphere;
 import java.util.prefs.*;
 
 class CarBattleImpl implements Runnable, CollisionListener, CarSim {
-    PhysicalWorld pw;
+    PVEWorld world;
     Preferences prefs;
     BattleCarBase car1;
     BattleCarBase car2;
@@ -69,17 +69,16 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
         workDir = prefs.get("workDir",null);
         workDirURL = prefs.get("workDirURL",null);
 
-        pw = new PhysicalWorld();
-        pw.resume();
-        pw.addCollisionListener(this);
+        world = new PVEWorld(PVEWorld.A3CANVAS);
+        world.resume();
+        world.addCollisionListener(this);
 
         gui = new CarBattleGUI(this,carClass1,carClass2);
         gui.pack();
         gui.setVisible(true);
 
-        pw.setMainCanvas(gui.mainCanvas);
-        pw.addSubCanvas(gui.car1Canvas);
-        pw.addSubCanvas(gui.car2Canvas);
+        world.addSubCanvas(gui.car1Canvas);
+        world.addSubCanvas(gui.car2Canvas);
 
         Thread t = new Thread(this);
         pauseRequest = true;
@@ -92,7 +91,7 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
             throw new IllegalStateException();
         if (battleRunning)
             throw new IllegalStateException();
-        pw.clear();
+        world.clear();
         activeObjects.clear();
         car1 = null;
         car2 = null;
@@ -108,8 +107,8 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
             throw new IllegalStateException();
         //MyGround g = new MyGround(pw);
         //MyGround2 g = new MyGround2(pw);
-        MyGround3 g = new MyGround3(pw);
-        pw.add(g);
+        MyGround3 g = new MyGround3();
+        world.add(g);
 
         classLoader1 = makeClassLoader(car1classpath);
         classLoader2 = makeClassLoader(car2classpath);
@@ -132,19 +131,19 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
             e.printStackTrace();
         }
 
-        car1.car.init(new Vector3d( 0,1.0,-10),new Vector3d(),"x-res:///res/stk_tux.a3",pw,this);
-        car2.car.init(new Vector3d( 0,1.0, 10),new Vector3d(0,3.1,0),"x-res:///res/stk_wilber2.a3",pw,this);
+        car1.car.init(new Vector3d( 0,1.0,-10),new Vector3d(),"x-res:///res/stk_tux.a3",world,this);
+        car2.car.init(new Vector3d( 0,1.0, 10),new Vector3d(0,3.1,0),"x-res:///res/stk_wilber2.a3",world,this);
 
-        pw.add(new MyBox(-10.0,1.0,0.0,pw));
-        pw.add(new MyBox(-13.0,1.0,0.0,pw));
-        pw.add(new MyBox(-16.0,1.0,0.0,pw));
+        world.add(new MyBox(-10.0,1.0,0.0));
+        world.add(new MyBox(-13.0,1.0,0.0));
+        world.add(new MyBox(-16.0,1.0,0.0));
 
-        pw.add(new MySphere(10,1.0,0.0,pw));
-        pw.add(new MySphere(13,1.0,0.0,pw));
-        pw.add(new MySphere(16,1.0,0.0,pw));
+        world.add(new MySphere(10,1.0,0.0));
+        world.add(new MySphere(13,1.0,0.0));
+        world.add(new MySphere(16,1.0,0.0));
 
-        pw.add(car1.car.car);
-        pw.add(car2.car.car);
+        world.add(car1.car.car);
+        world.add(car2.car.car);
         gui.setCar1(car1.car);
         gui.setCar2(car2.car);
         activeObjects.add(car1.car);
@@ -197,11 +196,11 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
             synchronized (waitingRoom) {
                 waitingRoom.notifyAll();
             }
-            pw.resume();
+            world.resume();
         } else {
             clearBattle();
             initBattle();
-            pw.resume();
+            world.resume();
             try{Thread.sleep(100);}catch(Exception e){;}//gaha:落ち着くまで待つ
             pauseRequest = false;
             synchronized (waitingRoom) {
@@ -216,13 +215,13 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
             return;
         if (simRunning) {
             pauseRequest = true;
-            pw.pause();
+            world.pause();
         } else {
             pauseRequest = false;
             synchronized (waitingRoom) {
                 waitingRoom.notifyAll();
             }
-            pw.resume();
+            world.resume();
         }
     }
     void stopBattle() {
@@ -230,7 +229,7 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
         try{Thread.sleep(300);}catch(Exception e){;}
         battleRunning = false;
         clearBattle();
-        pw.pause();
+        world.pause();
         gui.setParamEditable(true);
     }
     public void run() {
@@ -263,7 +262,7 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
 
             if ((car1.getEnergy()<=0)||(car2.getEnergy()<=0)) {
                 pauseRequest = true;
-                pw.pause();
+                world.pause();
                 Runnable r = new Runnable() {
                     public void run() {
                         finishBattle();
@@ -289,10 +288,10 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
     }
 
     @Override
-    public void collided(A3CollisionObject a, A3CollisionObject b) {
+    public void collided(PVEObject a, PVEObject b) {
         if ((a instanceof MyBullet)||(b instanceof MyBullet)) {
             MyBullet bullet = null;
-            A3CollisionObject other = null;
+            PVEObject other = null;
             if (a instanceof MyBullet) {
                 bullet = (MyBullet)a;
                 other = b;
@@ -301,7 +300,7 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
                 other = a;
             }
             if (other instanceof MyBullet) {
-                pw.del(other);
+                world.del(other);
                 this.delActiveObject((MyBullet)other);
             } else if (other instanceof MyCar) {
                 ((MyCar)other).carBase.hit();
@@ -310,7 +309,7 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
             } else {
                 ;
             }
-            pw.del(bullet);
+            world.del(bullet);
             this.delActiveObject(bullet);
         }
         //System.out.println("gaha a:"+a.a3.getUserData()+" b:"+b.a3.getUserData());
