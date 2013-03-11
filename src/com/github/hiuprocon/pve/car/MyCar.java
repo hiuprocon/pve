@@ -11,13 +11,13 @@ import com.github.hiuprocon.pve.core.*;
 import jp.sourceforge.acerola3d.a3.*;
 
 //car
-public class MyCar extends PVEObject {
+public class MyCar extends PVEPart {
     String a3url;
     CarMotion motion;
     RaycastVehicle vehicle;
     public CarBase carBase;
     public MyCar(Vector3d l,Vector3d r,String a3url,DefaultVehicleRaycaster dvr) {
-        super(l,r,ObjType.DYNAMIC,a3url,dvr);
+        super(l,r,PartType.DYNAMIC,a3url,dvr);
         //this.a3url = a3url;
         //group = 1;
         //mask = 3;

@@ -15,7 +15,7 @@ import javax.vecmath.Vector3d;
 import com.github.hiuprocon.pve.car.CarBase;
 import com.github.hiuprocon.pve.car.CarSim;
 import com.github.hiuprocon.pve.car.MyCar;
-import com.github.hiuprocon.pve.core.PVEObject;
+import com.github.hiuprocon.pve.core.PVEPart;
 import com.github.hiuprocon.pve.core.ActiveObject;
 import com.github.hiuprocon.pve.core.CollisionListener;
 import com.github.hiuprocon.pve.core.PVEWorld;
@@ -288,10 +288,10 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
     }
 
     @Override
-    public void collided(PVEObject a, PVEObject b) {
+    public void collided(PVEPart a, PVEPart b) {
         if ((a instanceof MyBullet)||(b instanceof MyBullet)) {
             MyBullet bullet = null;
-            PVEObject other = null;
+            PVEPart other = null;
             if (a instanceof MyBullet) {
                 bullet = (MyBullet)a;
                 other = b;

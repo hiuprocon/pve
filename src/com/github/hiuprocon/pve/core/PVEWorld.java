@@ -7,6 +7,7 @@ import com.bulletphysics.collision.narrowphase.PersistentManifold;
 import com.bulletphysics.dynamics.*;
 import com.bulletphysics.dynamics.constraintsolver.ConstraintSolver;
 import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSolver;
+import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.bulletphysics.linearmath.*;
 import com.bulletphysics.dynamics.vehicle.DefaultVehicleRaycaster;
 import com.bulletphysics.dynamics.vehicle.RaycastVehicle;
@@ -89,9 +90,9 @@ public class PVEWorld implements Runnable {
     		mainCanvas = new JA3Window(300,300);
     	}
         mainCanvas.setUpdateInterval(waitTime);
-        for (PVEObject o : objects) {
-            mainCanvas.add(o.a3);
-        }
+        for (PVEObject o : objects)
+        	for (PVEPart p : o.parts)
+                mainCanvas.add(p.a3);
     }
 
     public A3CanvasInterface getMainCanvas() {
@@ -103,17 +104,17 @@ public class PVEWorld implements Runnable {
     }
 
     //新規の剛体を加える
-    public void add(PVEObject rb) {
-        rb.init(this);
+    public void add(PVEObject o) {
+        o.init(this);
         synchronized (newObjects) {
-            newObjects.add(rb);
+            newObjects.add(o);
         }
     }
 
     //既存の剛体を削除
-    public void del(PVEObject rb) {
+    public void del(PVEObject o) {
         synchronized (delObjects) {
-            delObjects.add(rb);
+            delObjects.add(o);
         }
     }
 
@@ -134,13 +135,10 @@ public class PVEWorld implements Runnable {
             //for (A3CollisionObject co : objects)
             //    mainCanvas.del(co.a3);
         }
-        for (PVEObject co : objects) {
-            if (co.coType==ObjType.GHOST) {
-                dynamicsWorld.removeCollisionObject(co.body);
-            } else {
-                dynamicsWorld.removeRigidBody((RigidBody)co.body);
-            }
-        }
+        for (PVEObject o : objects)
+        	for (PVEPart p:o.parts)
+                dynamicsWorld.removeRigidBody(p.body);
+
         objects.clear();
         newObjects.clear();
         delObjects.clear();
@@ -162,47 +160,53 @@ public class PVEWorld implements Runnable {
                 }
             }
             synchronized (newObjects) {
-                for (PVEObject co : newObjects) {
-                	if (co.constraint!=null)
-                		if (co.constraint instanceof RaycastVehicle)
-                			dynamicsWorld.addVehicle((RaycastVehicle)co.constraint);
-                		else
-                			dynamicsWorld.addConstraint(co.constraint);
-                    dynamicsWorld.addRigidBody(co.body,co.group,co.mask);
-                    if (mainCanvas!=null)
-                        mainCanvas.add(co.a3);
-                    objects.add(co);
+                for (PVEObject o : newObjects) {
+                	for (PVEPart p:o.parts) {
+                        dynamicsWorld.addRigidBody(p.body,p.group,p.mask);
+                        if (mainCanvas!=null)
+                            mainCanvas.add(p.a3);
+                	}
+                	for (TypedConstraint c:o.constraints)
+            		    if (c instanceof RaycastVehicle)
+            			    dynamicsWorld.addVehicle((RaycastVehicle)c);
+            		    else
+            			    dynamicsWorld.addConstraint(c);
+                    objects.add(o);
                 }
                 newObjects.clear();
             }
 
             synchronized (delObjects) {
-                for (PVEObject co : delObjects) {
-                	if (co.constraint!=null)
-                		if (co.constraint instanceof RaycastVehicle)
-                			dynamicsWorld.removeVehicle((RaycastVehicle)co.constraint);
-                		else
-                			dynamicsWorld.removeConstraint(co.constraint);
-                    dynamicsWorld.removeRigidBody(co.body);
-                    if (mainCanvas!=null)
-                        mainCanvas.del(co.a3);
-                   objects.remove(co);
+                for (PVEObject o : delObjects) {
+                	for (PVEPart p : o.parts) {
+                        dynamicsWorld.removeRigidBody(p.body);
+                        if (mainCanvas!=null)
+                            mainCanvas.del(p.a3);
+                	}
+                	for (TypedConstraint c:o.constraints)
+            		    if (c instanceof RaycastVehicle)
+            			    dynamicsWorld.removeVehicle((RaycastVehicle)c);
+            		    else
+            			    dynamicsWorld.removeConstraint(c);
+                    objects.remove(o);
                 }
                 delObjects.clear();
             }
 
-            for (PVEObject co : objects) {
-                if ((co.locRequest==null)&&(co.quatRequest==null))
-                    continue;
-                Transform t = new Transform();
-                t = co.motionState.getWorldTransform(t);
-                if (co.locRequest!=null)
-                    t.origin.set(co.locRequest);
-                if (co.quatRequest!=null)
-                    t.setRotation(new Quat4f(co.quatRequest));
-                co.motionState.setWorldTransform(t);
-                if (co.coType==ObjType.DYNAMIC)
-                    co.setKinematicTemp();
+            for (PVEObject o : objects) {
+            	for (PVEPart p:o.parts){ 
+                    if ((p.locRequest==null)&&(p.quatRequest==null))
+                        continue;
+                    Transform t = new Transform();
+                    t = p.motionState.getWorldTransform(t);
+                    if (p.locRequest!=null)
+                        t.origin.set(p.locRequest);
+                    if (p.quatRequest!=null)
+                        t.setRotation(new Quat4f(p.quatRequest));
+                    p.motionState.setWorldTransform(t);
+                    if (p.coType==PartType.DYNAMIC)
+                        p.setKinematicTemp();
+            	}
             }
 
 //System.out.println("PhysicalWorld:-----gaha-----1");
@@ -213,9 +217,9 @@ public class PVEWorld implements Runnable {
 //System.out.println("PhysicalWorld:-----gaha-----2");
 
             //車の車輪の更新。dynamicsWorld.setSimulation()の更新時間が1/60で割り切れない時とかに特に必要
-            for (PVEObject co : objects) {
-            	co.postSimulation();
-            }
+            for (PVEObject o : objects)
+            	for (PVEPart p:o.parts)
+            	    p.postSimulation();
             
             //衝突
             int numManifolds = dynamicsWorld.getDispatcher().getNumManifolds();
@@ -244,25 +248,29 @@ public class PVEWorld implements Runnable {
                 //ロックしすぎ？
                 synchronized (collisionListeners) {
                     for (CollisionListener cl : collisionListeners) {
-                        cl.collided(((PVEObject)obA.getUserPointer()),((PVEObject)obB.getUserPointer()));
+                        cl.collided(((PVEPart)obA.getUserPointer()),((PVEPart)obB.getUserPointer()));
                     }
                 }
             }
 
 
-            for (PVEObject co : objects) {
-                if (co.locRequest==null && co.quatRequest==null)
-                    continue;
-              	co.resetKinematicTemp();
-                co.locRequest=null;
-                co.quatRequest=null;
+            for (PVEObject o : objects) {
+            	for (PVEPart p:o.parts) { 
+                    if (p.locRequest==null && p.quatRequest==null)
+                        continue;
+              	    p.resetKinematicTemp();
+                    p.locRequest=null;
+                    p.quatRequest=null;
+            	}
             }
 
-            for (PVEObject co : objects) {
-                if (co.velRequest==null)
-                    continue;
-                co.body.setLinearVelocity(co.velRequest);
-                co.velRequest=null;
+            for (PVEObject o : objects) {
+            	for (PVEPart p:o.parts) { 
+                    if (p.velRequest==null)
+                        continue;
+                    p.body.setLinearVelocity(p.velRequest);
+                    p.velRequest=null;
+            	}
             }
 
             /*

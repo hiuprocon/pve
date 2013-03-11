@@ -15,7 +15,7 @@ import com.github.hiuprocon.pve.car.CarBase;
 import com.github.hiuprocon.pve.car.CarSim;
 import com.github.hiuprocon.pve.car.MyCar;
 import com.github.hiuprocon.pve.car.MyCheckPoint;
-import com.github.hiuprocon.pve.core.PVEObject;
+import com.github.hiuprocon.pve.core.PVEPart;
 import com.github.hiuprocon.pve.core.ActiveObject;
 import com.github.hiuprocon.pve.core.CollisionListener;
 import com.github.hiuprocon.pve.core.PVEWorld;
@@ -235,10 +235,10 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
     }
 
     @Override
-    public void collided(PVEObject a, PVEObject b) {
+    public void collided(PVEPart a, PVEPart b) {
         if ((a instanceof MyCheckPoint)||(b instanceof MyCheckPoint)) {
             MyCheckPoint cp = null;
-            PVEObject other = null;
+            PVEPart other = null;
             if (a instanceof MyCheckPoint) {
                 cp = (MyCheckPoint)a;
                 other = b;

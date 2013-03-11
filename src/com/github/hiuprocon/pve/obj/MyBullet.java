@@ -2,7 +2,6 @@ package com.github.hiuprocon.pve.obj;
 
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.dynamics.*;
-import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.bulletphysics.linearmath.MotionState;
 import com.bulletphysics.linearmath.Transform;
 import com.github.hiuprocon.pve.core.*;
@@ -10,11 +9,11 @@ import javax.vecmath.*;
 import jp.sourceforge.acerola3d.a3.*;
 
 //弾丸を表すクラス
-public class MyBullet extends PVEObject implements ActiveObject {
+public class MyBullet extends PVEPart implements ActiveObject {
     Vector3d l = new Vector3d();
     Vector3d v = new Vector3d();
     public MyBullet(Vector3d l,Vector3d v) {
-        super(l,new Vector3d(),ObjType.KINEMATIC);
+        super(l,new Vector3d(),PartType.KINEMATIC);
         this.l.set(l);
         this.v.set(v);
     }
@@ -45,10 +44,6 @@ static int gaha;
         //rb.setCollisionFlags(rb.getCollisionFlags()|CollisionFlags.KINEMATIC_OBJECT);
         //rb.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
         return rb;
-    }
-
-    public TypedConstraint makeConstraint(Object...args) {
-    	return null;
     }
 
     boolean initGrav = false;

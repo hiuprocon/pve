@@ -9,13 +9,13 @@ import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
 import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.bulletphysics.linearmath.MotionState;
 import com.bulletphysics.linearmath.Transform;
-import com.github.hiuprocon.pve.core.PVEObject;
+import com.github.hiuprocon.pve.core.PVEPart;
 import com.github.hiuprocon.pve.core.A3MotionState;
-import com.github.hiuprocon.pve.core.ObjType;
+import com.github.hiuprocon.pve.core.PartType;
 
-public class MyCheckPoint extends PVEObject {
+public class MyCheckPoint extends PVEPart {
     public MyCheckPoint(Vector3d l,Vector3d r) {
-        super(l,r,ObjType.GHOST);
+        super(l,r,PartType.GHOST);
         //group = 2;
         //mask = 2;
     }

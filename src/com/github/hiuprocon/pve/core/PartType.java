@@ -1,6 +1,6 @@
 package com.github.hiuprocon.pve.core;
 
-public enum ObjType {
+public enum PartType {
     DYNAMIC,
     STATIC,
     KINEMATIC,

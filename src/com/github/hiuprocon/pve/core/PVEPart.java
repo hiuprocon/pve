@@ -4,12 +4,11 @@ import jp.sourceforge.acerola3d.a3.*;
 import javax.vecmath.*;
 import com.bulletphysics.collision.dispatch.*;
 import com.bulletphysics.dynamics.*;
-import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.bulletphysics.linearmath.*;
 import static com.bulletphysics.collision.dispatch.CollisionFlags.*;
 
 //このプログラムで剛体を表すクラス
-public abstract class PVEObject {
+public abstract class PVEPart {
     static final int DYNAMIC_FLAGS = 0;
     static final int STATIC_FLAGS = KINEMATIC_OBJECT | STATIC_OBJECT;
     static final int KINEMATIC_FLAGS = KINEMATIC_OBJECT;
@@ -20,18 +19,18 @@ public abstract class PVEObject {
     public A3Object a3;
     public MotionState motionState;//JBulletと座標をやりとりするオブジェクト
     protected RigidBody body;//JBulletにおける剛体などを表すオブジェクト
-    protected TypedConstraint constraint;
+    //protected TypedConstraint constraint;
     Vector3f locRequest;
     Quat4d quatRequest;
     Vector3f velRequest;
-    ObjType coType = ObjType.DYNAMIC;
+    PartType coType = PartType.DYNAMIC;
     short group = 1;
     short mask = 1;
     //DYNAMICなんだけど一時的にKINEMATICになってる時にtrue
     boolean kinematicTmp = false;
 
     //Acerola3DファイルのURLと初期座標で初期化
-    public PVEObject(Vector3d l,Vector3d r,ObjType t,Object...args) {
+    public PVEPart(Vector3d l,Vector3d r,PartType t,Object...args) {
         this.coType = t;
         this.l = new Vector3d(l);
         this.r = new Vector3d(r);
@@ -50,7 +49,7 @@ public abstract class PVEObject {
         }
         motionState = makeMotionState(l,r);
         body = makeRigidBody(tmpArgs);
-        constraint = makeConstraint(tmpArgs);
+        //constraint = makeConstraint(tmpArgs);
         changeCOType(coType);
         body.setUserPointer(this);
         //DYNAMIC以外なんか最初の座標が表示に反映されないので。。。
@@ -60,11 +59,10 @@ public abstract class PVEObject {
     protected abstract A3Object makeA3Object(Object...args) throws Exception ;
     protected abstract MotionState makeMotionState(Vector3d l,Vector3d r);
     protected abstract RigidBody makeRigidBody(Object...args);
-    protected abstract TypedConstraint makeConstraint(Object...args);
     protected void postSimulation() {;};
 
-    void changeCOType(ObjType t) {
-        if (t==ObjType.DYNAMIC) {
+    void changeCOType(PartType t) {
+        if (t==PartType.DYNAMIC) {
             body.setCollisionFlags(DYNAMIC_FLAGS);
             //rb.body.setActivationState(CollisionObject.ACTIVE_TAG);
             body.forceActivationState(CollisionObject.ACTIVE_TAG);
@@ -72,19 +70,19 @@ public abstract class PVEObject {
             body.clearForces();
             body.setLinearVelocity(new Vector3f());
             body.setAngularVelocity(new Vector3f());
-        } else if (t==ObjType.STATIC) {
+        } else if (t==PartType.STATIC) {
             body.setCollisionFlags(STATIC_FLAGS);
             //body.setActivationState(CollisionObject.DISABLE_SIMULATION);
             body.clearForces();
             body.setLinearVelocity(new Vector3f());
             body.setAngularVelocity(new Vector3f());
-        } else if (t==ObjType.KINEMATIC){
+        } else if (t==PartType.KINEMATIC){
             body.setCollisionFlags(KINEMATIC_FLAGS);
             //body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
             body.clearForces();
             body.setLinearVelocity(new Vector3f());
             body.setAngularVelocity(new Vector3f());
-        } else if (t==ObjType.GHOST) {
+        } else if (t==PartType.GHOST) {
         	body.setCollisionFlags(GHOST_FLAGS);
             //body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
             body.clearForces();

@@ -2,7 +2,6 @@ package com.github.hiuprocon.pve.obj;
 
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.dynamics.*;
-import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.bulletphysics.linearmath.MotionState;
 import com.bulletphysics.linearmath.Transform;
 import com.github.hiuprocon.pve.core.*;
@@ -10,9 +9,9 @@ import javax.vecmath.*;
 import jp.sourceforge.acerola3d.a3.*;
 
 //地面を表すクラス
-class MyGround extends PVEObject {
+class MyGround extends PVEPart {
     public MyGround() {
-        super(new Vector3d(0.0,-50.0,0.0),new Vector3d(),ObjType.STATIC);
+        super(new Vector3d(0.0,-50.0,0.0),new Vector3d(),PartType.STATIC);
     }
 
     public A3Object makeA3Object(Object...args) throws Exception {
@@ -38,8 +37,5 @@ class MyGround extends PVEObject {
                 groundShape,localInertia);
         RigidBody groundBody = new RigidBody(groundRBInfo);
         return groundBody;
-    }
-    public TypedConstraint makeConstraint(Object...args) {
-    	return null;
     }
 }
