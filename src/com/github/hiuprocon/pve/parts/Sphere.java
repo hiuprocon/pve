@@ -1,21 +1,35 @@
 package com.github.hiuprocon.pve.parts;
 
 import com.bulletphysics.collision.shapes.*;
-import com.bulletphysics.dynamics.*;
 import com.bulletphysics.linearmath.MotionState;
 import com.bulletphysics.linearmath.Transform;
 import com.github.hiuprocon.pve.core.*;
 import javax.vecmath.*;
 import jp.sourceforge.acerola3d.a3.*;
 
-//球を表すクラス
+//立方体を表すクラス
 public class Sphere extends PVEPart {
-    public Sphere(double x,double y,double z) {
-        super(PartType.DYNAMIC,new Vector3d(x,y,z),new Vector3d());
+	float size;
+	String a3url;
+    public Sphere(Type type,Vector3d innerLoc,double mass) {
+    	this(type,innerLoc,new Vector3d(),mass);
+    }
+    public Sphere(Type type,Vector3d innerLoc,Vector3d innerRot,double mass) {
+    	this(type,innerLoc,innerRot,mass,1.0);
+    }
+    public Sphere(Type type,Vector3d innerLoc,Vector3d innerRot,double mass,double size) {
+    	this(type,innerLoc,innerRot,mass,size,"x-res:///res/Sphere.wrl");
+    }
+    public Sphere(Type type,Vector3d innerLoc,Vector3d innerRot,double mass,double size,String a3url) {
+        super(type,innerLoc,innerRot,mass);
+        this.size = (float)size;
+        this.a3url = a3url;
     }
 
-    public A3Object makeA3Object(Object...args) throws Exception {
-        return new Action3D("x-res:///res/earth.a3");
+    public A3Object makeA3Object() {
+    	A3Object a = PVEUtil.loadA3(a3url);
+        a.setUserData("サイコロ");
+        return a;
     }
     public MotionState makeMotionState(Vector3d l,Vector3d r) {
         Transform transform = new Transform();
@@ -24,15 +38,8 @@ public class Sphere extends PVEPart {
         transform.setRotation(new Quat4f(Util.euler2quat(r)));
         return new A3MotionState(a3,transform);
     }
-    //球状の剛体を作る
-    public RigidBody makeRigidBody(Object...args) {
-        CollisionShape shape = new SphereShape(1.0f);
-        Vector3f localInertia = new Vector3f(0,0,0);
-        shape.calculateLocalInertia(1.0f,localInertia);
-        RigidBodyConstructionInfo rbcInfo =
-                new RigidBodyConstructionInfo(1.0f,motionState,
-                                              shape,localInertia);
-        RigidBody rb = new RigidBody(rbcInfo);
-        return rb;
+    //立方体の剛体を作る
+    public CollisionShape makeCollisionShape() {
+        return new SphereShape(size);
     }
 }

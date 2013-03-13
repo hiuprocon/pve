@@ -13,7 +13,7 @@ public class MyBullet extends PVEPart implements ActiveObject {
     Vector3d l = new Vector3d();
     Vector3d v = new Vector3d();
     public MyBullet(Vector3d l,Vector3d v) {
-        super(PartType.KINEMATIC,l,new Vector3d());
+        super(Type.KINEMATIC,l,new Vector3d());
         this.l.set(l);
         this.v.set(v);
     }
@@ -29,7 +29,7 @@ static int gaha;
         Transform transform = new Transform();
         transform.setIdentity();
         transform.origin.set((float)l.x,(float)l.y,(float)l.z);
-        transform.setRotation(new Quat4f(Util.euler2quat(r)));
+        transform.setRotation(new Quat4f(PVEUtil.euler2quat(r)));
         return new A3MotionState(a3,transform);
     }
     //球状の剛体を作る

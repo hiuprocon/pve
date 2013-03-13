@@ -11,7 +11,7 @@ import jp.sourceforge.acerola3d.a3.*;
 //地面を表すクラス
 class MyGround extends PVEPart {
     public MyGround() {
-        super(PartType.STATIC,new Vector3d(0.0,-50.0,0.0),new Vector3d());
+        super(Type.STATIC,new Vector3d(0.0,-50.0,0.0),new Vector3d());
     }
 
     public A3Object makeA3Object(Object...args) throws Exception {
@@ -24,7 +24,7 @@ class MyGround extends PVEPart {
         Transform transform = new Transform();
         transform.setIdentity();
         transform.origin.set((float)l.x,(float)l.y,(float)l.z);
-        transform.setRotation(new Quat4f(Util.euler2quat(r)));
+        transform.setRotation(new Quat4f(PVEUtil.euler2quat(r)));
         return new A3MotionState(a3,transform);
     }
     //地面用の剛体を作る

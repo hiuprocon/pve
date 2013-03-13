@@ -204,7 +204,7 @@ public class PVEWorld implements Runnable {
                     if (p.quatRequest!=null)
                         t.setRotation(new Quat4f(p.quatRequest));
                     p.motionState.setWorldTransform(t);
-                    if (p.coType==PartType.DYNAMIC)
+                    if (p.type==Type.DYNAMIC)
                         p.setKinematicTemp();
             	}
             }

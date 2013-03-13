@@ -11,39 +11,23 @@ import javax.vecmath.*;
 import javax.media.j3d.*;
 
 class CarMotion implements Motion {
-    RigidBody carChassis;
     VehicleRaycaster vehicleRayCaster;
     RaycastVehicle vehicle;
     Transform rootTransform = new Transform();
 
-    public CarMotion(MotionState ms,DefaultVehicleRaycaster vehicleRayCaster) {
+    public CarMotion(MotionState ms,DefaultVehicleRaycaster vehicleRayCaster,RigidBody body) {
     	this.vehicleRayCaster = vehicleRayCaster;
 
-        //Transform tr = new Transform();
-        //tr.setIdentity();
-
-        CollisionShape chassisShape = new BoxShape(new Vector3f(0.4f, 0.25f, 0.75f));
-
-        CompoundShape compound = new CompoundShape();
-        Transform localTrans = new Transform();
-        localTrans.setIdentity();
-        localTrans.origin.set(0, 0.25f, 0);
-
-        compound.addChildShape(localTrans, chassisShape);
-
-        //tr.origin.set(0, 0, 0);
-
-        carChassis = localCreateRigidBody(100, ms, compound);
-        carChassis.setDamping(0.5f,0.5f);//空気抵抗を設定
+        body.setDamping(0.5f,0.5f);//空気抵抗を設定
 
         // create vehicle
         {
             VehicleTuning tuning = new VehicleTuning();
 
-            vehicle = new RaycastVehicle(tuning, carChassis, vehicleRayCaster);
+            vehicle = new RaycastVehicle(tuning, body, vehicleRayCaster);
 
             //無効化の禁止
-            carChassis.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
+            body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);
 
             //dynamicsWorld.addVehicle(vehicle);
 

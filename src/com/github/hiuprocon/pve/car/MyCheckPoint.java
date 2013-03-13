@@ -11,11 +11,11 @@ import com.bulletphysics.linearmath.MotionState;
 import com.bulletphysics.linearmath.Transform;
 import com.github.hiuprocon.pve.core.PVEPart;
 import com.github.hiuprocon.pve.core.A3MotionState;
-import com.github.hiuprocon.pve.core.PartType;
+import com.github.hiuprocon.pve.core.Type;
 
 public class MyCheckPoint extends PVEPart {
     public MyCheckPoint(Vector3d l,Vector3d r) {
-        super(PartType.GHOST,l,r);
+        super(Type.GHOST,l,r);
         //group = 2;
         //mask = 2;
     }
