@@ -16,29 +16,28 @@ public abstract class PVEPart {
     static final int KINEMATIC_TEMP_FLAGS = KINEMATIC_OBJECT;
 
     PVEWorld world;
+    final PartType coType;
     public A3Object a3;
     public MotionState motionState;//JBulletと座標をやりとりするオブジェクト
     protected RigidBody body;//JBulletにおける剛体などを表すオブジェクト
-    //protected TypedConstraint constraint;
+    final Vector3d internalLoc;
+    final Vector3d internalQuat;
     Vector3f locRequest;
     Quat4d quatRequest;
     Vector3f velRequest;
-    PartType coType = PartType.DYNAMIC;
     short group = 1;
     short mask = 1;
     //DYNAMICなんだけど一時的にKINEMATICになってる時にtrue
     boolean kinematicTmp = false;
 
     //Acerola3DファイルのURLと初期座標で初期化
-    public PVEPart(Vector3d l,Vector3d r,PartType t,Object...args) {
-        this.coType = t;
-        this.l = new Vector3d(l);
-        this.r = new Vector3d(r);
+    public PVEPart(PartType t,Vector3d l,Vector3d r,Object...args) {
+        coType = t;
+        internalLoc = new Vector3d(l);
+        internalQuat = new Vector3d(r);
         tmpArgs = args;
     }
     final Object[] tmpArgs;
-    final Vector3d l;
-    final Vector3d r;
 
     void init(PVEWorld world) {
         this.world = world;
@@ -47,10 +46,10 @@ public abstract class PVEPart {
         } catch(Exception e) {
             a3 = new VRML("gaha");
         }
-        motionState = makeMotionState(l,r);
+        motionState = makeMotionState(internalLoc,internalQuat);
         body = makeRigidBody(tmpArgs);
         //constraint = makeConstraint(tmpArgs);
-        changeCOType(coType);
+        initRigidBody(coType);
         body.setUserPointer(this);
         //DYNAMIC以外なんか最初の座標が表示に反映されないので。。。
         Transform t = new Transform();
@@ -61,7 +60,7 @@ public abstract class PVEPart {
     protected abstract RigidBody makeRigidBody(Object...args);
     protected void postSimulation() {;};
 
-    void changeCOType(PartType t) {
+    void initRigidBody(PartType t) {
         if (t==PartType.DYNAMIC) {
             body.setCollisionFlags(DYNAMIC_FLAGS);
             //rb.body.setActivationState(CollisionObject.ACTIVE_TAG);
@@ -89,7 +88,6 @@ public abstract class PVEPart {
             body.setLinearVelocity(new Vector3f());
             body.setAngularVelocity(new Vector3f());
         }
-        coType = t;
     }
     void setKinematicTemp() {
         body.setCollisionFlags(KINEMATIC_TEMP_FLAGS);

@@ -1,4 +1,4 @@
-package com.github.hiuprocon.pve.obj;
+package com.github.hiuprocon.pve.parts;
 
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.dynamics.*;
@@ -12,7 +12,7 @@ import jp.sourceforge.acerola3d.a3.*;
 public class MyGround2 extends PVEPart {
     static CollisionShape groundShape;
     public MyGround2() {
-        super(new Vector3d(0,0,0),new Vector3d(),PartType.STATIC);
+        super(PartType.STATIC,new Vector3d(0,0,0),new Vector3d());
     }
 
     public A3Object makeA3Object(Object...args) throws Exception {

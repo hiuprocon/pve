@@ -9,8 +9,8 @@ import com.github.hiuprocon.pve.car.CarBase;
 import com.github.hiuprocon.pve.car.CarSim;
 import com.github.hiuprocon.pve.core.ActiveObject;
 import com.github.hiuprocon.pve.core.PVEWorld;
-import com.github.hiuprocon.pve.obj.MyBox;
-import com.github.hiuprocon.pve.obj.MyGround2;
+import com.github.hiuprocon.pve.parts.Box;
+import com.github.hiuprocon.pve.parts.MyGround2;
 
 class RaceTestImpl implements CarSim, Runnable {
     PVEWorld world;
@@ -28,7 +28,7 @@ class RaceTestImpl implements CarSim, Runnable {
         for (double x=-3.0;x<=3.0;x+=2.0) {
             for (double y=1.0;y<=7.0;y+=2.0) {
                 for (double z=-3.0;z<=3.0;z+=2.0) {
-                    MyBox b = new MyBox(x,y,z+20);//立方体
+                    Box b = new Box(x,y,z+20);//立方体
                     world.add(b);
                 }
             }

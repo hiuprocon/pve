@@ -1,4 +1,4 @@
-package com.github.hiuprocon.pve.car;
+package com.github.hiuprocon.pve.parts;
 
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3d;
@@ -7,17 +7,18 @@ import com.bulletphysics.linearmath.MotionState;
 import com.bulletphysics.linearmath.Transform;
 import com.bulletphysics.dynamics.vehicle.*;
 import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
+import com.github.hiuprocon.pve.car.CarBase;
 import com.github.hiuprocon.pve.core.*;
 import jp.sourceforge.acerola3d.a3.*;
 
 //car
-public class MyCar extends PVEPart {
+public class SimpleCar extends PVEPart {
     String a3url;
     CarMotion motion;
     RaycastVehicle vehicle;
     public CarBase carBase;
-    public MyCar(Vector3d l,Vector3d r,String a3url,DefaultVehicleRaycaster dvr) {
-        super(l,r,PartType.DYNAMIC,a3url,dvr);
+    public SimpleCar(Vector3d l,Vector3d r,String a3url,DefaultVehicleRaycaster dvr) {
+        super(PartType.DYNAMIC,l,r,a3url,dvr);
         //this.a3url = a3url;
         //group = 1;
         //mask = 3;

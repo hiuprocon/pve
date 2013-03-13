@@ -15,7 +15,7 @@ import com.github.hiuprocon.pve.core.PartType;
 
 public class MyCheckPoint extends PVEPart {
     public MyCheckPoint(Vector3d l,Vector3d r) {
-        super(l,r,PartType.GHOST);
+        super(PartType.GHOST,l,r);
         //group = 2;
         //mask = 2;
     }

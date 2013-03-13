@@ -6,7 +6,8 @@ import jp.sourceforge.acerola3d.a3.Util;
 import com.bulletphysics.linearmath.Transform;
 import com.github.hiuprocon.pve.core.ActiveObject;
 import com.github.hiuprocon.pve.core.PVEWorld;
-import com.github.hiuprocon.pve.obj.MyBullet;
+import com.github.hiuprocon.pve.parts.MyBullet;
+import com.github.hiuprocon.pve.parts.SimpleCar;
 
 /**
  * このクラスを拡張してレースorバトルするための車を作成します。
@@ -17,7 +18,7 @@ import com.github.hiuprocon.pve.obj.MyBullet;
  */
 public class CarBase implements ActiveObject {
     static int carIDCount=0; 
-    public MyCar car;
+    public SimpleCar car;
     PVEWorld world;
     CarSim carSim;
     int carID;
@@ -32,7 +33,7 @@ public class CarBase implements ActiveObject {
     public final void init(Vector3d loc,Vector3d rot,String a3url,PVEWorld world,CarSim cs) {
         this.world = world;
         carSim = cs;
-        car = new MyCar(loc,rot,a3url,world.createDefaultVehicleRaycaster());
+        car = new SimpleCar(loc,rot,a3url,world.createDefaultVehicleRaycaster());
         car.setCarBase(this);
     }
 

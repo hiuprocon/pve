@@ -13,14 +13,14 @@ import javax.vecmath.Vector3d;
 
 import com.github.hiuprocon.pve.car.CarBase;
 import com.github.hiuprocon.pve.car.CarSim;
-import com.github.hiuprocon.pve.car.MyCar;
 import com.github.hiuprocon.pve.car.MyCheckPoint;
 import com.github.hiuprocon.pve.core.PVEPart;
 import com.github.hiuprocon.pve.core.ActiveObject;
 import com.github.hiuprocon.pve.core.CollisionListener;
 import com.github.hiuprocon.pve.core.PVEWorld;
-import com.github.hiuprocon.pve.obj.MyBullet;
-import com.github.hiuprocon.pve.obj.MyGround2;
+import com.github.hiuprocon.pve.parts.MyBullet;
+import com.github.hiuprocon.pve.parts.SimpleCar;
+import com.github.hiuprocon.pve.parts.MyGround2;
 
 class CarRaceImpl implements Runnable, CollisionListener, CarSim {
     PVEWorld world;
@@ -246,7 +246,7 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
                 cp = (MyCheckPoint)b;
                 other = a;
             }
-            if (other instanceof MyCar) {
+            if (other instanceof SimpleCar) {
                 if (checkPointStack.peek()!=cp) {
                     checkPointStack.push(cp);
                     String t = String.format("%4.2f",world.getTime());

@@ -1,4 +1,4 @@
-package com.github.hiuprocon.pve.obj;
+package com.github.hiuprocon.pve.parts;
 
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.dynamics.*;
@@ -13,7 +13,7 @@ public class MyBullet extends PVEPart implements ActiveObject {
     Vector3d l = new Vector3d();
     Vector3d v = new Vector3d();
     public MyBullet(Vector3d l,Vector3d v) {
-        super(l,new Vector3d(),PartType.KINEMATIC);
+        super(PartType.KINEMATIC,l,new Vector3d());
         this.l.set(l);
         this.v.set(v);
     }

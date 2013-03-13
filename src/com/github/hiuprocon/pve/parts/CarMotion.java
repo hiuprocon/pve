@@ -1,4 +1,4 @@
-package com.github.hiuprocon.pve.car;
+package com.github.hiuprocon.pve.parts;
 
 import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.collision.shapes.*;

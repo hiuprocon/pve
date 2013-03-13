@@ -1,4 +1,4 @@
-package com.github.hiuprocon.pve.obj;
+package com.github.hiuprocon.pve.parts;
 
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.dynamics.*;
@@ -9,9 +9,9 @@ import javax.vecmath.*;
 import jp.sourceforge.acerola3d.a3.*;
 
 //球を表すクラス
-public class MySphere extends PVEPart {
-    public MySphere(double x,double y,double z) {
-        super(new Vector3d(x,y,z),new Vector3d(),PartType.DYNAMIC);
+public class Sphere extends PVEPart {
+    public Sphere(double x,double y,double z) {
+        super(PartType.DYNAMIC,new Vector3d(x,y,z),new Vector3d());
     }
 
     public A3Object makeA3Object(Object...args) throws Exception {

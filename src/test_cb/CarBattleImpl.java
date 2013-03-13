@@ -14,16 +14,16 @@ import javax.vecmath.Vector3d;
 
 import com.github.hiuprocon.pve.car.CarBase;
 import com.github.hiuprocon.pve.car.CarSim;
-import com.github.hiuprocon.pve.car.MyCar;
 import com.github.hiuprocon.pve.core.PVEPart;
 import com.github.hiuprocon.pve.core.ActiveObject;
 import com.github.hiuprocon.pve.core.CollisionListener;
 import com.github.hiuprocon.pve.core.PVEWorld;
-import com.github.hiuprocon.pve.obj.MyBox;
-import com.github.hiuprocon.pve.obj.MyBullet;
-import com.github.hiuprocon.pve.obj.MyGround2;
-import com.github.hiuprocon.pve.obj.MyGround3;
-import com.github.hiuprocon.pve.obj.MySphere;
+import com.github.hiuprocon.pve.parts.Box;
+import com.github.hiuprocon.pve.parts.MyBullet;
+import com.github.hiuprocon.pve.parts.SimpleCar;
+import com.github.hiuprocon.pve.parts.MyGround2;
+import com.github.hiuprocon.pve.parts.MyGround3;
+import com.github.hiuprocon.pve.parts.Sphere;
 
 import java.util.prefs.*;
 
@@ -134,13 +134,13 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
         car1.car.init(new Vector3d( 0,1.0,-10),new Vector3d(),"x-res:///res/stk_tux.a3",world,this);
         car2.car.init(new Vector3d( 0,1.0, 10),new Vector3d(0,3.1,0),"x-res:///res/stk_wilber2.a3",world,this);
 
-        world.add(new MyBox(-10.0,1.0,0.0));
-        world.add(new MyBox(-13.0,1.0,0.0));
-        world.add(new MyBox(-16.0,1.0,0.0));
+        world.add(new Box(-10.0,1.0,0.0));
+        world.add(new Box(-13.0,1.0,0.0));
+        world.add(new Box(-16.0,1.0,0.0));
 
-        world.add(new MySphere(10,1.0,0.0));
-        world.add(new MySphere(13,1.0,0.0));
-        world.add(new MySphere(16,1.0,0.0));
+        world.add(new Sphere(10,1.0,0.0));
+        world.add(new Sphere(13,1.0,0.0));
+        world.add(new Sphere(16,1.0,0.0));
 
         world.add(car1.car.car);
         world.add(car2.car.car);
@@ -302,8 +302,8 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
             if (other instanceof MyBullet) {
                 world.del(other);
                 this.delActiveObject((MyBullet)other);
-            } else if (other instanceof MyCar) {
-                ((MyCar)other).carBase.hit();
+            } else if (other instanceof SimpleCar) {
+                ((SimpleCar)other).carBase.hit();
             } else if (other instanceof MyGround2){
                 ;
             } else {
