@@ -38,17 +38,22 @@ public abstract class PVEPart {
     	this(type,mass,a3url,new Vector3d());
     }
     public PVEPart(Type type,double mass,String a3url,Vector3d localInertia) {
-    	//type,shape,mass,inertia,a3
+    	this(type,mass,a3url,localInertia,null);
+    }
+    public PVEPart(Type type,double mass,String a3url,Vector3d localInertia,PVEWorld world) {
+    	//worldがnullでないのはSimpleCarの場合のみと想定している
+    	if (world!=null) {
+    		((SimpleCar)this).world = world;
+    	}
         this.type = type;
         this.mass = (float)mass;
         a3 = PVEUtil.loadA3(a3url);
         this.localInertia = new Vector3f(localInertia);
     }
-
-    void internalInit(PVEWorld world) {
-        if (this instanceof SimpleCar) {
-        	((SimpleCar)this).dvr = world.createDefaultVehicleRaycaster();
-        }
+    /**
+     * このメソッドはコンストラクタの中で必ず呼び出さなければならない。
+     */
+    protected final void init() {
         Transform t = new Transform();
         t.setIdentity();
         if (this instanceof SimpleCar)
@@ -57,20 +62,14 @@ public abstract class PVEPart {
         	motionState = new A3MotionState(a3,t);
         CollisionShape shape = makeCollisionShape();
         float massR = type==Type.DYNAMIC?mass:0.0f;
-        shape.calculateLocalInertia(massR, localInertia);
+        shape.calculateLocalInertia(massR,localInertia);
         RigidBodyConstructionInfo rbcInfo =
-        	new RigidBodyConstructionInfo(mass,motionState,shape,localInertia);
+        	new RigidBodyConstructionInfo(massR,motionState,shape,this.localInertia);
         body = new RigidBody(rbcInfo);
         body.setUserPointer(this);
         initRigidBody(type);
-        init();
     }
     protected abstract CollisionShape makeCollisionShape();
-    /**
-     * A3Object,MotionState,CollisionShapeが生成されRigidBody(body)
-     * がの準備が整った後に呼ばれるメソッド。
-     */
-    protected void init() {;}
     public void setInitLocRot(Vector3d l,Vector3d r) {
     	innerLoc.set(l);
     	innerRot.set(r);

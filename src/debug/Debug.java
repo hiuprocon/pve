@@ -19,12 +19,14 @@ public class Debug {
 	    f.pack();
 	    f.setVisible(true);
 	    
-	    Ground g = new Ground();
+	    Ground g = new Ground("x-rzip:x-res:///res/stk_racetrack.a3!/racetrack.wrl");
 	    w.add(g);
-	    //BoxObj b = new BoxObj();
-	    SimpleCarObj b = new SimpleCarObj("x-res:///res/stk_tux.a3");
-	    w.add(b);
+	    BoxObj b = new BoxObj();
+	    //SimpleCarObj b = new SimpleCarObj(w,"x-res:///res/stk_tux.a3");
 	    b.setLoc(0,10,0);
+	    w.add(b);
+
+	    Thread.sleep(1000);
 	    w.resume();
 	    double x=0;
 	    while(true) {

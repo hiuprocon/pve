@@ -11,6 +11,7 @@ public class Bullet extends PVEObject implements ActiveObject {
 	}
 	public Bullet(String a3url) {
 		this.a3url = a3url;
+		init();
 	}
 
 	@Override

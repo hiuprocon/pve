@@ -11,6 +11,7 @@ public class Ground extends PVEObject {
 	}
 	public Ground(String a3url) {
 		this.a3url = a3url;
+		init();
 	}
 
 	@Override

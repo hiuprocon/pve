@@ -11,21 +11,20 @@ public abstract class PVEObject {
 	PVEPart mainPart;
     PVEPart[] parts;
     TypedConstraint[] constraints;
-    protected PVEWorld world;
     public PVEObject() {
     }
     protected abstract PVEPart[] createParts();
     protected abstract TypedConstraint[] createConstraints();
     protected abstract PVEPart getMainPart();
-    void init(PVEWorld world) {
-    	this.world = world;
+    /**
+     * このメソッドはコンストラクタの中で必ず呼び出さなければならない。
+     */
+    protected final void init() {
     	parts = createParts();
     	for (PVEPart p:parts)
     		p.obj = this;
     	constraints = createConstraints();
     	mainPart = getMainPart();
-    	for (PVEPart p : parts)
-    		p.internalInit(world);
     }
     public void setLoc(double x,double y,double z) {
     	for (PVEPart p:parts) {

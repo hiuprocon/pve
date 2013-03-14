@@ -5,14 +5,17 @@ import com.github.hiuprocon.pve.core.*;
 
 public class SimpleCarObj extends PVEObject {
 	String a3url;
+	PVEWorld world;
 	SimpleCar vehicle;
-	public SimpleCarObj(String a3url) {
+	public SimpleCarObj(PVEWorld world,String a3url) {
+		this.world = world;
 		this.a3url = a3url;
+		init();
 	}
 
 	@Override
 	protected PVEPart[] createParts() {
-		vehicle = new SimpleCar(a3url);
+		vehicle = new SimpleCar(world,a3url);
 		return new PVEPart[]{vehicle};
 	}
 

@@ -6,10 +6,14 @@ import javax.vecmath.Vector3d;
 
 public class CheckPoint extends PVEObject {
 	Box box;
+	public CheckPoint() {
+		init();
+		this.getMainA3().setScale(8);
+	}
 
 	@Override
     protected PVEPart[] createParts() {
-		box = new Box(Type.GHOST,0.0,new Vector3d(1,1,1),"x-res:///res/Box.wrl");
+		box = new Box(Type.GHOST,0.0,new Vector3d(4,4,2),"x-rzip:x-res:///res/ClearBlocks2.a3!/blockBlack.wrl");
     	return new PVEPart[]{box};
     }
 

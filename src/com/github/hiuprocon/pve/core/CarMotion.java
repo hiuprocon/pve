@@ -11,12 +11,13 @@ import javax.vecmath.*;
 import javax.media.j3d.*;
 
 class CarMotion implements Motion {
-    VehicleRaycaster vehicleRayCaster;
+    //VehicleRaycaster vehicleRayCaster;
     RaycastVehicle vehicle;
     Transform rootTransform = new Transform();
 
-    public CarMotion(MotionState ms,DefaultVehicleRaycaster vehicleRayCaster,RigidBody body) {
-    	this.vehicleRayCaster = vehicleRayCaster;
+    //public CarMotion(MotionState ms,DefaultVehicleRaycaster vehicleRayCaster,RigidBody body) {
+    public CarMotion(MotionState ms,PVEWorld world,RigidBody body) {
+    	//this.vehicleRayCaster = vehicleRayCaster;
 
         body.setDamping(0.5f,0.5f);//空気抵抗を設定
 
@@ -24,6 +25,7 @@ class CarMotion implements Motion {
         {
             VehicleTuning tuning = new VehicleTuning();
 
+            DefaultVehicleRaycaster vehicleRayCaster = world.createDefaultVehicleRaycaster();
             vehicle = new RaycastVehicle(tuning, body, vehicleRayCaster);
 
             //無効化の禁止

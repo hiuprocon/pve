@@ -34,7 +34,7 @@ public class CarBase implements ActiveObject {
     //public final void init(Vector3d loc,Vector3d rot,String a3url,PVEWorld world,CarSim cs) {
         this.world = world;
         carSim = cs;
-        car = new SimpleCarObj(a3url);
+        car = new SimpleCarObj(world,a3url);
         //car.setLoc(loc);
         //car.setRot(rot);
     }

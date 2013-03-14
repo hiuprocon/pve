@@ -102,9 +102,7 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
             throw new IllegalStateException();
         if (battleRunning)
             throw new IllegalStateException();
-        //MyGround g = new MyGround(pw);
-        //MyGround2 g = new MyGround2(pw);
-        Ground g = new Ground();
+        Ground g = new Ground("x-rzip:x-res:///res/BattleField01.a3!/base.wrl");
         world.add(g);
 
         classLoader1 = makeClassLoader(car1classpath);

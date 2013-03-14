@@ -22,7 +22,7 @@ class RaceTestImpl implements CarSim, Runnable {
         window = (A3Window)world.getMainCanvas();
         window.setSize(500,300);
 
-        Ground g = new Ground();
+        Ground g = new Ground("x-res:///res/stk_racetrack.a3");
         world.add(g);
 
         for (double x=-3.0;x<=3.0;x+=2.0) {

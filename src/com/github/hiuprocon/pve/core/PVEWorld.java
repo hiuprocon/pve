@@ -105,7 +105,6 @@ public class PVEWorld implements Runnable {
 
     //新規の剛体を加える
     public void add(PVEObject o) {
-        o.init(this);
         synchronized (newObjects) {
             newObjects.add(o);
         }

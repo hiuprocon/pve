@@ -18,6 +18,7 @@ public class BoxObj extends PVEObject {
 		this.mass = mass;
 		this.a3url = a3url;
 		this.size = new Vector3d(size);
+		init();
 	}
 
 	@Override

@@ -83,10 +83,8 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
             throw new IllegalStateException();
         if (battleRunning)
             throw new IllegalStateException();
-        Ground g = new Ground();
+        Ground g = new Ground("x-rzip:x-res:///res/stk_racetrack.a3!/racetrack.wrl");
         world.add(g);
-        //MyGround g = new MyGround(pw);
-        //pw.add(g);
 
         //CheckPoint配置
         cps = new CheckPoint[NUM];
