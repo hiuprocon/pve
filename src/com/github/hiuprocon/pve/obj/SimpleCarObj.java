@@ -2,8 +2,6 @@ package com.github.hiuprocon.pve.obj;
 
 import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.github.hiuprocon.pve.core.*;
-import com.github.hiuprocon.pve.parts.*;
-import javax.vecmath.*;
 
 public class SimpleCarObj extends PVEObject {
 	String a3url;
@@ -14,9 +12,7 @@ public class SimpleCarObj extends PVEObject {
 
 	@Override
 	protected PVEPart[] createParts() {
-		Vector3d loc = new Vector3d();
-		Vector3d rot = new Vector3d();
-		vehicle = new SimpleCar(loc,rot,a3url);
+		vehicle = new SimpleCar(a3url);
 		return new PVEPart[]{vehicle};
 	}
 
@@ -24,5 +20,13 @@ public class SimpleCarObj extends PVEObject {
 	protected TypedConstraint[] createConstraints() {
 		return new TypedConstraint[]{vehicle.vehicleConstraint};
 	}
-	
+
+	@Override
+	protected PVEPart getMainPart() {
+		return vehicle;
+	}
+
+	public void setForce(double force,double steering,double breaking,double drift) {
+		vehicle.setForce((float)force,(float)steering,(float)breaking,(float)drift);
+	}
 }

@@ -13,14 +13,15 @@ import javax.vecmath.Vector3d;
 
 import com.github.hiuprocon.pve.car.CarBase;
 import com.github.hiuprocon.pve.car.CarSim;
-import com.github.hiuprocon.pve.car.MyCheckPoint;
+import com.github.hiuprocon.pve.car.CheckPoint;
+import com.github.hiuprocon.pve.core.Box;
+import com.github.hiuprocon.pve.core.PVEObject;
 import com.github.hiuprocon.pve.core.PVEPart;
 import com.github.hiuprocon.pve.core.ActiveObject;
 import com.github.hiuprocon.pve.core.CollisionListener;
 import com.github.hiuprocon.pve.core.PVEWorld;
-import com.github.hiuprocon.pve.parts.MyBullet;
-import com.github.hiuprocon.pve.parts.SimpleCar;
-import com.github.hiuprocon.pve.parts.MyGround2;
+import com.github.hiuprocon.pve.core.SimpleCar;
+import com.github.hiuprocon.pve.obj.*;
 
 class CarRaceImpl implements Runnable, CollisionListener, CarSim {
     PVEWorld world;
@@ -35,8 +36,8 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
     URLClassLoader classLoader;
     CarRaceGUI gui;
     int NUM=12;
-    MyCheckPoint cps[];
-    Deque<MyCheckPoint> checkPointStack;
+    CheckPoint cps[];
+    Deque<CheckPoint> checkPointStack;
 
     CarRaceImpl(String args[]) {
         prefs = Preferences.userNodeForPackage(this.getClass());
@@ -48,7 +49,7 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
         carClasspath = prefs.get("carClasspath","System");
         workDir = prefs.get("workDir",null);
         workDirURL = prefs.get("workDirURL",null);
-        checkPointStack = new ArrayDeque<MyCheckPoint>();
+        checkPointStack = new ArrayDeque<CheckPoint>();
 
         world = new PVEWorld(PVEWorld.A3CANVAS);
         world.pause();
@@ -82,43 +83,55 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
             throw new IllegalStateException();
         if (battleRunning)
             throw new IllegalStateException();
-        MyGround2 g = new MyGround2();
+        Ground g = new Ground();
         world.add(g);
         //MyGround g = new MyGround(pw);
         //pw.add(g);
 
         //CheckPoint配置
-        cps = new MyCheckPoint[NUM];
+        cps = new CheckPoint[NUM];
         Vector3d loc = new Vector3d();
         Vector3d rot = new Vector3d();
         loc.set(  0,  4,-25);rot.set(0,0,0);
-        cps[ 0] = new MyCheckPoint(loc,rot);
+        cps[ 0] = new CheckPoint();
+        cps[ 0].setLoc(loc);cps[ 0].setRot(rot);
         loc.set(-37,  4,-56);rot.set(0,1.57,0);
-        cps[ 1] = new MyCheckPoint(loc,rot);
+        cps[ 1] = new CheckPoint();
+        cps[ 1].setLoc(loc);cps[ 1].setRot(rot);
         loc.set(-76,  4,  9);rot.set(0,0.78,0);
-        cps[ 2] = new MyCheckPoint(loc,rot);
+        cps[ 2] = new CheckPoint();
+        cps[ 2].setLoc(loc);cps[ 2].setRot(rot);
         loc.set(-21,  4, 20);rot.set(0,0,0);
-        cps[ 3] = new MyCheckPoint(loc,rot);
+        cps[ 3] = new CheckPoint();
+        cps[ 3].setLoc(loc);cps[ 3].setRot(rot);
         loc.set(-54,  4, 35);rot.set(0,0,0);
-        cps[ 4] = new MyCheckPoint(loc,rot);
+        cps[ 4] = new CheckPoint();
+        cps[ 4].setLoc(loc);cps[ 4].setRot(rot);
         loc.set(-16,  4, 35);rot.set(0,-0.78,0);
-        cps[ 5] = new MyCheckPoint(loc,rot);
+        cps[ 5] = new CheckPoint();
+        cps[ 5].setLoc(loc);cps[ 5].setRot(rot);
         loc.set(-23,  4,-39);rot.set(0,1.57,0);
-        cps[ 6] = new MyCheckPoint(loc,rot);
+        cps[ 6] = new CheckPoint();
+        cps[ 6].setLoc(loc);cps[ 6].setRot(rot);
         loc.set(-43,  4,  0);rot.set(0,1.57,0);
-        cps[ 7] = new MyCheckPoint(loc,rot);
+        cps[ 7] = new CheckPoint();
+        cps[ 7].setLoc(loc);cps[ 7].setRot(rot);
         loc.set(-53,  4,-38);rot.set(0,1.57,0);
-        cps[ 8] = new MyCheckPoint(loc,rot);
+        cps[ 8] = new CheckPoint();
+        cps[ 8].setLoc(loc);cps[ 8].setRot(rot);
         loc.set(-65,  9, 11);rot.set(0,0,0);
-        cps[ 9] = new MyCheckPoint(loc,rot);
+        cps[ 9] = new CheckPoint();
+        cps[ 9].setLoc(loc);cps[ 9].setRot(rot);
         loc.set(-40,  4, 55);rot.set(0,1.57,0);
-        cps[10] = new MyCheckPoint(loc,rot);
+        cps[10] = new CheckPoint();
+        cps[10].setLoc(loc);cps[10].setRot(rot);
         loc.set(  0,  4, 10);rot.set(0,0,0);
-        cps[11] = new MyCheckPoint(loc,rot);
+        cps[11] = new CheckPoint();
+        cps[11].setLoc(loc);cps[11].setRot(rot);
 
         for (int i=0;i<NUM;i++) {
             world.add(cps[i]);
-            cps[i].a3.setUserData(String.format("cp%02d",i));
+            cps[i].getMainA3().setUserData(String.format("cp%02d",i));
         }
 
         classLoader = makeClassLoader(carClasspath);
@@ -136,9 +149,11 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
         }
 
         //下の行の3.1という数値は本来PI=3.141592...ジンバルロック対策でわざと誤差を入れた
-        car.car.init(new Vector3d( 0,0.8,-1),new Vector3d(0,3.1,0),"x-res:///res/stk_tux.a3",world,this);
-
+        car.car.init("x-res:///res/stk_tux.a3",world,this);
         world.add(car.car.car);
+        car.car.car.setLoc(new Vector3d( 0,0.8,-1));
+        car.car.car.setRot(new Vector3d(0,3.1,0));
+
         gui.setCar(car.car);
         activeObjects.add(car.car);
         gui.updateCarInfo(car.car);
@@ -235,31 +250,33 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
     }
 
     @Override
-    public void collided(PVEPart a, PVEPart b) {
-        if ((a instanceof MyCheckPoint)||(b instanceof MyCheckPoint)) {
-            MyCheckPoint cp = null;
-            PVEPart other = null;
-            if (a instanceof MyCheckPoint) {
-                cp = (MyCheckPoint)a;
+    public void collided(PVEPart aa, PVEPart bb) {
+    	PVEObject a = aa.getObject();
+    	PVEObject b = bb.getObject();
+        if ((a instanceof CheckPoint)||(b instanceof CheckPoint)) {
+            CheckPoint cp = null;
+            PVEObject other = null;
+            if (a instanceof CheckPoint) {
+                cp = (CheckPoint)a;
                 other = b;
             } else {
-                cp = (MyCheckPoint)b;
+                cp = (CheckPoint)b;
                 other = a;
             }
-            if (other instanceof SimpleCar) {
+            if (other instanceof SimpleCarObj) {
                 if (checkPointStack.peek()!=cp) {
                     checkPointStack.push(cp);
                     String t = String.format("%4.2f",world.getTime());
-                    System.out.println(cp.a3.getUserData()+":"+t);
+                    System.out.println(cp.getMainA3().getUserData()+":"+t);
                 }
                 if (cp==cps[NUM-1]) {
                     finishBattle();
                 }
-            } else if (other instanceof MyGround2){
+            } else if (other instanceof Ground){
                 ;
-            } else if (other instanceof MyBullet){
+            } else if (other instanceof Bullet){
                 ;
-            } else if (other instanceof MyCheckPoint){
+            } else if (other instanceof CheckPoint){
                 ;
             } else {
             }
@@ -300,7 +317,7 @@ int debugCount=0;
                 goal=false;
                 break;
             }
-            MyCheckPoint cp = checkPointStack.removeLast();
+            CheckPoint cp = checkPointStack.removeLast();
             if (cps[i]!=cp) {
                 goal=false;
                 break;

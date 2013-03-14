@@ -10,20 +10,17 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.swing.JOptionPane;
 import javax.vecmath.Vector3d;
-
-
 import com.github.hiuprocon.pve.car.CarBase;
 import com.github.hiuprocon.pve.car.CarSim;
+import com.github.hiuprocon.pve.core.Box;
+import com.github.hiuprocon.pve.core.PVEObject;
 import com.github.hiuprocon.pve.core.PVEPart;
 import com.github.hiuprocon.pve.core.ActiveObject;
 import com.github.hiuprocon.pve.core.CollisionListener;
 import com.github.hiuprocon.pve.core.PVEWorld;
-import com.github.hiuprocon.pve.parts.Box;
-import com.github.hiuprocon.pve.parts.MyBullet;
-import com.github.hiuprocon.pve.parts.SimpleCar;
-import com.github.hiuprocon.pve.parts.MyGround2;
-import com.github.hiuprocon.pve.parts.MyGround3;
-import com.github.hiuprocon.pve.parts.Sphere;
+import com.github.hiuprocon.pve.core.SimpleCar;
+import com.github.hiuprocon.pve.core.Sphere;
+import com.github.hiuprocon.pve.obj.*;
 
 import java.util.prefs.*;
 
@@ -107,7 +104,7 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
             throw new IllegalStateException();
         //MyGround g = new MyGround(pw);
         //MyGround2 g = new MyGround2(pw);
-        MyGround3 g = new MyGround3();
+        Ground g = new Ground();
         world.add(g);
 
         classLoader1 = makeClassLoader(car1classpath);
@@ -131,19 +128,23 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
             e.printStackTrace();
         }
 
-        car1.car.init(new Vector3d( 0,1.0,-10),new Vector3d(),"x-res:///res/stk_tux.a3",world,this);
-        car2.car.init(new Vector3d( 0,1.0, 10),new Vector3d(0,3.1,0),"x-res:///res/stk_wilber2.a3",world,this);
-
-        world.add(new Box(-10.0,1.0,0.0));
-        world.add(new Box(-13.0,1.0,0.0));
-        world.add(new Box(-16.0,1.0,0.0));
-
-        world.add(new Sphere(10,1.0,0.0));
-        world.add(new Sphere(13,1.0,0.0));
-        world.add(new Sphere(16,1.0,0.0));
-
+        car1.car.init("x-res:///res/stk_tux.a3",world,this);
         world.add(car1.car.car);
+        car1.car.car.setLoc(new Vector3d( 0,1.0,-10));
+        car1.car.car.setRot(new Vector3d());
+        car2.car.init("x-res:///res/stk_wilber2.a3",world,this);
         world.add(car2.car.car);
+        car2.car.car.setLoc(new Vector3d( 0,1.0, 10));
+        car2.car.car.setRot(new Vector3d(0,3.1,0));
+
+        //world.add(new Box(-10.0,1.0,0.0));
+        //world.add(new Box(-13.0,1.0,0.0));
+        //world.add(new Box(-16.0,1.0,0.0));
+
+        //world.add(new Sphere(10,1.0,0.0));
+        //world.add(new Sphere(13,1.0,0.0));
+        //world.add(new Sphere(16,1.0,0.0));
+
         gui.setCar1(car1.car);
         gui.setCar2(car2.car);
         activeObjects.add(car1.car);
@@ -288,23 +289,26 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
     }
 
     @Override
-    public void collided(PVEPart a, PVEPart b) {
-        if ((a instanceof MyBullet)||(b instanceof MyBullet)) {
-            MyBullet bullet = null;
-            PVEPart other = null;
-            if (a instanceof MyBullet) {
-                bullet = (MyBullet)a;
+    public void collided(PVEPart aa, PVEPart bb) {
+    	PVEObject a = aa.getObject();
+    	PVEObject b = bb.getObject();
+        if ((a instanceof Bullet)||(b instanceof Bullet)) {
+            Bullet bullet = null;
+            PVEObject other = null;
+            if (a instanceof Bullet) {
+                bullet = (Bullet)a;
                 other = b;
             } else {
-                bullet = (MyBullet)b;
+                bullet = (Bullet)b;
                 other = a;
             }
-            if (other instanceof MyBullet) {
+            if (other instanceof Bullet) {
                 world.del(other);
-                this.delActiveObject((MyBullet)other);
-            } else if (other instanceof SimpleCar) {
-                ((SimpleCar)other).carBase.hit();
-            } else if (other instanceof MyGround2){
+                this.delActiveObject((Bullet)other);
+            } else if (other instanceof SimpleCarObj) {
+            	//TODO
+                //((SimpleCarObj)other).carBase.hit();
+            } else if (other instanceof Ground){
                 ;
             } else {
                 ;

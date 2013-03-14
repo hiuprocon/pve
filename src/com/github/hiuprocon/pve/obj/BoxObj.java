@@ -2,7 +2,6 @@ package com.github.hiuprocon.pve.obj;
 
 import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.github.hiuprocon.pve.core.*;
-import com.github.hiuprocon.pve.parts.*;
 import javax.vecmath.*;
 
 public class BoxObj extends PVEObject {
@@ -11,17 +10,19 @@ public class BoxObj extends PVEObject {
 	double mass;
 	Vector3d size;
 	Box box;
+	public BoxObj() {
+		this(Type.DYNAMIC,1.0,new Vector3d(1,1,1),"x-res:///res/Box.wrl");
+	}
 	public BoxObj(Type type,double mass,Vector3d size,String a3url) {
 		this.type = type;
+		this.mass = mass;
 		this.a3url = a3url;
 		this.size = new Vector3d(size);
 	}
 
 	@Override
 	protected PVEPart[] createParts() {
-		Vector3d loc = new Vector3d();
-		Vector3d rot = new Vector3d();
-		box = new Box(Type.DYNAMIC,loc,rot,mass,size,a3url);
+		box = new Box(type,mass,size,a3url);
 		return new PVEPart[]{box};
 	}
 
@@ -29,5 +30,9 @@ public class BoxObj extends PVEObject {
 	protected TypedConstraint[] createConstraints() {
 		return new TypedConstraint[0];
 	}
-	
+
+	@Override
+	protected PVEPart getMainPart() {
+		return box;
+	}
 }

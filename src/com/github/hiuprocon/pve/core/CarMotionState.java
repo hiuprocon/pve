@@ -1,4 +1,4 @@
-package com.github.hiuprocon.pve.parts;
+package com.github.hiuprocon.pve.core;
 
 import com.bulletphysics.linearmath.*;
 

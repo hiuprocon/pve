@@ -142,14 +142,14 @@ class CarBattleGUI extends JFrame implements ActionListener {
     }
 
     void setCar1(CarBase c1) {
-        car1Canvas.setAvatar(c1.car.a3);
+        car1Canvas.setAvatar(c1.car.getMainA3());
         Vector3d lookAt = new Vector3d(0.0,0.0,6.0);
         Vector3d camera = new Vector3d(0.0,3.0,-6.0);
         Vector3d up = new Vector3d(0.0,1.0,0.0);
         car1Canvas.setNavigationMode(A3CanvasInterface.NaviMode.CHASE,lookAt,camera,up,10.0);
     }
     void setCar2(CarBase c2) {
-        car2Canvas.setAvatar(c2.car.a3);
+        car2Canvas.setAvatar(c2.car.getMainA3());
         Vector3d lookAt = new Vector3d(0.0,0.0,6.0);
         Vector3d camera = new Vector3d(0.0,3.0,-6.0);
         Vector3d up = new Vector3d(0.0,1.0,0.0);

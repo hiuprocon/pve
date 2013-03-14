@@ -16,14 +16,15 @@ public abstract class PVEPart {
     static final int GHOST_FLAGS = KINEMATIC_OBJECT | NO_CONTACT_RESPONSE;
     static final int KINEMATIC_TEMP_FLAGS = KINEMATIC_OBJECT;
 
-    protected PVEWorld world;
+    PVEObject obj;
     final Type type;
-    public A3Object a3;
+    protected A3Object a3;
     public MotionState motionState;//JBulletと座標をやりとりするオブジェクト
     protected RigidBody body;//JBulletにおける剛体などを表すオブジェクト
-    final Vector3d innerLoc;
-    final Vector3d innerRot;
+    Vector3d innerLoc = new Vector3d();
+    Vector3d innerRot = new Vector3d();
     float mass;
+    Vector3f localInertia;
     Vector3f locRequest;
     Quat4d quatRequest;
     Vector3f velRequest;
@@ -33,44 +34,52 @@ public abstract class PVEPart {
     boolean kinematicTmp = false;
 
     //Acerola3DファイルのURLと初期座標で初期化
-    public PVEPart(Type type,Vector3d innerLoc,Vector3d innerRot,double mass) {
+    public PVEPart(Type type,double mass,String a3url) {
+    	this(type,mass,a3url,new Vector3d());
+    }
+    public PVEPart(Type type,double mass,String a3url,Vector3d localInertia) {
+    	//type,shape,mass,inertia,a3
         this.type = type;
-        this.innerLoc = new Vector3d(innerLoc);
-        this.innerRot = new Vector3d(innerRot);
         this.mass = (float)mass;
+        a3 = PVEUtil.loadA3(a3url);
+        this.localInertia = new Vector3f(localInertia);
     }
 
     void internalInit(PVEWorld world) {
-        this.world = world;
-        try {
-            a3 = makeA3Object();
-        } catch(Exception e) {
-            a3 = new VRML("gaha");
+        if (this instanceof SimpleCar) {
+        	((SimpleCar)this).dvr = world.createDefaultVehicleRaycaster();
         }
-        motionState = makeMotionState(innerLoc,innerRot);
+        Transform t = new Transform();
+        t.setIdentity();
+        if (this instanceof SimpleCar)
+        	motionState = new CarMotionState(t);
+        else
+        	motionState = new A3MotionState(a3,t);
         CollisionShape shape = makeCollisionShape();
-        Vector3f localInertia = new Vector3f(0,0,0);
-        float massR = type==Type.STATIC?0.0f:mass;
+        float massR = type==Type.DYNAMIC?mass:0.0f;
         shape.calculateLocalInertia(massR, localInertia);
         RigidBodyConstructionInfo rbcInfo =
         	new RigidBodyConstructionInfo(mass,motionState,shape,localInertia);
         body = new RigidBody(rbcInfo);
-        //constraint = makeConstraint(tmpArgs);
-        initRigidBody(type);
         body.setUserPointer(this);
-        //DYNAMIC以外なんか最初の座標が表示に反映されないので。。。
-        Transform t = new Transform();
-        motionState.setWorldTransform(body.getWorldTransform(t));
+        initRigidBody(type);
         init();
     }
-    protected abstract A3Object makeA3Object();
-    protected abstract MotionState makeMotionState(Vector3d l,Vector3d r);
     protected abstract CollisionShape makeCollisionShape();
     /**
      * A3Object,MotionState,CollisionShapeが生成されRigidBody(body)
      * がの準備が整った後に呼ばれるメソッド。
      */
     protected void init() {;}
+    public void setInitLocRot(Vector3d l,Vector3d r) {
+    	innerLoc.set(l);
+    	innerRot.set(r);
+        Transform t = new Transform();
+        t.origin.set(innerLoc);
+        t.setRotation(new Quat4f(Util.euler2quat(innerRot)));
+        body.setWorldTransform(t);
+        motionState.setWorldTransform(body.getWorldTransform(t));
+    }
     protected void postSimulation() {;}
 
     void initRigidBody(Type t) {
@@ -136,5 +145,21 @@ public abstract class PVEPart {
     }
     public void setVel(double x,double y,double z) {
         velRequest = new Vector3f((float)x,(float)y,(float)z);
+    }
+    public Vector3d getLoc() {
+    	Transform t = new Transform();
+    	motionState.getWorldTransform(t);
+    	return new Vector3d(t.origin);
+    }
+    public Quat4d getQuat() {
+    	Transform t = new Transform();
+    	motionState.getWorldTransform(t);
+    	return Util.matrix2quat(t.basis);
+    }
+    public Vector3d getRot() {
+    	return Util.quat2euler(getQuat());
+    }
+    public PVEObject getObject() {
+    	return obj;
     }
 }

@@ -6,8 +6,8 @@ import jp.sourceforge.acerola3d.a3.Util;
 import com.bulletphysics.linearmath.Transform;
 import com.github.hiuprocon.pve.core.ActiveObject;
 import com.github.hiuprocon.pve.core.PVEWorld;
-import com.github.hiuprocon.pve.parts.MyBullet;
-import com.github.hiuprocon.pve.parts.SimpleCar;
+import com.github.hiuprocon.pve.core.SimpleCar;
+import com.github.hiuprocon.pve.obj.*;
 
 /**
  * このクラスを拡張してレースorバトルするための車を作成します。
@@ -18,7 +18,7 @@ import com.github.hiuprocon.pve.parts.SimpleCar;
  */
 public class CarBase implements ActiveObject {
     static int carIDCount=0; 
-    public SimpleCar car;
+    public SimpleCarObj car;
     PVEWorld world;
     CarSim carSim;
     int carID;
@@ -30,11 +30,13 @@ public class CarBase implements ActiveObject {
     public CarBase() {
         carID=carIDCount++;
     }
-    public final void init(Vector3d loc,Vector3d rot,String a3url,PVEWorld world,CarSim cs) {
+    public final void init(String a3url,PVEWorld world,CarSim cs) {
+    //public final void init(Vector3d loc,Vector3d rot,String a3url,PVEWorld world,CarSim cs) {
         this.world = world;
         carSim = cs;
-        car = new SimpleCar(loc,rot,a3url,world.createDefaultVehicleRaycaster());
-        car.setCarBase(this);
+        car = new SimpleCarObj(a3url);
+        //car.setLoc(loc);
+        //car.setRot(rot);
     }
 
     /**
@@ -56,66 +58,28 @@ public class CarBase implements ActiveObject {
      * この車の現在の座標を取得します。
      */
     public Vector3d getLoc() {
-        //return car.a3.getTargetLoc();
-
-        //Transform t = new Transform();
-        //car.body.getWorldTransform(t);
-        //return new Vector3d(t.origin);
-
-        Transform t = new Transform();
-        car.motionState.getWorldTransform(t);
-        return new Vector3d(t.origin);
+        return car.getLoc();
     }
 
     /**
      * この車の現在の回転を四元数で取得します。
      */
     public Quat4d getQuat() {
-        //return car.a3.getTargetQuat();
-
-        //Transform t = new Transform();
-        //car.body.getWorldTransform(t);
-        //Quat4d q = Util.matrix2quat(t.basis);
-        //return q;
-
-        Transform t = new Transform();
-        car.motionState.getWorldTransform(t);
-        Quat4d q = Util.matrix2quat(t.basis);
-        return q;
+        return car.getQuat();
     }
 
     /**
      * この車の現在の回転をオイラー角で取得します。
      */
     public Vector3d getRot() {
-        //return car.a3.getTargetRot();
-
-        //Transform t = new Transform();
-        //car.body.getWorldTransform(t);
-        //Quat4d q = Util.matrix2quat(t.basis);
-        //return Util.quat2euler(q);
-
-        Transform t = new Transform();
-        car.motionState.getWorldTransform(t);
-        Quat4d q = Util.matrix2quat(t.basis);
-        return Util.quat2euler(q);
+        return car.getRot();
     }
 
     /**
      * この車の現在の進行方向左向きの単位ベクトルを取得します。
      */
     public Vector3d getUnitVecX() {
-        //return car.a3.getUnitVecX();
-
-        //Transform t = new Transform();
-        //car.body.getWorldTransform(t);
-        //Quat4d q = Util.matrix2quat(t.basis);
-        //q.normalize();
-        //return Util.trans(q,new Vector3d(1,0,0));
-
-        Transform t = new Transform();
-        car.motionState.getWorldTransform(t);
-        Quat4d q = Util.matrix2quat(t.basis);
+        Quat4d q = getQuat();
         q.normalize();
         return Util.trans(q,new Vector3d(1,0,0));
     }
@@ -124,17 +88,7 @@ public class CarBase implements ActiveObject {
      * この車の現在の進行方向上向きの単位ベクトルを取得します。
      */
     public Vector3d getUnitVecY() {
-        //return car.a3.getUnitVecY();
-
-        //Transform t = new Transform();
-        //car.body.getWorldTransform(t);
-        //Quat4d q = Util.matrix2quat(t.basis);
-        //q.normalize();
-        //return Util.trans(q,new Vector3d(0,1,0));
-
-        Transform t = new Transform();
-        car.motionState.getWorldTransform(t);
-        Quat4d q = Util.matrix2quat(t.basis);
+        Quat4d q = getQuat();
         q.normalize();
         return Util.trans(q,new Vector3d(0,1,0));
     }
@@ -143,17 +97,7 @@ public class CarBase implements ActiveObject {
      * この車の現在の進行方向の単位ベクトルを取得します。
      */
     public Vector3d getUnitVecZ() {
-        //return car.a3.getUnitVecZ();
-
-        //Transform t = new Transform();
-        //car.body.getWorldTransform(t);
-        //Quat4d q = Util.matrix2quat(t.basis);
-        //q.normalize();
-        //return Util.trans(q,new Vector3d(0,0,1));
-
-        Transform t = new Transform();
-        car.motionState.getWorldTransform(t);
-        Quat4d q = Util.matrix2quat(t.basis);
+        Quat4d q = getQuat();
         q.normalize();
         return Util.trans(q,new Vector3d(0,0,1));
     }
@@ -178,7 +122,9 @@ public class CarBase implements ActiveObject {
         l.add(new Vector3d(0.0,0.2,0.0));
         d.scale(1.5);//計算上0.85より少し上なら良いはずだけど???
         l.add(d);
-        MyBullet b = new MyBullet(l,v);
+        Bullet b = new Bullet();
+        b.setLoc(l);
+        b.setVel(v);
         world.add(b);
         carSim.addActiveObject(b);
     }

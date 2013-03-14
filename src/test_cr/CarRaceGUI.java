@@ -141,7 +141,7 @@ class CarRaceGUI extends JFrame implements ActionListener {
     }
 
     void setCar(CarBase c) {
-        carCanvas.setAvatar(c.car.a3);
+        carCanvas.setAvatar(c.car.getMainA3());
         Vector3d lookAt = new Vector3d(0.0,0.0,6.0);
         Vector3d camera = new Vector3d(0.0,3.0,-6.0);
         camera.normalize();
