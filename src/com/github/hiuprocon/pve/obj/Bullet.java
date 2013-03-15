@@ -1,6 +1,5 @@
 package com.github.hiuprocon.pve.obj;
 
-import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.github.hiuprocon.pve.core.*;
 import jp.sourceforge.acerola3d.a3.*;
 import javax.vecmath.*;
@@ -29,8 +28,8 @@ public class Bullet extends PVEObject {
 	}
 
 	@Override
-	protected TypedConstraint[] createConstraints() {
-		return new TypedConstraint[0];
+	protected Constraint[] createConstraints() {
+		return new Constraint[0];
 	}
 
 	@Override

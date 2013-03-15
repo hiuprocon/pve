@@ -3,14 +3,13 @@ package com.github.hiuprocon.pve.core;
 import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.linearmath.*;
-import com.bulletphysics.dynamics.vehicle.*;
 import jp.sourceforge.acerola3d.a3.*;
 import javax.vecmath.*;
 
 public class SimpleCar extends PVEPart {
     PVEWorld world;
     CarMotion motion;
-    public RaycastVehicle vehicleConstraint;
+    public CarConstraint carConstraint;
     public SimpleCar(PVEWorld world) {
     	this(world,"x-res:///res/stk_tux.a3");
     }
@@ -21,7 +20,7 @@ public class SimpleCar extends PVEPart {
         init();
         //motionState.setAutoUpdate(false);//MotionデータでコントロールするのでAutoUpdate不要
         motion = new CarMotion(motionState,world,body);
-        vehicleConstraint = motion.vehicle;
+        carConstraint = new CarConstraint(motion.vehicle);
         ((CarMotionState)motionState).setCarMotion(motion);
         ((Action3D)a3).setMotion("default",motion);
         ((Action3D)a3).transControlUsingRootBone(true);//rootの骨の情報でA3Objectの変換を制御

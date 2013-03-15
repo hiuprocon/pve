@@ -1,12 +1,11 @@
 package com.github.hiuprocon.pve.obj;
 
-import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.github.hiuprocon.pve.core.*;
 
 public class SimpleCarObj extends PVEObject {
 	String a3url;
 	PVEWorld world;
-	SimpleCar vehicle;
+	SimpleCar car;
 	public SimpleCarObj(PVEWorld world,String a3url) {
 		this.world = world;
 		this.a3url = a3url;
@@ -15,21 +14,21 @@ public class SimpleCarObj extends PVEObject {
 
 	@Override
 	protected PVEPart[] createParts() {
-		vehicle = new SimpleCar(world,a3url);
-		return new PVEPart[]{vehicle};
+		car = new SimpleCar(world,a3url);
+		return new PVEPart[]{car};
 	}
 
 	@Override
-	protected TypedConstraint[] createConstraints() {
-		return new TypedConstraint[]{vehicle.vehicleConstraint};
+	protected Constraint[] createConstraints() {
+		return new Constraint[]{car.carConstraint};
 	}
 
 	@Override
 	protected PVEPart getMainPart() {
-		return vehicle;
+		return car;
 	}
 
 	public void setForce(double force,double steering,double breaking,double drift) {
-		vehicle.setForce((float)force,(float)steering,(float)breaking,(float)drift);
+		car.setForce((float)force,(float)steering,(float)breaking,(float)drift);
 	}
 }

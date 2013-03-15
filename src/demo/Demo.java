@@ -1,14 +1,14 @@
-package debug;
+package demo;
 
 import javax.vecmath.*;
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 import jp.sourceforge.acerola3d.a3.*;
 
-public class Debug implements CollisionListener {
+public class Demo implements CollisionListener {
     public static void main(String args[]) {
 	    PVEWorld w = new PVEWorld(PVEWorld.A3CANVAS);
-	    DebugGUI gui = new DebugGUI((A3Canvas)w.getMainCanvas());
+	    DemoGUI gui = new DemoGUI((A3Canvas)w.getMainCanvas());
 	    w.resume();
 	    
 	    //Ground g = new Ground("x-rzip:x-res:///res/stk_racetrack.a3!/racetrack.wrl");

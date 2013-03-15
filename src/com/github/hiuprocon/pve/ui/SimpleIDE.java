@@ -156,6 +156,7 @@ public class SimpleIDE extends JDialog implements ActionListener {
                 filePath = f.getAbsolutePath();
                 setEnable(true);
                 editor.setCaretPosition(0);
+            	br.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -168,6 +169,7 @@ public class SimpleIDE extends JDialog implements ActionListener {
             pw.print(editor.getText());
             pw.flush();
             outputTA.append(i18n("ide.saveSuccess")+"\n");
+            pw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

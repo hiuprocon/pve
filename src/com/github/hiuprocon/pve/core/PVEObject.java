@@ -1,20 +1,17 @@
 package com.github.hiuprocon.pve.core;
 
 import javax.vecmath.*;
-
 import jp.sourceforge.acerola3d.a3.A3Object;
 import jp.sourceforge.acerola3d.a3.Util;
-
-import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 
 public abstract class PVEObject {
 	PVEPart mainPart;
     PVEPart[] parts;
-    TypedConstraint[] constraints;
+    Constraint[] constraints;
     public PVEObject() {
     }
     protected abstract PVEPart[] createParts();
-    protected abstract TypedConstraint[] createConstraints();
+    protected abstract Constraint[] createConstraints();
     protected abstract PVEPart getMainPart();
     protected void postSimulation(){;}
     /**

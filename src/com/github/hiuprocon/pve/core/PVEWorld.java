@@ -7,7 +7,6 @@ import com.bulletphysics.collision.narrowphase.PersistentManifold;
 import com.bulletphysics.dynamics.*;
 import com.bulletphysics.dynamics.constraintsolver.ConstraintSolver;
 import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSolver;
-import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.bulletphysics.linearmath.*;
 import com.bulletphysics.dynamics.vehicle.DefaultVehicleRaycaster;
 import com.bulletphysics.dynamics.vehicle.RaycastVehicle;
@@ -165,11 +164,11 @@ public class PVEWorld implements Runnable {
                         if (mainCanvas!=null)
                             mainCanvas.add(p.a3);
                 	}
-                	for (TypedConstraint c:o.constraints)
-            		    if (c instanceof RaycastVehicle)
-            			    dynamicsWorld.addVehicle((RaycastVehicle)c);
+                	for (Constraint c:o.constraints)
+            		    if (c.con instanceof RaycastVehicle)
+            			    dynamicsWorld.addVehicle((RaycastVehicle)(c.con));
             		    else
-            			    dynamicsWorld.addConstraint(c);
+            			    dynamicsWorld.addConstraint(c.con);
                     objects.add(o);
                 }
                 newObjects.clear();
@@ -182,11 +181,11 @@ public class PVEWorld implements Runnable {
                         if (mainCanvas!=null)
                             mainCanvas.del(p.a3);
                 	}
-                	for (TypedConstraint c:o.constraints)
-            		    if (c instanceof RaycastVehicle)
-            			    dynamicsWorld.removeVehicle((RaycastVehicle)c);
+                	for (Constraint c:o.constraints)
+            		    if (c.con instanceof RaycastVehicle)
+            			    dynamicsWorld.removeVehicle((RaycastVehicle)(c.con));
             		    else
-            			    dynamicsWorld.removeConstraint(c);
+            			    dynamicsWorld.removeConstraint(c.con);
                     objects.remove(o);
                 }
                 delObjects.clear();

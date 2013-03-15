@@ -1,4 +1,4 @@
-package debug;
+package demo;
 
 import java.awt.FlowLayout;
 import java.awt.event.*;
@@ -10,13 +10,13 @@ import com.github.hiuprocon.pve.core.PVEObject;
 import jp.sourceforge.acerola3d.a3.A3Canvas;
 import jp.sourceforge.acerola3d.a3.A3CanvasInterface;
 
-public class DebugGUI extends JFrame implements ChangeListener {
+public class DemoGUI extends JFrame implements ChangeListener {
 	private static final long serialVersionUID = 1L;
 	A3Canvas canvas;
 	JRadioButton aRB,bRB,cRB,dRB,eRB,fRB,gRB;
 	KeyListener aKL,bKL,cKL,dKL,eKL,fKL,gKL;
 	KeyListener activeKL = null;
-	public DebugGUI(A3Canvas c) {
+	public DemoGUI(A3Canvas c) {
 		super("Debug");
 		setLayout(new FlowLayout());
 		canvas = c;

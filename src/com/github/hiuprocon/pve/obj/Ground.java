@@ -1,6 +1,5 @@
 package com.github.hiuprocon.pve.obj;
 
-import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.github.hiuprocon.pve.core.*;
 
 public class Ground extends PVEObject {
@@ -21,8 +20,8 @@ public class Ground extends PVEObject {
 	}
 
 	@Override
-	protected TypedConstraint[] createConstraints() {
-		return new TypedConstraint[0];
+	protected Constraint[] createConstraints() {
+		return new Constraint[0];
 	}
 
 	@Override

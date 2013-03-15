@@ -1,6 +1,5 @@
 package com.github.hiuprocon.pve.car;
 
-import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.github.hiuprocon.pve.core.*;
 import javax.vecmath.Vector3d;
 
@@ -18,8 +17,8 @@ public class CheckPoint extends PVEObject {
     }
 
 	@Override
-    protected TypedConstraint[] createConstraints() {
-    	return new TypedConstraint[0];
+    protected Constraint[] createConstraints() {
+    	return new Constraint[0];
     }
 
 	@Override
