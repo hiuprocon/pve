@@ -9,18 +9,8 @@ import java.util.*;
 import java.util.prefs.Preferences;
 import javax.swing.JOptionPane;
 import javax.vecmath.Vector3d;
-
-
-import com.github.hiuprocon.pve.car.CarBase;
-import com.github.hiuprocon.pve.car.CarSim;
-import com.github.hiuprocon.pve.car.CheckPoint;
-import com.github.hiuprocon.pve.core.Box;
-import com.github.hiuprocon.pve.core.PVEObject;
-import com.github.hiuprocon.pve.core.PVEPart;
-import com.github.hiuprocon.pve.core.ActiveObject;
-import com.github.hiuprocon.pve.core.CollisionListener;
-import com.github.hiuprocon.pve.core.PVEWorld;
-import com.github.hiuprocon.pve.core.SimpleCar;
+import com.github.hiuprocon.pve.car.*;
+import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 
 class CarRaceImpl implements Runnable, CollisionListener, CarSim {

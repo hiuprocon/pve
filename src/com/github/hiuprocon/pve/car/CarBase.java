@@ -3,10 +3,7 @@ package com.github.hiuprocon.pve.car;
 import java.util.ArrayList;
 import javax.vecmath.*;
 import jp.sourceforge.acerola3d.a3.Util;
-import com.bulletphysics.linearmath.Transform;
-import com.github.hiuprocon.pve.core.ActiveObject;
-import com.github.hiuprocon.pve.core.PVEWorld;
-import com.github.hiuprocon.pve.core.SimpleCar;
+import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 
 /**
@@ -31,12 +28,9 @@ public class CarBase implements ActiveObject {
         carID=carIDCount++;
     }
     public final void init(String a3url,PVEWorld world,CarSim cs) {
-    //public final void init(Vector3d loc,Vector3d rot,String a3url,PVEWorld world,CarSim cs) {
         this.world = world;
         carSim = cs;
         car = new SimpleCarObj(world,a3url);
-        //car.setLoc(loc);
-        //car.setRot(rot);
     }
 
     /**
@@ -51,7 +45,7 @@ public class CarBase implements ActiveObject {
      * そしてブレーキの力(gBreakingForce)を指定して車をコントロールします。
      */
     public void setForce(double gEngineForce,double gVehicleSteering,double gBreakingForce,double drift) {
-        car.setForce((float)gEngineForce,(float)gVehicleSteering,(float)gBreakingForce,(float)drift);
+        car.setForce(gEngineForce,gVehicleSteering,gBreakingForce,drift);
     }
 
     /**
@@ -122,11 +116,10 @@ public class CarBase implements ActiveObject {
         l.add(new Vector3d(0.0,0.2,0.0));
         d.scale(1.5);//計算上0.85より少し上なら良いはずだけど???
         l.add(d);
-        Bullet b = new Bullet();
-        b.setLoc(l);
-        b.setVel(v);
+        Bullet b = new Bullet(l,v);
+        b.setGravity(new Vector3d());
         world.add(b);
-        carSim.addActiveObject(b);
+        //carSim.addActiveObject(b);
     }
 
     /**

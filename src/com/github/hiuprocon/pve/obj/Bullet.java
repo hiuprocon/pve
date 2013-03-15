@@ -2,21 +2,29 @@ package com.github.hiuprocon.pve.obj;
 
 import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.github.hiuprocon.pve.core.*;
+import jp.sourceforge.acerola3d.a3.*;
+import javax.vecmath.*;
 
-public class Bullet extends PVEObject implements ActiveObject {
+public class Bullet extends PVEObject {
 	String a3url;
 	Sphere sphere;
-	public Bullet() {
-		this("x-res:///res/bullet.a3");
+	public Bullet(Vector3d loc,Vector3d vel) {
+		this("x-res:///res/bullet.a3",loc,vel);
 	}
-	public Bullet(String a3url) {
+	public Bullet(String a3url,Vector3d loc,Vector3d vel) {
 		this.a3url = a3url;
 		init();
+		PVEPart p = this.getMainPart();
+		p.setGravity(new Vector3d());
+		p.setLoc(loc);
+		p.setVel(vel);
+		A3Object a = getMainA3();
+		a.setScale(2.0);
 	}
 
 	@Override
 	protected PVEPart[] createParts() {
-		sphere = new Sphere(Type.KINEMATIC,1.0,0.2,a3url);
+		sphere = new Sphere(Type.DYNAMIC,1.0,0.2,a3url);
 		return new PVEPart[]{sphere};
 	}
 
@@ -28,10 +36,5 @@ public class Bullet extends PVEObject implements ActiveObject {
 	@Override
 	protected PVEPart getMainPart() {
 		return sphere;
-	}
-
-	@Override
-	public void exec() {
-		// TODO Auto-generated method stub
 	}
 }

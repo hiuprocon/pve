@@ -215,10 +215,12 @@ public class PVEWorld implements Runnable {
             time += stepTime;
 //System.out.println("PhysicalWorld:-----gaha-----2");
 
-            //車の車輪の更新。dynamicsWorld.setSimulation()の更新時間が1/60で割り切れない時とかに特に必要
-            for (PVEObject o : objects)
+            //いまのところ車の車輪の更新にしか使われていない。
+            for (PVEObject o : objects) {
             	for (PVEPart p:o.parts)
             	    p.postSimulation();
+            	o.postSimulation();
+            }
             
             //衝突
             int numManifolds = dynamicsWorld.getDispatcher().getNumManifolds();

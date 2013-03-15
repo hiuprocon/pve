@@ -16,6 +16,7 @@ public abstract class PVEObject {
     protected abstract PVEPart[] createParts();
     protected abstract TypedConstraint[] createConstraints();
     protected abstract PVEPart getMainPart();
+    protected void postSimulation(){;}
     /**
      * このメソッドはコンストラクタの中で必ず呼び出さなければならない。
      */
@@ -68,5 +69,10 @@ public abstract class PVEObject {
     }
     public A3Object getMainA3() {
     	return mainPart.a3;
+    }
+    public void setGravity(Vector3d g) {
+    	for (PVEPart p:parts) {
+    		p.setGravity(g);
+    	}
     }
 }

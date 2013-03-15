@@ -3,13 +3,8 @@ package test_rt;
 import java.util.ArrayList;
 import jp.sourceforge.acerola3d.a3.*;
 import javax.vecmath.*;
-
-
-import com.github.hiuprocon.pve.car.CarBase;
-import com.github.hiuprocon.pve.car.CarSim;
-import com.github.hiuprocon.pve.core.ActiveObject;
-import com.github.hiuprocon.pve.core.Box;
-import com.github.hiuprocon.pve.core.PVEWorld;
+import com.github.hiuprocon.pve.car.*;
+import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 
 class RaceTestImpl implements CarSim, Runnable {

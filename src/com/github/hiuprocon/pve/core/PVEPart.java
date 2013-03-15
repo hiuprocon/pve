@@ -131,16 +131,29 @@ public abstract class PVEPart {
         kinematicTmp=false;
     }
     //座標変更．副作用で力や速度がリセットされる
+    public void setLoc(Vector3d loc) {
+    	locRequest = new Vector3f(loc);
+    }
     public void setLoc(double x,double y,double z) {
         locRequest = new Vector3f((float)x,(float)y,(float)z);
     }
     //座標変更．副作用で力や速度がリセットされる
+    public void setRot(Vector3d rot) {
+    	quatRequest = Util.euler2quat(rot);
+    }
     public void setRot(double x,double y,double z) {
         quatRequest = Util.euler2quat(x,y,z);
     }
     //座標変更．副作用で力や速度がリセットされる
+    public void setRev(Vector3d rev) {
+    	rev.scale(180.0/Math.PI);
+    	quatRequest = Util.euler2quat(rev);
+    }
     public void setRev(double x,double y,double z) {
         quatRequest = Util.euler2quat(x/180.0*Math.PI,y/180.0*Math.PI,z/180.0*Math.PI);
+    }
+    public void setVel(Vector3d vel) {
+    	velRequest = new Vector3f(vel);
     }
     public void setVel(double x,double y,double z) {
         velRequest = new Vector3f((float)x,(float)y,(float)z);
@@ -160,5 +173,8 @@ public abstract class PVEPart {
     }
     public PVEObject getObject() {
     	return obj;
+    }
+    public void setGravity(Vector3d g) {
+    	body.setGravity(new Vector3f(g));
     }
 }

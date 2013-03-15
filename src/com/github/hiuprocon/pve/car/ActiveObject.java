@@ -1,4 +1,4 @@
-package com.github.hiuprocon.pve.core;
+package com.github.hiuprocon.pve.car;
 
 public interface ActiveObject {
     public void exec();

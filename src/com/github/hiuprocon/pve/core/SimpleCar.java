@@ -1,5 +1,6 @@
 package com.github.hiuprocon.pve.core;
 
+import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.linearmath.*;
 import com.bulletphysics.dynamics.vehicle.*;
@@ -35,6 +36,7 @@ public class SimpleCar extends PVEPart {
         compound.addChildShape(localTrans, chassisShape);
     	return compound;
     }
+
     public void setForce(double gEngineForce,double gVehicleSteering,double gBreakingForce,double drift) {
         motion.setForce((float)gEngineForce,(float)gVehicleSteering,(float)gBreakingForce,(float)drift);
     }
@@ -42,6 +44,7 @@ public class SimpleCar extends PVEPart {
     @Override
     protected void postSimulation() {
     	updateWheelTransform();
+    	body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);//なぜか必要
     }
     //車輪の更新
     void updateWheelTransform() {

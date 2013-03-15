@@ -1,28 +1,17 @@
 package test_cb;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.net.*;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import javax.swing.JOptionPane;
-import javax.vecmath.Vector3d;
-import com.github.hiuprocon.pve.car.CarBase;
-import com.github.hiuprocon.pve.car.CarSim;
-import com.github.hiuprocon.pve.core.Box;
-import com.github.hiuprocon.pve.core.PVEObject;
-import com.github.hiuprocon.pve.core.PVEPart;
-import com.github.hiuprocon.pve.core.ActiveObject;
-import com.github.hiuprocon.pve.core.CollisionListener;
-import com.github.hiuprocon.pve.core.PVEWorld;
-import com.github.hiuprocon.pve.core.SimpleCar;
-import com.github.hiuprocon.pve.core.Sphere;
-import com.github.hiuprocon.pve.obj.*;
-
 import java.util.prefs.*;
+import javax.swing.JOptionPane;
+import com.github.hiuprocon.pve.car.*;
+import com.github.hiuprocon.pve.core.*;
+import com.github.hiuprocon.pve.obj.*;
+import javax.vecmath.Vector3d;
 
 class CarBattleImpl implements Runnable, CollisionListener, CarSim {
     PVEWorld world;
@@ -302,7 +291,7 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
             }
             if (other instanceof Bullet) {
                 world.del(other);
-                this.delActiveObject((Bullet)other);
+                //this.delActiveObject((Bullet)other);
             } else if (other instanceof SimpleCarObj) {
             	//TODO
                 //((SimpleCarObj)other).carBase.hit();
@@ -312,7 +301,7 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
                 ;
             }
             world.del(bullet);
-            this.delActiveObject(bullet);
+            //this.delActiveObject(bullet);
         }
         //System.out.println("gaha a:"+a.a3.getUserData()+" b:"+b.a3.getUserData());
     }
