@@ -15,6 +15,7 @@ public class SimpleCarObj extends PVEObject {
 	@Override
 	protected PVEPart[] createParts() {
 		car = new SimpleCar(world,a3url);
+		//car.setInitLocRot(0,0,0, 0,0,0);
 		return new PVEPart[]{car};
 	}
 

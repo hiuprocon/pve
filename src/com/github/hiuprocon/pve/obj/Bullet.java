@@ -15,8 +15,8 @@ public class Bullet extends PVEObject {
 		init();
 		PVEPart p = this.getMainPart();
 		p.setGravity(new Vector3d());
-		p.setLoc(loc);
-		p.setVel(vel);
+		p.setInitLocRot(loc,new Vector3d());
+		setVel(vel);
 		A3Object a = getMainA3();
 		a.setScale(2.0);
 	}
@@ -24,6 +24,7 @@ public class Bullet extends PVEObject {
 	@Override
 	protected PVEPart[] createParts() {
 		sphere = new Sphere(Type.DYNAMIC,1.0,0.2,a3url);
+		//sphere.setInitLocRot(0,0,0, 0,0,0);
 		return new PVEPart[]{sphere};
 	}
 

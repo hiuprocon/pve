@@ -16,6 +16,7 @@ public class Ground extends PVEObject {
 	@Override
 	protected PVEPart[] createParts() {
 		g = new FreeShapeA(Type.STATIC,a3url);
+		//g.setInitLocRot(0,0,0, 0,0,0);
 		return new PVEPart[]{g};
 	}
 

@@ -19,7 +19,7 @@ public abstract class PVEPart {
     PVEObject obj;
     final Type type;
     protected A3Object a3;
-    public MotionState motionState;//JBulletと座標をやりとりするオブジェクト
+    protected MotionState motionState;//JBulletと座標をやりとりするオブジェクト
     protected RigidBody body;//JBulletにおける剛体などを表すオブジェクト
     Vector3d innerLoc = new Vector3d();
     Vector3d innerRot = new Vector3d();
@@ -70,6 +70,15 @@ public abstract class PVEPart {
         initRigidBody(type);
     }
     protected abstract CollisionShape makeCollisionShape();
+    public void setInitLocRot(double lx,double ly,double lz,double rx,double ry,double rz) {
+    	innerLoc.set(lx,ly,lz);
+    	innerRot.set(rx,ry,rz);
+        Transform t = new Transform();
+        t.origin.set(innerLoc);
+        t.setRotation(new Quat4f(Util.euler2quat(innerRot)));
+        body.setWorldTransform(t);
+        motionState.setWorldTransform(body.getWorldTransform(t));
+    }
     public void setInitLocRot(Vector3d l,Vector3d r) {
     	innerLoc.set(l);
     	innerRot.set(r);
@@ -131,44 +140,48 @@ public abstract class PVEPart {
         kinematicTmp=false;
     }
     //座標変更．副作用で力や速度がリセットされる
-    public void setLoc(Vector3d loc) {
+    void setLoc(Vector3d loc) {
     	locRequest = new Vector3f(loc);
     }
-    public void setLoc(double x,double y,double z) {
+    void setLoc(double x,double y,double z) {
         locRequest = new Vector3f((float)x,(float)y,(float)z);
     }
-    //座標変更．副作用で力や速度がリセットされる
-    public void setRot(Vector3d rot) {
+    //副作用で力や速度がリセットされる
+    void setQuat(Quat4d q) {
+    	quatRequest = new Quat4d(q);
+    }
+    //副作用で力や速度がリセットされる
+    void setRot(Vector3d rot) {
     	quatRequest = Util.euler2quat(rot);
     }
-    public void setRot(double x,double y,double z) {
+    void setRot(double x,double y,double z) {
         quatRequest = Util.euler2quat(x,y,z);
     }
-    //座標変更．副作用で力や速度がリセットされる
-    public void setRev(Vector3d rev) {
+    //副作用で力や速度がリセットされる
+    void setRev(Vector3d rev) {
     	rev.scale(180.0/Math.PI);
     	quatRequest = Util.euler2quat(rev);
     }
-    public void setRev(double x,double y,double z) {
+    void setRev(double x,double y,double z) {
         quatRequest = Util.euler2quat(x/180.0*Math.PI,y/180.0*Math.PI,z/180.0*Math.PI);
     }
-    public void setVel(Vector3d vel) {
+    void setVel(Vector3d vel) {
     	velRequest = new Vector3f(vel);
     }
-    public void setVel(double x,double y,double z) {
+    void setVel(double x,double y,double z) {
         velRequest = new Vector3f((float)x,(float)y,(float)z);
     }
-    public Vector3d getLoc() {
+    Vector3d getLoc() {
     	Transform t = new Transform();
     	motionState.getWorldTransform(t);
     	return new Vector3d(t.origin);
     }
-    public Quat4d getQuat() {
+    Quat4d getQuat() {
     	Transform t = new Transform();
     	motionState.getWorldTransform(t);
     	return Util.matrix2quat(t.basis);
     }
-    public Vector3d getRot() {
+    Vector3d getRot() {
     	return Util.quat2euler(getQuat());
     }
     public PVEObject getObject() {

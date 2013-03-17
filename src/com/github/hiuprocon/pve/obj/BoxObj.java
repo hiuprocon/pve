@@ -23,6 +23,7 @@ public class BoxObj extends PVEObject {
 	@Override
 	protected PVEPart[] createParts() {
 		box = new Box(type,mass,size,a3url);
+		//box.setInitLocRot(0,0,0, 0,0,0);
 		return new PVEPart[]{box};
 	}
 

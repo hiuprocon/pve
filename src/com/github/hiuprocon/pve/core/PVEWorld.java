@@ -168,7 +168,7 @@ public class PVEWorld implements Runnable {
             		    if (c.con instanceof RaycastVehicle)
             			    dynamicsWorld.addVehicle((RaycastVehicle)(c.con));
             		    else
-            			    dynamicsWorld.addConstraint(c.con);
+            			    dynamicsWorld.addConstraint(c.con,c.disableCollisionsBetweenLinkedBodies);
                     objects.add(o);
                 }
                 newObjects.clear();

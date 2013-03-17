@@ -13,6 +13,7 @@ public class CheckPoint extends PVEObject {
 	@Override
     protected PVEPart[] createParts() {
 		box = new Box(Type.GHOST,0.0,new Vector3d(4,4,2),"x-rzip:x-res:///res/ClearBlocks2.a3!/blockBlack.wrl");
+		//box.setInitLocRot(0,0,0, 0,0,0);
     	return new PVEPart[]{box};
     }
 

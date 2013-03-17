@@ -1,6 +1,6 @@
 package demo;
 
-import javax.vecmath.*;
+import javax.vecmath.Vector3d;
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 import jp.sourceforge.acerola3d.a3.*;
@@ -20,10 +20,12 @@ public class Demo implements CollisionListener {
 	    KeyboardForkLift c = new KeyboardForkLift(w,"x-res:///res/stk_tux.a3");
 	    c.setLoc(0,1,0);
 	    w.add(c);gui.aKL = c;
+	    c.setLiftMotor(1);c.setLiftMotor(0);
+	    //c.setForkMotor(1);
 
 	    BoxObj b = new BoxObj(Type.DYNAMIC,1,new Vector3d(1,2,1),"x-res:///res/Box.wrl");
-	    b.setLoc(0,1,5);
-	    w.add(b);
+	    b.setLoc(0,10,5);
+	    //w.add(b);
     }
 
 	@Override

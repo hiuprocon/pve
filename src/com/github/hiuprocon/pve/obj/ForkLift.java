@@ -16,18 +16,25 @@ public class ForkLift extends PVEObject {
 		this.world = world;
 		this.a3url = a3url;
 		init();
+		setLiftMotor(1);setLiftMotor(0);
+		setForkMotor(1);setForkMotor(0);
 	}
 
 	@Override
 	protected PVEPart[] createParts() {
 		car = new SimpleCar(world,a3url);
-		car.setLoc(0,0,0);
-		lift = new Box(Type.DYNAMIC,0.1,new Vector3d(1.0,0.1,1.0));
-		lift.setLoc(0,0,1);
-		fork = new Box(Type.DYNAMIC,0.1,new Vector3d(0.1,1.0,1.0));
-		fork.setLoc(0,1,1);
-		liftHinge = new Hinge(car,lift);
-		forkSlider = new Slider(lift,fork);
+		lift = new Box(Type.DYNAMIC,0.1,new Vector3d(1.0,2.0,0.1));
+		fork = new Box(Type.DYNAMIC,0.1,new Vector3d(1.0,0.1,1.0));
+
+		car.setInitLocRot( 0.0, 0.0, 0.0,  0,0,0);
+		lift.setInitLocRot(0.0, 1.1, 1.0,  0,0,0);
+		fork.setInitLocRot(0.0, 0.0, 1.6,  0,0,0);
+
+		liftHinge = new Hinge(car,lift,new Vector3d(0,0.1,1.0),new Vector3d(1,0,0));
+		liftHinge.disableCollisionsBetweenLinkedBodies=true;
+		//forkSlider = new Slider(lift,fork,new Vector3d(0,0,1.6),new Vector3d(0,1,0));
+		forkSlider = new Slider(lift,fork,new Vector3d(0,0,1.6),new Vector3d(0,0,1));//????
+		forkSlider.disableCollisionsBetweenLinkedBodies=true;
 		return new PVEPart[]{car,lift,fork};
 	}
 

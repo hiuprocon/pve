@@ -21,7 +21,8 @@ public class DemoGUI extends JFrame implements ChangeListener {
 		setLayout(new FlowLayout());
 		canvas = c;
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    c.setCameraLocImmediately(0,5,30);
+	    //c.setCameraLocImmediately(0,5,30);
+	    c.setCameraLocImmediately(5,2,5);
 	    c.setCameraLookAtPointImmediately(0,0,0);
         Vector3d lookAt = new Vector3d(0.0,0.0,6.0);
         Vector3d camera = new Vector3d(0.0,3.0,-6.0);
