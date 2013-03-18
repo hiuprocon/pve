@@ -55,11 +55,29 @@ public class Slider extends Constraint {
     public Slider(PVEPart a,PVEPart b,Transform localA,Transform localB) {
     	con = new SliderConstraint(a.body,b.body,localA,localB,true);
     }
-    public void setMotor(double f) {//??????
-    	((SliderConstraint)con).setLowerLinLimit(0.1f);
-    	((SliderConstraint)con).setUpperLinLimit(3.9f);
-    	((SliderConstraint)con).setPoweredLinMotor(true);
-    	((SliderConstraint)con).setMaxLinMotorForce(10.0f);
-    	((SliderConstraint)con).setTargetLinMotorVelocity((float)f);
+
+    public void setLowerLinLimit(double lowerLimit) {
+    	((SliderConstraint)con).setLowerLinLimit((float)lowerLimit);
+    }
+    public void setUpperLinLimit(double upperLimit) {
+    	((SliderConstraint)con).setUpperLinLimit((float)upperLimit);
+    }
+    public void setPoweredLinMotor(boolean onOff) {
+    	((SliderConstraint)con).setPoweredLinMotor(onOff);
+    }
+    public void setMaxLinMotorForce(double maxLinMotorForce) {
+    	((SliderConstraint)con).setMaxLinMotorForce((float)maxLinMotorForce);
+    }
+    public void setTargetLinMotorVelocity(double targetLinMotorVelocity) {
+    	((SliderConstraint)con).setTargetLinMotorVelocity((float)targetLinMotorVelocity);
+    }
+    public double getLinearPos() {
+    	return ((SliderConstraint)con).getLinearPos();
+    }
+    public double getLowerLinLimit() {
+    	return ((SliderConstraint)con).getLowerLinLimit();
+    }
+    public double getUpperLinLimit() {
+    	return ((SliderConstraint)con).getUpperLinLimit();
     }
 }

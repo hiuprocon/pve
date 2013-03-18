@@ -39,6 +39,9 @@ public class SimpleCar extends PVEPart {
     public void setForce(double gEngineForce,double gVehicleSteering,double gBreakingForce,double drift) {
         motion.setForce((float)gEngineForce,(float)gVehicleSteering,(float)gBreakingForce,(float)drift);
     }
+    public void setDamping(double lin_damping,double ang_damping) {
+    	body.setDamping((float)lin_damping,(float)ang_damping);
+    }
 
     @Override
     protected void postSimulation() {

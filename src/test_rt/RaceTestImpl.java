@@ -17,15 +17,15 @@ class RaceTestImpl implements CarSim, Runnable {
         window = (A3Window)world.getMainCanvas();
         window.setSize(500,300);
 
-        Ground g = new Ground("x-res:///res/stk_racetrack.a3");
+        Ground g = new Ground("x-rzip:x-res:///res/stk_racetrack.zip!/racetrack.wrl");
         world.add(g);
 
         for (double x=-3.0;x<=3.0;x+=2.0) {
             for (double y=1.0;y<=7.0;y+=2.0) {
                 for (double z=-3.0;z<=3.0;z+=2.0) {
-                    BoxObj b = new BoxObj();//立方体
+                    BoxObj b = new BoxObj(Type.DYNAMIC,10.0,new Vector3d(2,2,2),"x-res:///res/Box.wrl");//立方体
                     world.add(b);
-                    b.setLoc(x,y,z+20);
+                    b.setLocRev(x,y,z+20, 0,0,0);
                 }
             }
         }
@@ -34,8 +34,8 @@ class RaceTestImpl implements CarSim, Runnable {
         car.car.init("x-res:///res/stk_tux.a3",world,this);
         window.addKeyListener(car);
         world.add(car.car.car);
-        car.car.car.setLoc(new Vector3d(0,0.8,-1));
-        car.car.car.setRot(new Vector3d(0,3.1,0));
+        car.car.car.setLocRev(new Vector3d(0,0.8,-1), new Vector3d());
+        car.car.car.setLocRev(new Vector3d(0,3.1,0), new Vector3d());
 
         window.setAvatar(car.car.car.getMainA3());
         Vector3d lookAt = new Vector3d(0.0,0.0,6.0);

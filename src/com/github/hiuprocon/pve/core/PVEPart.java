@@ -88,6 +88,13 @@ public abstract class PVEPart {
         body.setWorldTransform(t);
         motionState.setWorldTransform(body.getWorldTransform(t));
     }
+    public void setInitLocRev(double lx,double ly,double lz,double rx,double ry,double rz) {
+    	setInitLocRot(lx,ly,lz,rx/180.0*Math.PI,ry/180.0*Math.PI,rz/180.0*Math.PI);
+    }
+    public void setInitLocRev(Vector3d l,Vector3d r) {
+    	Vector3d rr = new Vector3d(r);rr.scale(180.0/Math.PI);
+    	setInitLocRot(l,rr);
+    }
     protected void postSimulation() {;}
 
     void initRigidBody(Type t) {

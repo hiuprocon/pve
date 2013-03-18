@@ -113,7 +113,7 @@ public class CarBase implements ActiveObject {
         Vector3d v = new Vector3d(d);//vは弾丸の速度ベクトル
         v.scale(10.0);
         Vector3d l = getLoc();
-        l.add(new Vector3d(0.0,0.2,0.0));
+        l.add(new Vector3d(0.0,0.6,0.0));
         d.scale(1.5);//計算上0.85より少し上なら良いはずだけど???
         l.add(d);
         Bullet b = new Bullet(l,v);

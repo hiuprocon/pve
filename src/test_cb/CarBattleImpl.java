@@ -91,7 +91,7 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
             throw new IllegalStateException();
         if (battleRunning)
             throw new IllegalStateException();
-        Ground g = new Ground("x-rzip:x-res:///res/BattleField01.a3!/base.wrl");
+        Ground g = new Ground("x-rzip:x-res:///res/BattleField01.zip!/base.wrl");
         world.add(g);
 
         classLoader1 = makeClassLoader(car1classpath);
@@ -117,12 +117,10 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
 
         car1.car.init("x-res:///res/stk_tux.a3",world,this);
         world.add(car1.car.car);
-        car1.car.car.setLoc(new Vector3d( 0,1.0,-10));
-        car1.car.car.setRot(new Vector3d());
+        car1.car.car.setLocRot(new Vector3d( 0,1.0,-10),new Vector3d());
         car2.car.init("x-res:///res/stk_wilber2.a3",world,this);
         world.add(car2.car.car);
-        car2.car.car.setLoc(new Vector3d( 0,1.0, 10));
-        car2.car.car.setRot(new Vector3d(0,3.1,0));
+        car2.car.car.setLocRot(new Vector3d( 0,1.0, 10),new Vector3d(0,3.1,0));
 
         //world.add(new Box(-10.0,1.0,0.0));
         //world.add(new Box(-13.0,1.0,0.0));

@@ -20,9 +20,9 @@ public class Box extends PVEPart {
         this.sz = (float)size.z;
         this.a3url = a3url;
         init();
-        a3.setScaleX(sx/2);
-        a3.setScaleY(sy/2);
-        a3.setScaleZ(sz/2);
+        a3.setScaleX(sx);
+        a3.setScaleY(sy);
+        a3.setScaleZ(sz);
     }
 
     //立方体の剛体を作る

@@ -33,7 +33,20 @@ public class Hinge extends Constraint {
     	Vector3f aib = new Vector3f(axisInB);
     	con = new HingeConstraint(a.body,b.body,pia,pib,aia,aib);
     }
-    public void setMotor(double f) {
-    	((HingeConstraint)con).enableAngularMotor(true,(float)f*10,100);
+
+    public void setLimit(double low,double high) {
+    	((HingeConstraint)con).setLimit((float)low,(float)high);
+    }
+    public void enableAngularMotor(boolean enableMotor,double targetVelocity,double maxMotorImpulse) {
+    	((HingeConstraint)con).enableAngularMotor(enableMotor,(float)targetVelocity,(float)maxMotorImpulse);
+    }
+    public double getHingeAngle() {
+    	return ((HingeConstraint)con).getHingeAngle();
+    }
+    public double getLowerLimit() {
+    	return ((HingeConstraint)con).getLowerLimit();
+    }
+    public double getUpperLimit() {
+    	return ((HingeConstraint)con).getUpperLimit();
     }
 }

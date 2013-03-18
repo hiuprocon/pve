@@ -73,49 +73,49 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
             throw new IllegalStateException();
         if (battleRunning)
             throw new IllegalStateException();
-        Ground g = new Ground("x-rzip:x-res:///res/stk_racetrack.a3!/racetrack.wrl");
+        Ground g = new Ground("x-rzip:x-res:///res/stk_racetrack.zip!/racetrack.wrl");
         world.add(g);
 
         //CheckPoint配置
         cps = new CheckPoint[NUM];
         Vector3d loc = new Vector3d();
         Vector3d rot = new Vector3d();
-        loc.set(  0,  4,-25);rot.set(0,0,0);
         cps[ 0] = new CheckPoint();
-        cps[ 0].setLoc(loc);cps[ 0].setRot(rot);
-        loc.set(-37,  4,-56);rot.set(0,1.57,0);
+        loc.set(  0,  4,-25);rot.set(0,0,0);
+        cps[ 0].setLocRot(loc,rot);
         cps[ 1] = new CheckPoint();
-        cps[ 1].setLoc(loc);cps[ 1].setRot(rot);
-        loc.set(-76,  4,  9);rot.set(0,0.78,0);
+        loc.set(-37,  4,-56);rot.set(0,1.57,0);
+        cps[ 1].setLocRot(loc,rot);
         cps[ 2] = new CheckPoint();
-        cps[ 2].setLoc(loc);cps[ 2].setRot(rot);
-        loc.set(-21,  4, 20);rot.set(0,0,0);
+        loc.set(-76,  4,  9);rot.set(0,0.78,0);
+        cps[ 2].setLocRot(loc,rot);
         cps[ 3] = new CheckPoint();
-        cps[ 3].setLoc(loc);cps[ 3].setRot(rot);
-        loc.set(-54,  4, 35);rot.set(0,0,0);
+        loc.set(-21,  4, 20);rot.set(0,0,0);
+        cps[ 3].setLocRot(loc,rot);
         cps[ 4] = new CheckPoint();
-        cps[ 4].setLoc(loc);cps[ 4].setRot(rot);
-        loc.set(-16,  4, 35);rot.set(0,-0.78,0);
+        loc.set(-54,  4, 35);rot.set(0,0,0);
+        cps[ 4].setLocRot(loc,rot);
         cps[ 5] = new CheckPoint();
-        cps[ 5].setLoc(loc);cps[ 5].setRot(rot);
-        loc.set(-23,  4,-39);rot.set(0,1.57,0);
+        loc.set(-16,  4, 35);rot.set(0,-0.78,0);
+        cps[ 5].setLocRot(loc,rot);
         cps[ 6] = new CheckPoint();
-        cps[ 6].setLoc(loc);cps[ 6].setRot(rot);
-        loc.set(-43,  4,  0);rot.set(0,1.57,0);
+        loc.set(-23,  4,-39);rot.set(0,1.57,0);
+        cps[ 6].setLocRot(loc,rot);
         cps[ 7] = new CheckPoint();
-        cps[ 7].setLoc(loc);cps[ 7].setRot(rot);
-        loc.set(-53,  4,-38);rot.set(0,1.57,0);
+        loc.set(-43,  4,  0);rot.set(0,1.57,0);
+        cps[ 7].setLocRot(loc,rot);
         cps[ 8] = new CheckPoint();
-        cps[ 8].setLoc(loc);cps[ 8].setRot(rot);
-        loc.set(-65,  9, 11);rot.set(0,0,0);
+        loc.set(-53,  4,-38);rot.set(0,1.57,0);
+        cps[ 8].setLocRot(loc,rot);
         cps[ 9] = new CheckPoint();
-        cps[ 9].setLoc(loc);cps[ 9].setRot(rot);
-        loc.set(-40,  4, 55);rot.set(0,1.57,0);
+        loc.set(-65,  9, 11);rot.set(0,0,0);
+        cps[ 9].setLocRot(loc,rot);
         cps[10] = new CheckPoint();
-        cps[10].setLoc(loc);cps[10].setRot(rot);
-        loc.set(  0,  4, 10);rot.set(0,0,0);
+        loc.set(-40,  4, 55);rot.set(0,1.57,0);
+        cps[10].setLocRot(loc,rot);
         cps[11] = new CheckPoint();
-        cps[11].setLoc(loc);cps[11].setRot(rot);
+        loc.set(  0,  4, 10);rot.set(0,0,0);
+        cps[11].setLocRot(loc,rot);
 
         for (int i=0;i<NUM;i++) {
             world.add(cps[i]);
@@ -139,8 +139,7 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
         //下の行の3.1という数値は本来PI=3.141592...ジンバルロック対策でわざと誤差を入れた
         car.car.init("x-res:///res/stk_tux.a3",world,this);
         world.add(car.car.car);
-        car.car.car.setLoc(new Vector3d( 0,0.8,-1));
-        car.car.car.setRot(new Vector3d(0,3.1,0));
+        car.car.car.setLocRot(new Vector3d( 0,0.8,-1),new Vector3d(0,3.1,0));
 
         gui.setCar(car.car);
         activeObjects.add(car.car);

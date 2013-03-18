@@ -1,3 +1,5 @@
 *.a3
 *.data
+*.wrl
+*.zip
 /lines.txt

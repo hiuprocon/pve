@@ -54,10 +54,12 @@ public class KeyboardForkLift extends ForkLift implements KeyListener {
 	        double drift = 0.0;
 	        if (keyUp)      engine += 500.0;
 	        if (keyDown)    engine -= 500.0;
-	        if (keyRight) steering -= 0.1;
-	        if (keyLeft)  steering += 0.1;
+	        if (keyRight) steering -= 0.3;
+	        if (keyLeft)  steering += 0.3;
 	        if (keySpace) breaking = 10.0;
 	        setForce(engine,steering,breaking,drift);
+	        lockLiftMotor();
+	        lockForkMotor();
 		} else {
 			double liftF = 0.0;
 			double forkF = 0.0;
@@ -65,8 +67,8 @@ public class KeyboardForkLift extends ForkLift implements KeyListener {
 			if (keyRight) liftF -= 0.1;
 			if (keyUp)    forkF += 1.0;
 			if (keyDown)  forkF -= 1.0;
-			setLiftMotor(liftF);
-			setForkMotor(forkF);
+			if (Math.abs(liftF)>0.0001)setLiftMotor(liftF);else lockLiftMotor();
+			if (Math.abs(forkF)>0.0001)setForkMotor(forkF);else lockForkMotor();
 		}
 	}
 }

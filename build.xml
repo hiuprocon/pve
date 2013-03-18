@@ -123,4 +123,11 @@
         </java>
     </target>
 
+    <target name="Test" depends="jar">
+        <java classname="demo.Test" fork="true">
+            <classpath refid="my.exec.class.path"/>
+            <jvmarg value="-Djava.library.path=${my.lib.path}"/>
+        </java>
+    </target>
+
 </project>
