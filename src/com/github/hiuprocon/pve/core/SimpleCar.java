@@ -1,6 +1,5 @@
 package com.github.hiuprocon.pve.core;
 
-import com.bulletphysics.collision.dispatch.CollisionObject;
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.linearmath.*;
 import jp.sourceforge.acerola3d.a3.*;
@@ -24,6 +23,7 @@ public class SimpleCar extends PVEPart {
         ((CarMotionState)motionState).setCarMotion(motion);
         ((Action3D)a3).setMotion("default",motion);
         ((Action3D)a3).transControlUsingRootBone(true);//rootの骨の情報でA3Objectの変換を制御
+        disableDeactivation(true);
     }
 
     protected CollisionShape makeCollisionShape() {
@@ -46,7 +46,6 @@ public class SimpleCar extends PVEPart {
     @Override
     protected void postSimulation() {
     	updateWheelTransform();
-    	body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);//なぜか必要
     }
     //車輪の更新
     void updateWheelTransform() {

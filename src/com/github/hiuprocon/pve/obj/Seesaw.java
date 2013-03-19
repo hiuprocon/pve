@@ -17,7 +17,7 @@ public class Seesaw extends PVEObject {
 		plate = new Box(Type.DYNAMIC,10.0,new Vector3d(3,0.1,20));
 		rightLeg = new Box(Type.DYNAMIC,100.0,new Vector3d(0.1,1.0,1.0));
 		leftLeg = new Box(Type.DYNAMIC,100.0,new Vector3d(0.1,1.0,1.0));
-		plate.setInitLocRev(0,1,0, 0,0,0);
+		plate.setInitLocRev(0,1,-2, 0,0,0);
 		rightLeg.setInitLocRev(1.55,0.5,0, 0,0,0);
 		leftLeg.setInitLocRev(-1.55,0.5,0, 0,0,0);
 		return new PVEPart[]{plate,rightLeg,leftLeg};

@@ -192,7 +192,7 @@ public class PVEWorld implements Runnable {
             }
 
             for (PVEObject o : objects) {
-            	for (PVEPart p:o.parts){ 
+            	for (PVEPart p:o.parts){
                     if ((p.locRequest==null)&&(p.quatRequest==null))
                         continue;
                     Transform t = new Transform();
@@ -214,13 +214,6 @@ public class PVEWorld implements Runnable {
             time += stepTime;
 //System.out.println("PhysicalWorld:-----gaha-----2");
 
-            //いまのところ車の車輪の更新にしか使われていない。
-            for (PVEObject o : objects) {
-            	for (PVEPart p:o.parts)
-            	    p.postSimulation();
-            	o.postSimulation();
-            }
-            
             //衝突
             int numManifolds = dynamicsWorld.getDispatcher().getNumManifolds();
             for (int ii=0;ii<numManifolds;ii++) {
@@ -273,6 +266,16 @@ public class PVEWorld implements Runnable {
             	}
             }
 
+            //いまのところ車の車輪の更新にしか使われていない。
+            for (PVEObject o : objects) {
+            	for (PVEPart p:o.parts) {
+            	    p.postSimulation();
+            	    if (p.disableDeactivation==true)
+            	    	p.body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);//毎回必要みたい
+            	}
+            	o.postSimulation();
+            }
+            
             /*
             //光線テストの実験
             RayResultCallback rayRC = new CollisionWorld.ClosestRayResultCallback(new Vector3f(0,0.5f,0),new Vector3f(0,0.5f,5));

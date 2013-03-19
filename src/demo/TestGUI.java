@@ -1,7 +1,12 @@
 package demo;
 
+import java.awt.event.KeyListener;
+
 import javax.swing.*;
 import javax.vecmath.*;
+
+import com.github.hiuprocon.pve.core.PVEObject;
+
 import jp.sourceforge.acerola3d.a3.*;
 
 public class TestGUI extends JFrame {
@@ -22,9 +27,9 @@ public class TestGUI extends JFrame {
     	pack();
     	setVisible(true);
     }
-    public void setCar(KeyboardForkLift forkLift) {
-    	canvas.setAvatar(forkLift.getMainA3());
-    	this.addKeyListener(forkLift);
-    	canvas.addKeyListener(forkLift);
+    public void setCar(PVEObject car) {
+    	canvas.setAvatar(car.getMainA3());
+    	this.addKeyListener((KeyListener)car);
+    	canvas.addKeyListener((KeyListener)car);
     }
 }

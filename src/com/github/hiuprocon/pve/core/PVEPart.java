@@ -32,6 +32,7 @@ public abstract class PVEPart {
     short mask = 1;
     //DYNAMICなんだけど一時的にKINEMATICになってる時にtrue
     boolean kinematicTmp = false;
+    boolean disableDeactivation=false;
 
     //Acerola3DファイルのURLと初期座標で初期化
     public PVEPart(Type type,double mass,String a3url) {
@@ -147,48 +148,48 @@ public abstract class PVEPart {
         kinematicTmp=false;
     }
     //座標変更．副作用で力や速度がリセットされる
-    void setLoc(Vector3d loc) {
+    public void setLoc(Vector3d loc) {
     	locRequest = new Vector3f(loc);
     }
-    void setLoc(double x,double y,double z) {
+    public void setLoc(double x,double y,double z) {
         locRequest = new Vector3f((float)x,(float)y,(float)z);
     }
     //副作用で力や速度がリセットされる
-    void setQuat(Quat4d q) {
+    public void setQuat(Quat4d q) {
     	quatRequest = new Quat4d(q);
     }
     //副作用で力や速度がリセットされる
-    void setRot(Vector3d rot) {
+    public void setRot(Vector3d rot) {
     	quatRequest = Util.euler2quat(rot);
     }
-    void setRot(double x,double y,double z) {
+    public void setRot(double x,double y,double z) {
         quatRequest = Util.euler2quat(x,y,z);
     }
     //副作用で力や速度がリセットされる
-    void setRev(Vector3d rev) {
+    public void setRev(Vector3d rev) {
     	rev.scale(180.0/Math.PI);
     	quatRequest = Util.euler2quat(rev);
     }
-    void setRev(double x,double y,double z) {
+    public void setRev(double x,double y,double z) {
         quatRequest = Util.euler2quat(x/180.0*Math.PI,y/180.0*Math.PI,z/180.0*Math.PI);
     }
-    void setVel(Vector3d vel) {
+    public void setVel(Vector3d vel) {
     	velRequest = new Vector3f(vel);
     }
-    void setVel(double x,double y,double z) {
+    public void setVel(double x,double y,double z) {
         velRequest = new Vector3f((float)x,(float)y,(float)z);
     }
-    Vector3d getLoc() {
+    public Vector3d getLoc() {
     	Transform t = new Transform();
     	motionState.getWorldTransform(t);
     	return new Vector3d(t.origin);
     }
-    Quat4d getQuat() {
+    public Quat4d getQuat() {
     	Transform t = new Transform();
     	motionState.getWorldTransform(t);
     	return Util.matrix2quat(t.basis);
     }
-    Vector3d getRot() {
+    public Vector3d getRot() {
     	return Util.quat2euler(getQuat());
     }
     public PVEObject getObject() {
@@ -196,5 +197,11 @@ public abstract class PVEPart {
     }
     public void setGravity(Vector3d g) {
     	body.setGravity(new Vector3f(g));
+    }
+    public void disableDeactivation(boolean b) {
+    	disableDeactivation = b;
+    }
+    public void setFriction(double f) {
+    	body.setFriction((float)f);
     }
 }

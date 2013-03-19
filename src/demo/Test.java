@@ -1,5 +1,6 @@
 package demo;
 
+import javax.vecmath.Vector3d;
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 
@@ -20,8 +21,11 @@ public class Test implements CollisionListener {
 	    Seesaw s = new Seesaw();
 	    s.setLocRev(0,0,30, 0,0,0);
 	    w.add(s);
+	    Obstacle ob = new Obstacle(new Vector3d(1,1,3),new Vector3d(-0.1,0,0.1));
+	    w.add(ob);
 
-	    KeyboardForkLift c = new KeyboardForkLift(w,"x-res:///res/stk_tux.a3");
+	    //KeyboardForkLift c = new KeyboardForkLift(w,"x-res:///res/stk_tux.a3");
+	    KeyboardHeavyCar c = new KeyboardHeavyCar();
 	    c.setLocRev(0,1,0, 0,0,0);
 	    w.add(c);
 	    gui.setCar(c);
