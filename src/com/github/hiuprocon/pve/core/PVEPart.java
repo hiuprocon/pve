@@ -204,4 +204,16 @@ public abstract class PVEPart {
     public void setFriction(double f) {
     	body.setFriction((float)f);
     }
+    public void setDamping(double lin_damping,double ang_damping) {
+    	body.setDamping((float)lin_damping,(float)ang_damping);
+    }
+    public void setAngularFactor(double af) {
+    	body.setAngularFactor((float)af);
+    }
+    public void applyCentralForce(Vector3d f) {
+    	body.applyCentralForce(new Vector3f(f));
+    }
+    public void setAngularVelocity(Vector3d av) {
+    	body.setAngularVelocity(new Vector3f(av));
+    }
 }

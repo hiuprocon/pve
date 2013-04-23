@@ -18,14 +18,15 @@ public class Test implements CollisionListener {
 	    Luggage o = new Luggage();
 	    o.setLocRev(0,2,5, 0,90,0);
 	    w.add(o);
-	    Seesaw s = new Seesaw();
-	    s.setLocRev(0,0,30, 0,0,0);
+	    SlopeObj s = new SlopeObj(3,1,10);
+	    s.setLocRev(0,0.5,30, 0,180,0);
 	    w.add(s);
 	    Obstacle ob = new Obstacle(new Vector3d(1,1,3),new Vector3d(-0.1,0,0.1));
 	    w.add(ob);
 
 	    //KeyboardForkLift c = new KeyboardForkLift(w,"x-res:///res/stk_tux.a3");
-	    KeyboardHeavyCar c = new KeyboardHeavyCar();
+	    //KeyboardHeavyCar c = new KeyboardHeavyCar();
+	    KeyboardHovercraft c = new KeyboardHovercraft();
 	    c.setLocRev(0,1,0, 0,0,0);
 	    w.add(c);
 	    gui.setCar(c);
