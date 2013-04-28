@@ -12,6 +12,7 @@ public class Sphere extends PVEPart {
         super(type,mass,a3url);
         this.size = (float)size;
         init();
+        a3.setScale(size);
     }
 
     //立方体の剛体を作る
