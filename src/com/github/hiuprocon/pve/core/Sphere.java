@@ -17,6 +17,6 @@ public class Sphere extends PVEPart {
 
     //立方体の剛体を作る
     public CollisionShape makeCollisionShape() {
-        return new SphereShape(size);
+        return new SphereShape(size/2.0f);
     }
 }
