@@ -8,14 +8,19 @@ import javax.vecmath.*;
 public class SimpleCar extends PVEPart {
     PVEWorld world;
     CarMotion motion;
+    CollisionShape chassisShape;
     public CarConstraint carConstraint;
     public SimpleCar(PVEWorld world) {
     	this(world,"x-res:///res/stk_tux.a3");
     }
     public SimpleCar(PVEWorld world,String a3url) {
+        this(world,a3url,null);
+    }
+    public SimpleCar(PVEWorld world,String a3url,CollisionShape chassisShape) {
         super(Type.DYNAMIC,100,a3url,new Vector3d(),world);
         //group = 1;
         //mask = 3;
+        this.chassisShape = chassisShape;
         init();
         //motionState.setAutoUpdate(false);//MotionデータでコントロールするのでAutoUpdate不要
         motion = new CarMotion(motionState,world,body);
@@ -27,6 +32,12 @@ public class SimpleCar extends PVEPart {
     }
 
     protected CollisionShape makeCollisionShape() {
+        if (chassisShape==null)
+            return makeCollisionShape_BAK();
+        else
+            return chassisShape;
+    }
+    protected CollisionShape makeCollisionShape_BAK() {
         CollisionShape chassisShape = new BoxShape(new Vector3f(0.4f, 0.25f, 0.75f));
         CompoundShape compound = new CompoundShape();
         Transform localTrans = new Transform();
