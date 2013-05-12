@@ -167,8 +167,7 @@ public abstract class PVEPart {
     }
     //副作用で力や速度がリセットされる
     public void setRev(Vector3d rev) {
-    	rev.scale(180.0/Math.PI);
-    	quatRequest = Util.euler2quat(rev);
+    	quatRequest = Util.euler2quat(Util.rev2rot(rev));
     }
     public void setRev(double x,double y,double z) {
         quatRequest = Util.euler2quat(x/180.0*Math.PI,y/180.0*Math.PI,z/180.0*Math.PI);
@@ -191,6 +190,9 @@ public abstract class PVEPart {
     }
     public Vector3d getRot() {
     	return Util.quat2euler(getQuat());
+    }
+    public Vector3d getRev() {
+    	return Util.rot2rev(Util.quat2euler(getQuat()));
     }
     public PVEObject getObject() {
     	return obj;
