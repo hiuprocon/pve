@@ -8,6 +8,7 @@ public abstract class PVEObject {
 	PVEPart mainPart;
     PVEPart[] parts;
     Constraint[] constraints;
+    Object userData;
     public PVEObject() {
     }
     protected abstract PVEPart[] createParts();
@@ -91,5 +92,11 @@ public abstract class PVEObject {
     	for (PVEPart p:parts) {
     		p.setGravity(g);
     	}
+    }
+    public void setUserData(Object o) {
+        userData = o;
+    }
+    public Object getUserData() {
+        return userData;
     }
 }

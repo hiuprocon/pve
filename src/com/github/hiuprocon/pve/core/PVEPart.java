@@ -33,6 +33,7 @@ public abstract class PVEPart {
     //DYNAMICなんだけど一時的にKINEMATICになってる時にtrue
     boolean kinematicTmp = false;
     boolean disableDeactivation=false;
+    Object userData;
 
     //Acerola3DファイルのURLと初期座標で初期化
     public PVEPart(Type type,double mass,String a3url) {
@@ -217,5 +218,12 @@ public abstract class PVEPart {
     }
     public void setAngularVelocity(Vector3d av) {
     	body.setAngularVelocity(new Vector3f(av));
+    }
+
+    public void setUserData(Object o) {
+        userData = o;
+    }
+    public Object getUserData() {
+        return userData;
     }
 }

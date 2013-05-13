@@ -1,8 +1,6 @@
 package com.github.hiuprocon.pve.core;
 
-import javax.media.j3d.Transform3D;
 import javax.vecmath.Vector3f;
-
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.util.ObjectArrayList;
 

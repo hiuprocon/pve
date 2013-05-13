@@ -21,7 +21,8 @@ public class Demo implements CollisionListener {
 
 	    //SimpleCarObj c = new SimpleCarObj(w,"x-res:///res/stk_tux.a3");
 	    //KeyboardSimpleCar c = new KeyboardSimpleCar(w,"x-res:///res/stk_tux.a3");
-	    KeyboardForkLift c = new KeyboardForkLift(w,"x-res:///res/stk_tux.a3");
+	    //KeyboardForkLift c = new KeyboardForkLift(w,"x-res:///res/stk_tux.a3");
+	    KeyboardHeavyCar c = new KeyboardHeavyCar();
 	    c.setLocRev(0,1,0, 0,0,0);
 	    w.add(c);gui.aKL = c;
 
@@ -32,8 +33,9 @@ public class Demo implements CollisionListener {
 	    //FreeObjA b = new FreeObjA(Type.STATIC,"x-res:///res/axis.wrl");
 	    //FreeObjB b = new FreeObjB(Type.DYNAMIC,"x-res:///res/axis.wrl");
 	    //FreeObjC b = new FreeObjC(Type.DYNAMIC,"x-res:///res/axis.wrl");
-	    Luggage b = new Luggage();
-	    b.setLocRev(new Vector3d(0,10,5), new Vector3d(0,0,0));
+	    //Luggage b = new Luggage();
+	    //b.setLocRev(new Vector3d(0,10,5), new Vector3d(0,0,0));
+        Seesaw b = new Seesaw();b.setLocRev(0,0,35, 0,0,0);
 	    w.add(b);
     }
 
