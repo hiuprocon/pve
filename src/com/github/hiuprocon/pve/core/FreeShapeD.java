@@ -1,7 +1,6 @@
 package com.github.hiuprocon.pve.core;
 
 import com.bulletphysics.collision.shapes.*;
-import jp.sourceforge.acerola3d.a3.*;
 
 //JBulletのCollisionShapeを直接使いたい時の物
 //特にCompoundShapeでConcaveなやつをつくりたい時に重宝するはず．

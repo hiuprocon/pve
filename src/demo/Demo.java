@@ -1,6 +1,5 @@
 package demo;
 
-import javax.vecmath.*;
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 import jp.sourceforge.acerola3d.a3.*;
