@@ -8,6 +8,7 @@ import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.linearmath.*;
 
 public class CarB extends PVEObject implements PVEMsgListener {
+    Simulator simulator;
     // FreeShapeD chassis;
     PVEPart chassis;
     double speed;
@@ -15,7 +16,8 @@ public class CarB extends PVEObject implements PVEMsgListener {
     Vector3d loc = new Vector3d();
     Vector3d rev = new Vector3d();
 
-    public CarB(int port) {
+    public CarB(Simulator simulator,int port) {
+        this.simulator = simulator;
         init();
         new Server(port, this);
     }
@@ -101,16 +103,34 @@ public class CarB extends PVEObject implements PVEMsgListener {
     @Override
     public String processMessage(String line) {
         if (line.startsWith("drive"))
-            msgDrive(line);
-        else if (line.equals("b"))
-            drive(0, 0);
-        return "OK";
+            return msgDrive(line);
+        else if (line.equals("getLoc"))
+            return msgGetLoc(line);
+        else if (line.equals("getRev"))
+            return msgGetRev(line);
+        else if (line.equals("searchJewels"))
+            return msgSearchJewels(line);
+        return "ERROR";
     }
 
-    void msgDrive(String line) {
+    String msgDrive(String line) {
         String s[] = line.split("\\s");
         double speed = Double.parseDouble(s[1]);
         double handle = Double.parseDouble(s[2]);
+        speed = 1*speed;
+        handle = -1*handle;
         drive(speed, handle);
+        return "OK";
+    }
+    String msgGetLoc(String line) {
+        Vector3d v = getLoc();
+        return ""+v.x+" "+v.y+" "+v.z;
+    }
+    String msgGetRev(String line) {
+        Vector3d v = Util.rot2rev(getRot());
+        return ""+v.x+" "+v.y+" "+v.z;
+    }
+    String msgSearchJewels(String line) {
+        return simulator.searchJewels();
     }
 }

@@ -6,10 +6,14 @@ import com.github.hiuprocon.pve.ui.Server;
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.linearmath.*;
 import javax.vecmath.*;
+import jp.sourceforge.acerola3d.a3.Util;
 
 public class CarA extends SimpleCarObj implements PVEMsgListener {
-    public CarA(PVEWorld w, int port) {
-        super(w, "x-res:///res/prototype/carA/carA.a3", shassisShape());
+    Simulator simulator;
+
+    public CarA(Simulator simulator, int port) {
+        super(simulator.w, "x-res:///res/prototype/carA/carA.a3", shassisShape());
+        this.simulator = simulator;
         new Server(port, this);
     }
 
@@ -43,16 +47,34 @@ public class CarA extends SimpleCarObj implements PVEMsgListener {
     @Override
     public String processMessage(String line) {
         if (line.startsWith("drive"))
-            msgDrive(line);
-        else if (line.equals("b"))
-            setForce(0, 0, 0, 0);
-        return "OK";
+            return msgDrive(line);
+        else if (line.equals("getLoc"))
+            return msgGetLoc(line);
+        else if (line.equals("getRev"))
+            return msgGetRev(line);
+        else if (line.equals("searchJewels"))
+            return msgSearchJewels(line);
+        return "ERROR";
     }
 
-    void msgDrive(String line) {
+    String msgDrive(String line) {
         String s[] = line.split("\\s");
         double speed = Double.parseDouble(s[1]);
         double handle = Double.parseDouble(s[2]);
+        speed = 500*speed;
+        handle = 3*handle;
         setForce(speed, handle, 0, 0);
+        return "OK";
+    }
+    String msgGetLoc(String line) {
+        Vector3d v = getLoc();
+        return ""+v.x+" "+v.y+" "+v.z;
+    }
+    String msgGetRev(String line) {
+        Vector3d v = Util.rot2rev(getRot());
+        return ""+v.x+" "+v.y+" "+v.z;
+    }
+    String msgSearchJewels(String line) {
+        return simulator.searchJewels();
     }
 }

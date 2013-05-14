@@ -26,11 +26,9 @@ public class SimulatorGUI extends JFrame {
         canvas.setCameraLookAtPointImmediately(0, 0, 0);
         canvas.setNavigationMode(A3CanvasInterface.NaviMode.SIMPLE,
                 Math.sqrt(y * y + z * z));
-        canvas.setSize(1000, 700);
-        box1.myAdd(canvas, 1);
+        canvas.setSize(800, 700);
 
         VBox box2 = new VBox();
-        box1.myAdd(box2, 1);
 
         sc1 = A3SubCanvas.createA3SubCanvas(200, 150);
         canvas.addA3SubCanvas(sc1);
@@ -44,8 +42,11 @@ public class SimulatorGUI extends JFrame {
         canvas.addA3SubCanvas(sc3);
         box2.myAdd(sc3, 1);
 
+        box1.myAdd(box2, 1);
+        box1.myAdd(canvas, 1);
         add(box1);
-        pack();
+        //pack();
+        setBounds(500,0,1000,700);
         setVisible(true);
 
         canvas.setBackground(new A3Background(0.1f, 0.3f, 0.5f));

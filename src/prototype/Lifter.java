@@ -19,8 +19,8 @@ public class Lifter extends PVEObject {
     protected PVEPart[] createParts() {
         plate = new Box(Type.DYNAMIC, 1.0, new Vector3d(10, 1, 10));
         plate.disableDeactivation(true);
-        rightLeg = new Box(Type.STATIC, 0.0, new Vector3d(10, 5, 1));
-        leftLeg = new Box(Type.STATIC, 0.0, new Vector3d(10, 5, 1));
+        rightLeg = new Box(Type.STATIC, 0.0, new Vector3d(10, 5, 1),"x-res:///res/ClearBox.wrl");
+        leftLeg = new Box(Type.STATIC, 0.0, new Vector3d(10, 5, 1),"x-res:///res/ClearBox.wrl");
         plate.setInitLocRev(0, 0.5, 0, 0, 0, 0);
         rightLeg.setInitLocRev(0, 2, 5.5, 0, 0, 0);
         leftLeg.setInitLocRev(0, 2, -5.5, 0, 0, 0);

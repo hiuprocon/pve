@@ -16,6 +16,7 @@ public class Jewel extends PVEObject {
                 "x-res:///res/prototype/Jewel.wrl");
         // box.setInitLocRot(0,0,0, 0,0,0);
         box.setFriction(1);
+        box.setDamping(0.9,0.9);
         return new PVEPart[] { box };
     }
 

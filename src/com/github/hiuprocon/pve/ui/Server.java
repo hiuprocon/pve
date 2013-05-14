@@ -38,12 +38,13 @@ public class Server implements Runnable {
                     pw.flush();
                 }
             } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
                 try {
                     br.close();
                     pw.close();
                     socket.close();
                     serverSocket.close();
-                    e.printStackTrace();
                 } catch (Exception ee) {
                     ee.printStackTrace();
                 }

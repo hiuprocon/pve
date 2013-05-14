@@ -8,6 +8,7 @@ public class Client implements Runnable {
     Object waitingRoom = new Object();
     String msg;
     String ret;
+    boolean closed = true;
 
     public Client(int port) {
         this.port = port;
@@ -29,11 +30,19 @@ public class Client implements Runnable {
                 osw = new OutputStreamWriter(socket.getOutputStream(), "UTF8");
                 bw = new BufferedWriter(osw);
                 pw = new PrintWriter(bw, true);
+                closed = false;
                 while (true) {
                     synchronized (waitingRoom) {
                         waitingRoom.wait();
                         if (msg == null)
                             continue;
+                        if (msg.equals("CLOSE")) {
+                            closed = true;
+                            System.out.println("CLOSE:"+port+"!");
+                            ret = "CLOSE:"+port+"!";
+                            waitingRoom.notifyAll();
+                            return;
+                        }
                         pw.println(msg);
                         pw.flush();
                         ret = br.readLine();
@@ -41,11 +50,12 @@ public class Client implements Runnable {
                     }
                 }
             } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
                 try {
                     br.close();
                     pw.close();
                     socket.close();
-                    e.printStackTrace();
                 } catch (Exception ee) {
                     ee.printStackTrace();
                 }
@@ -54,6 +64,8 @@ public class Client implements Runnable {
     }
 
     public String post(String msg) {
+        if (closed==true)
+            return "SOCKET IS CLOSED!!!";
         synchronized (waitingRoom) {
             this.msg = msg;
             waitingRoom.notifyAll();
