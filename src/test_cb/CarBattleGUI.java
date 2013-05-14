@@ -6,12 +6,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.PrintStream;
-
 import jp.sourceforge.acerola3d.a3.*;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.vecmath.Vector3d;
-
 import com.github.hiuprocon.pve.car.CarBase;
 import com.github.hiuprocon.pve.ui.A3CSController;
 import com.github.hiuprocon.pve.ui.HBox;
@@ -42,7 +40,7 @@ class CarBattleGUI extends JFrame implements ActionListener {
     JTextArea stdOutTA;
     JTextAreaOutputStream out;
 
-    CarBattleGUI(CarBattleImpl i,String carClass1,String carClass2) {
+    CarBattleGUI(CarBattleImpl i, String carClass1, String carClass2) {
         super("CarBattle");
         impl = i;
         ide = new SimpleIDE(this);
@@ -50,143 +48,149 @@ class CarBattleGUI extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
         VBox baseBox = new VBox();
-        this.add(baseBox,BorderLayout.CENTER);
+        this.add(baseBox, BorderLayout.CENTER);
 
         HBox controlBox = new HBox();
-        baseBox.myAdd(controlBox,0);
+        baseBox.myAdd(controlBox, 0);
         VBox classNameBox = new VBox();
-        controlBox.myAdd(classNameBox,1);
+        controlBox.myAdd(classNameBox, 1);
         HBox classNameBox1 = new HBox();
-        classNameBox.myAdd(classNameBox1,0);
-        classNameBox1.myAdd(new JLabel("CAR1:"),0);
+        classNameBox.myAdd(classNameBox1, 0);
+        classNameBox1.myAdd(new JLabel("CAR1:"), 0);
         car1classTF = new JTextField(carClass1);
-        classNameBox1.myAdd(car1classTF,1);
+        classNameBox1.myAdd(car1classTF, 1);
         changeCPB1 = new JButton("changeCP");
         changeCPB1.addActionListener(this);
-        classNameBox1.myAdd(changeCPB1,0);
+        classNameBox1.myAdd(changeCPB1, 0);
         HBox classNameBox2 = new HBox();
-        classNameBox.myAdd(classNameBox2,0);
-        classNameBox2.myAdd(new JLabel("CAR2:"),0);
+        classNameBox.myAdd(classNameBox2, 0);
+        classNameBox2.myAdd(new JLabel("CAR2:"), 0);
         car2classTF = new JTextField(carClass2);
-        classNameBox2.myAdd(car2classTF,1);
+        classNameBox2.myAdd(car2classTF, 1);
         VBox controlBox2 = new VBox();
-        controlBox.myAdd(controlBox2,0);
+        controlBox.myAdd(controlBox2, 0);
         changeCPB2 = new JButton("changeCP");
         changeCPB2.addActionListener(this);
-        classNameBox2.myAdd(changeCPB2,0);
+        classNameBox2.myAdd(changeCPB2, 0);
         HBox generalInfoBox = new HBox();
-        controlBox2.myAdd(generalInfoBox,0);
+        controlBox2.myAdd(generalInfoBox, 0);
         confB = new JButton("Conf");
         confB.addActionListener(this);
-        generalInfoBox.myAdd(confB,0);
+        generalInfoBox.myAdd(confB, 0);
         ideB = new JButton("IDE");
         ideB.addActionListener(this);
-        generalInfoBox.myAdd(ideB,0);
+        generalInfoBox.myAdd(ideB, 0);
         generalInfoL = new JLabel("Time:");
-        generalInfoBox.myAdd(generalInfoL,1);
+        generalInfoBox.myAdd(generalInfoL, 1);
         HBox mainButtonsBox = new HBox();
-        controlBox2.myAdd(mainButtonsBox,0);
+        controlBox2.myAdd(mainButtonsBox, 0);
         startB = new JButton("START");
         startB.addActionListener(this);
-        mainButtonsBox.myAdd(startB,1);
+        mainButtonsBox.myAdd(startB, 1);
         pauseB = new JButton("PAUSE");
         pauseB.addActionListener(this);
-        mainButtonsBox.myAdd(pauseB,1);
+        mainButtonsBox.myAdd(pauseB, 1);
         stopB = new JButton("STOP");
         stopB.addActionListener(this);
-        mainButtonsBox.myAdd(stopB,1);
+        mainButtonsBox.myAdd(stopB, 1);
 
         HBox displayBox = new HBox();
-        baseBox.myAdd(displayBox,1);
-        mainCanvas = (A3Canvas)impl.world.getMainCanvas();
-        mainCanvas.setSize(400,400);
-        mainCanvas.setCameraLocImmediately(0,50,20);
-        mainCanvas.setCameraLookAtPointImmediately(0,0,0);
+        baseBox.myAdd(displayBox, 1);
+        mainCanvas = (A3Canvas) impl.world.getMainCanvas();
+        mainCanvas.setSize(400, 400);
+        mainCanvas.setCameraLocImmediately(0, 50, 20);
+        mainCanvas.setCameraLookAtPointImmediately(0, 0, 0);
         a3csController = new A3CSController(60.0);
         mainCanvas.setA3Controller(a3csController);
-        //mainCanvas.setNavigationMode(A3CanvasInterface.NaviMode.SIMPLE,150.0);
-        displayBox.myAdd(mainCanvas,1);
+        // mainCanvas.setNavigationMode(A3CanvasInterface.NaviMode.SIMPLE,150.0);
+        displayBox.myAdd(mainCanvas, 1);
         VBox subBox = new VBox();
-        displayBox.myAdd(subBox,1);
+        displayBox.myAdd(subBox, 1);
         HBox car1Box = new HBox();
-        subBox.myAdd(car1Box,1);
-        car1Canvas = A3SubCanvas.createA3SubCanvas(200,200);
-        car1Box.myAdd(car1Canvas,1);
+        subBox.myAdd(car1Box, 1);
+        car1Canvas = A3SubCanvas.createA3SubCanvas(200, 200);
+        car1Box.myAdd(car1Canvas, 1);
         VBox car1InfoBox = new VBox();
-        car1Box.myAdd(car1InfoBox,0);
-        car1InfoBox.myAdd(new JLabel("CAR1:"),0);
+        car1Box.myAdd(car1InfoBox, 0);
+        car1InfoBox.myAdd(new JLabel("CAR1:"), 0);
         car1EnergyL = new JLabel("Energy: 000");
-        car1InfoBox.myAdd(car1EnergyL,0);
-        
-        HBox car2Box = new HBox();
-        subBox.myAdd(car2Box,1);
-        car2Canvas = A3SubCanvas.createA3SubCanvas(200,200);
-        car2Box.myAdd(car2Canvas,1);
-        VBox car2InfoBox = new VBox();
-        car2Box.myAdd(car2InfoBox,0);
-        car2InfoBox.myAdd(new JLabel("CAR2:"),0);
-        car2EnergyL = new JLabel("Energy: 000");
-        car2InfoBox.myAdd(car2EnergyL,0);
+        car1InfoBox.myAdd(car1EnergyL, 0);
 
-        stdOutTA = new JTextArea(10,80);
+        HBox car2Box = new HBox();
+        subBox.myAdd(car2Box, 1);
+        car2Canvas = A3SubCanvas.createA3SubCanvas(200, 200);
+        car2Box.myAdd(car2Canvas, 1);
+        VBox car2InfoBox = new VBox();
+        car2Box.myAdd(car2InfoBox, 0);
+        car2InfoBox.myAdd(new JLabel("CAR2:"), 0);
+        car2EnergyL = new JLabel("Energy: 000");
+        car2InfoBox.myAdd(car2EnergyL, 0);
+
+        stdOutTA = new JTextArea(10, 80);
         stdOutTA.setEditable(false);
         JScrollPane sp = new JScrollPane(stdOutTA);
-        sp.setMinimumSize(new Dimension(100,100));
-        baseBox.myAdd(sp,0);
-        out = new JTextAreaOutputStream(stdOutTA,System.out);
-        PrintStream ps = new PrintStream(out,true);
+        sp.setMinimumSize(new Dimension(100, 100));
+        baseBox.myAdd(sp, 0);
+        out = new JTextAreaOutputStream(stdOutTA, System.out);
+        PrintStream ps = new PrintStream(out, true);
         System.setOut(ps);
         System.setErr(ps);
-        //this.pack();
-        //this.setVisible(true);
+        // this.pack();
+        // this.setVisible(true);
     }
 
     void setCar1(CarBase c1) {
         car1Canvas.setAvatar(c1.car.getMainA3());
-        Vector3d lookAt = new Vector3d(0.0,0.0,6.0);
-        Vector3d camera = new Vector3d(0.0,3.0,-6.0);
-        Vector3d up = new Vector3d(0.0,1.0,0.0);
-        car1Canvas.setNavigationMode(A3CanvasInterface.NaviMode.CHASE,lookAt,camera,up,10.0);
+        Vector3d lookAt = new Vector3d(0.0, 0.0, 6.0);
+        Vector3d camera = new Vector3d(0.0, 3.0, -6.0);
+        Vector3d up = new Vector3d(0.0, 1.0, 0.0);
+        car1Canvas.setNavigationMode(A3CanvasInterface.NaviMode.CHASE, lookAt,
+                camera, up, 10.0);
     }
+
     void setCar2(CarBase c2) {
         car2Canvas.setAvatar(c2.car.getMainA3());
-        Vector3d lookAt = new Vector3d(0.0,0.0,6.0);
-        Vector3d camera = new Vector3d(0.0,3.0,-6.0);
-        Vector3d up = new Vector3d(0.0,1.0,0.0);
-        car2Canvas.setNavigationMode(A3CanvasInterface.NaviMode.CHASE,lookAt,camera,up,10.0);
+        Vector3d lookAt = new Vector3d(0.0, 0.0, 6.0);
+        Vector3d camera = new Vector3d(0.0, 3.0, -6.0);
+        Vector3d up = new Vector3d(0.0, 1.0, 0.0);
+        car2Canvas.setNavigationMode(A3CanvasInterface.NaviMode.CHASE, lookAt,
+                camera, up, 10.0);
     }
+
     void updateCar1Info(CarBase c) {
-        car1EnergyL.setText("Energy: "+c.getEnergy());
+        car1EnergyL.setText("Energy: " + c.getEnergy());
     }
+
     void updateCar2Info(CarBase c) {
-        car2EnergyL.setText("Energy: "+c.getEnergy());
+        car2EnergyL.setText("Energy: " + c.getEnergy());
     }
+
     @Override
     public void actionPerformed(ActionEvent ae) {
         Object s = ae.getSource();
-        if (s==startB) {
+        if (s == startB) {
             impl.startBattle();
-        } else if (s==pauseB) {
+        } else if (s == pauseB) {
             impl.pauseBattle();
-        } else if (s==stopB) {
+        } else if (s == stopB) {
             impl.stopBattle();
-        } else if (s==changeCPB1) {
+        } else if (s == changeCPB1) {
             changeCP1();
-        } else if (s==changeCPB2) {
+        } else if (s == changeCPB2) {
             changeCP2();
-        } else if (s==confB) {
+        } else if (s == confB) {
             conf();
-        } else if (s==ideB) {
+        } else if (s == ideB) {
             ide();
         }
     }
+
     String getPath(int i) {
         Object[] possibleValues = { "System", "IDE", "JAR" };
-        String selectedValue = (String)JOptionPane.showInputDialog(this,
-                "Choose one", "Input",
-                JOptionPane.INFORMATION_MESSAGE, null,
+        String selectedValue = (String) JOptionPane.showInputDialog(this,
+                "Choose one", "Input", JOptionPane.INFORMATION_MESSAGE, null,
                 possibleValues, possibleValues[i]);
-        if (selectedValue==null)
+        if (selectedValue == null)
             return null;
         if (selectedValue.equals("System"))
             return "System";
@@ -195,18 +199,19 @@ class CarBattleGUI extends JFrame implements ActionListener {
         else {
             JFileChooser chooser = new JFileChooser();
             FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                "JAR File", "jar");
+                    "JAR File", "jar");
             chooser.setFileFilter(filter);
             int returnVal = chooser.showOpenDialog(this);
-            if(returnVal == JFileChooser.APPROVE_OPTION) {
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File f = chooser.getSelectedFile();
                 String url = f.toURI().toString();
-                url = "jar:"+url+"!/";
+                url = "jar:" + url + "!/";
                 return url;
             }
             return null;
         }
     }
+
     void changeCP1() {
         int i = 0;
         if (impl.car1classpath.equals("System"))
@@ -216,9 +221,10 @@ class CarBattleGUI extends JFrame implements ActionListener {
         else
             i = 2;
         String cp = getPath(i);
-        if (cp!=null)
+        if (cp != null)
             impl.changeCP1(cp);
     }
+
     void changeCP2() {
         int i = 0;
         if (impl.car2classpath.equals("System"))
@@ -228,9 +234,10 @@ class CarBattleGUI extends JFrame implements ActionListener {
         else
             i = 2;
         String cp = getPath(i);
-        if (cp!=null)
+        if (cp != null)
             impl.changeCP2(cp);
     }
+
     void setParamEditable(boolean b) {
         car1classTF.setEditable(b);
         car2classTF.setEditable(b);
@@ -239,29 +246,32 @@ class CarBattleGUI extends JFrame implements ActionListener {
         confB.setEnabled(b);
         ideB.setEnabled(b);
     }
+
     void conf() {
         File iniF = null;
-        if (impl.workDir!=null) {
+        if (impl.workDir != null) {
             iniF = new File(impl.workDir);
         }
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        if (iniF!=null)
+        if (iniF != null)
             chooser.setSelectedFile(iniF);
         int returnVal = chooser.showOpenDialog(this);
-        if(returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
             File f = chooser.getSelectedFile();
             impl.setWorkDir(f.getAbsolutePath());
             impl.setWorkDirURL(f.toURI().toString());
         } else {
-            //変更しないことにした
-            //impl.setWorkDir(null);
-            //impl.setWorkDirURL(null);
+            // 変更しないことにした
+            // impl.setWorkDir(null);
+            // impl.setWorkDirURL(null);
         }
     }
+
     void ide() {
         ide.popup(impl.workDir);
     }
+
     void clearTA() {
         stdOutTA.setText("");
     }

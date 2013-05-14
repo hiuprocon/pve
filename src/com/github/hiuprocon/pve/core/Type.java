@@ -1,8 +1,5 @@
 package com.github.hiuprocon.pve.core;
 
 public enum Type {
-    DYNAMIC,
-    STATIC,
-    KINEMATIC,
-    GHOST,
+    DYNAMIC, STATIC, KINEMATIC, GHOST,
 }

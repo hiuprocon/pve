@@ -7,14 +7,12 @@ import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 
 /**
- * このクラスを拡張してレースorバトルするための車を作成します。
- * これを拡張して作成する車クラスは必ず引数無しの
- * コンストラクタを持つ必要があります。レースでは関係ありませんが、
- * この車は初期値100のエネルギーを持ち、被弾すると5づつエネルギーが
+ * このクラスを拡張してレースorバトルするための車を作成します。 これを拡張して作成する車クラスは必ず引数無しの
+ * コンストラクタを持つ必要があります。レースでは関係ありませんが、 この車は初期値100のエネルギーを持ち、被弾すると5づつエネルギーが
  * 減少します。また弾丸を発射した時も1づつエネルギーを消費します。
  */
 public class CarBase implements ActiveObject {
-    static int carIDCount=0; 
+    static int carIDCount = 0;
     public SimpleCarObj car;
     PVEWorld world;
     CarSim carSim;
@@ -25,12 +23,13 @@ public class CarBase implements ActiveObject {
      * CarBaseのコンストラクタです。
      */
     public CarBase() {
-        carID=carIDCount++;
+        carID = carIDCount++;
     }
-    public final void init(String a3url,PVEWorld world,CarSim cs) {
+
+    public final void init(String a3url, PVEWorld world, CarSim cs) {
         this.world = world;
         carSim = cs;
-        car = new SimpleCarObj(world,a3url);
+        car = new SimpleCarObj(world, a3url);
     }
 
     /**
@@ -44,8 +43,9 @@ public class CarBase implements ActiveObject {
      * 前進のための力(gEngineForce)、ハンドルの方向(gVehicleSteering:正->右,負->左)、
      * そしてブレーキの力(gBreakingForce)を指定して車をコントロールします。
      */
-    public void setForce(double gEngineForce,double gVehicleSteering,double gBreakingForce,double drift) {
-        car.setForce(gEngineForce,gVehicleSteering,gBreakingForce,drift);
+    public void setForce(double gEngineForce, double gVehicleSteering,
+            double gBreakingForce, double drift) {
+        car.setForce(gEngineForce, gVehicleSteering, gBreakingForce, drift);
     }
 
     /**
@@ -75,7 +75,7 @@ public class CarBase implements ActiveObject {
     public Vector3d getUnitVecX() {
         Quat4d q = getQuat();
         q.normalize();
-        return Util.trans(q,new Vector3d(1,0,0));
+        return Util.trans(q, new Vector3d(1, 0, 0));
     }
 
     /**
@@ -84,7 +84,7 @@ public class CarBase implements ActiveObject {
     public Vector3d getUnitVecY() {
         Quat4d q = getQuat();
         q.normalize();
-        return Util.trans(q,new Vector3d(0,1,0));
+        return Util.trans(q, new Vector3d(0, 1, 0));
     }
 
     /**
@@ -93,42 +93,39 @@ public class CarBase implements ActiveObject {
     public Vector3d getUnitVecZ() {
         Quat4d q = getQuat();
         q.normalize();
-        return Util.trans(q,new Vector3d(0,0,1));
+        return Util.trans(q, new Vector3d(0, 0, 1));
     }
 
     /**
-     * 弾丸を発射します。引数のベクトルは弾丸を発射したい方向を世界座標で
-     * 指定します。ただしこの車の進行方向と弾丸の発射方向が45度以上開いて
-     * いる場合は弾丸は発射されません。このメソッドを呼び出すと無条件で
-     * エネルギーを1消費します。
+     * 弾丸を発射します。引数のベクトルは弾丸を発射したい方向を世界座標で 指定します。ただしこの車の進行方向と弾丸の発射方向が45度以上開いて
+     * いる場合は弾丸は発射されません。このメソッドを呼び出すと無条件で エネルギーを1消費します。
      */
     public void shoot(Vector3d d) {
         energy = energy - 1;
-        if (d.length()<0.0001)
+        if (d.length() < 0.0001)
             return;
         d.normalize();
         Vector3d front = getUnitVecZ();
-        if (d.dot(front)<0.707)//0.707=1/1.41421356
+        if (d.dot(front) < 0.707)// 0.707=1/1.41421356
             return;
-        Vector3d v = new Vector3d(d);//vは弾丸の速度ベクトル
+        Vector3d v = new Vector3d(d);// vは弾丸の速度ベクトル
         v.scale(10.0);
         Vector3d l = getLoc();
-        l.add(new Vector3d(0.0,0.6,0.0));
-        d.scale(1.5);//計算上0.85より少し上なら良いはずだけど???
+        l.add(new Vector3d(0.0, 0.6, 0.0));
+        d.scale(1.5);// 計算上0.85より少し上なら良いはずだけど???
         l.add(d);
-        Bullet b = new Bullet(l,v);
+        Bullet b = new Bullet(l, v);
         b.setGravity(new Vector3d());
         world.add(b);
-        //carSim.addActiveObject(b);
+        // carSim.addActiveObject(b);
     }
 
     /**
-     * 現在のフィールドに存在している全ての車の情報を取得します。
-     * データの詳細についてはCarDataクラスを参照して下さい。
+     * 現在のフィールドに存在している全ての車の情報を取得します。 データの詳細についてはCarDataクラスを参照して下さい。
      */
     public ArrayList<CarData> getAllCarData() {
         ArrayList<CarData> ret = new ArrayList<CarData>();
-        for (CarBase c:carSim.getAllCar()) {
+        for (CarBase c : carSim.getAllCar()) {
             CarData cd = new CarData();
             cd.carID = c.getCarID();
             cd.loc = c.getLoc();
@@ -147,9 +144,10 @@ public class CarBase implements ActiveObject {
     public int getEnergy() {
         return energy;
     }
+
     public void hit() {
         energy = energy - 5;
-        System.out.println("車:"+carID+":いて!!!");
+        System.out.println("車:" + carID + ":いて!!!");
     }
 
     /**
@@ -158,21 +156,25 @@ public class CarBase implements ActiveObject {
     public double getTime() {
         return world.getTime();
     }
+
     /**
-     * この車をコントロールするプログラムを記述するメソッドです。
-     * このCarBaseを継承するクラスでは必ず、このメソッドを実装して
-     * 下さい。
+     * この車をコントロールするプログラムを記述するメソッドです。 このCarBaseを継承するクラスでは必ず、このメソッドを実装して 下さい。
      */
-    public void exec(){;};
-    //以下2012,08/18追加
-    Vector3d oldLoc=new Vector3d();
-    Vector3d vel=new Vector3d();
+    public void exec() {
+        ;
+    };
+
+    // 以下2012,08/18追加
+    Vector3d oldLoc = new Vector3d();
+    Vector3d vel = new Vector3d();
+
     public void beforeExec() {
         Vector3d loc = getLoc();
-        vel.sub(loc,oldLoc);
-        vel.scale(1.0/world.stepTime);
+        vel.sub(loc, oldLoc);
+        vel.scale(1.0 / world.stepTime);
         oldLoc = loc;
     }
+
     /**
      * 車の現在の速度を返します。
      */

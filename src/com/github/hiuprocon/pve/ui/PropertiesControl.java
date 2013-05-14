@@ -1,4 +1,5 @@
 package com.github.hiuprocon.pve.ui;
+
 //2012,11/03コピペ
 //2012,11/20修正
 //http://d.hatena.ne.jp/quasistatic/20111208/p1
@@ -36,13 +37,18 @@ public class PropertiesControl extends ResourceBundle.Control {
 
     @Override
     public List<String> getFormats(String baseName) {
-        if (baseName == null) throw new NullPointerException();
+        if (baseName == null)
+            throw new NullPointerException();
         return FORMATS;
     }
 
     @Override
-    public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload) throws IOException {
-        if (baseName == null || locale == null || format == null || loader == null) throw new NullPointerException();
+    public ResourceBundle newBundle(String baseName, Locale locale,
+            String format, ClassLoader loader, boolean reload)
+            throws IOException {
+        if (baseName == null || locale == null || format == null
+                || loader == null)
+            throw new NullPointerException();
         ResourceBundle bundle = null;
         if (format.equals(FORMAT)) {
             String bundleName = toBundleName(baseName, locale);
@@ -63,7 +69,8 @@ public class PropertiesControl extends ResourceBundle.Control {
             if (stream != null) {
                 BufferedReader reader = null;
                 try {
-                    reader = new BufferedReader(new InputStreamReader(stream, charset));
+                    reader = new BufferedReader(new InputStreamReader(stream,
+                            charset));
                     bundle = new PropertyResourceBundle(reader);
                 } catch (Exception e) {
                     e.printStackTrace();

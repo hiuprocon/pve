@@ -6,16 +6,18 @@ import com.bulletphysics.collision.shapes.*;
 //特にCompoundShapeでConcaveなやつをつくりたい時に重宝するはず．
 public class FreeShapeD extends PVEPart {
     CollisionShape cs;
-    public FreeShapeD(Type type,String a3url,CollisionShape cs) {
-    	this(type,1.0,a3url,cs);
+
+    public FreeShapeD(Type type, String a3url, CollisionShape cs) {
+        this(type, 1.0, a3url, cs);
     }
-    public FreeShapeD(Type type,double mass,String a3url,CollisionShape cs) {
-    	super(type,mass,a3url);
+
+    public FreeShapeD(Type type, double mass, String a3url, CollisionShape cs) {
+        super(type, mass, a3url);
         this.cs = cs;
-    	init();
+        init();
     }
 
     protected CollisionShape makeCollisionShape() {
-    	return cs;
+        return cs;
     }
 }

@@ -4,6 +4,6 @@ import com.bulletphysics.dynamics.vehicle.RaycastVehicle;
 
 public class CarConstraint extends Constraint {
     public CarConstraint(RaycastVehicle rv) {
-    	this.con = rv;
+        this.con = rv;
     }
 }

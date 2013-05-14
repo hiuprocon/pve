@@ -3,8 +3,7 @@ package com.github.hiuprocon.pve.car;
 import javax.vecmath.*;
 
 /**
- * 車に関するデータをひとまとめにして受け渡しをするための
- * クラスです。
+ * 車に関するデータをひとまとめにして受け渡しをするための クラスです。
  */
 public class CarData {
     /**

@@ -2,7 +2,6 @@ package com.github.hiuprocon.pve.ui;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
-
 import javax.swing.JTextArea;
 import javax.swing.text.Caret;
 import javax.swing.text.Document;

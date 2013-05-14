@@ -21,24 +21,24 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
     String workDir;
     String workDirURL;
     ArrayList<ActiveObject> activeObjects = new ArrayList<ActiveObject>();
-    boolean battleRunning = false;//一時停止中でもtrue
-    boolean simRunning = false;//一時停止中はfalse
+    boolean battleRunning = false;// 一時停止中でもtrue
+    boolean simRunning = false;// 一時停止中はfalse
     URLClassLoader classLoader;
     CarRaceGUI gui;
-    int NUM=12;
+    int NUM = 12;
     CheckPoint cps[];
     Deque<CheckPoint> checkPointStack;
 
     CarRaceImpl(String args[]) {
         prefs = Preferences.userNodeForPackage(this.getClass());
-        String carClass = prefs.get("carClass","test.TestCar01");
-        if (args.length>=1) {
+        String carClass = prefs.get("carClass", "test.TestCar01");
+        if (args.length >= 1) {
             carClass = args[0];
-            prefs.put("carClass",carClass);
+            prefs.put("carClass", carClass);
         }
-        carClasspath = prefs.get("carClasspath","System");
-        workDir = prefs.get("workDir",null);
-        workDirURL = prefs.get("workDirURL",null);
+        carClasspath = prefs.get("carClasspath", "System");
+        workDir = prefs.get("workDir", null);
+        workDirURL = prefs.get("workDirURL", null);
         checkPointStack = new ArrayDeque<CheckPoint>();
 
         world = new PVEWorld(PVEWorld.A3CANVAS);
@@ -47,13 +47,14 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
         world.addTask(this);
         world.addCollisionListener(this);
 
-        gui = new CarRaceGUI(this,carClass);
+        gui = new CarRaceGUI(this, carClass);
         gui.pack();
         gui.setVisible(true);
 
         world.addSubCanvas(gui.carCanvas);
     }
-    //clearの処理
+
+    // clearの処理
     void clearBattle() {
         if (simRunning)
             throw new IllegalStateException();
@@ -68,109 +69,126 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
         gui.clearTA();
         checkPointStack.clear();
     }
+
     void initBattle() {
         if (simRunning)
             throw new IllegalStateException();
         if (battleRunning)
             throw new IllegalStateException();
-        Ground g = new Ground("x-rzip:x-res:///res/stk_racetrack.zip!/racetrack.wrl");
+        Ground g = new Ground(
+                "x-rzip:x-res:///res/stk_racetrack.zip!/racetrack.wrl");
         world.add(g);
 
-        //CheckPoint配置
+        // CheckPoint配置
         cps = new CheckPoint[NUM];
         Vector3d loc = new Vector3d();
         Vector3d rot = new Vector3d();
-        cps[ 0] = new CheckPoint();
-        loc.set(  0,  4,-25);rot.set(0,0,0);
-        cps[ 0].setLocRot(loc,rot);
-        cps[ 1] = new CheckPoint();
-        loc.set(-37,  4,-56);rot.set(0,1.57,0);
-        cps[ 1].setLocRot(loc,rot);
-        cps[ 2] = new CheckPoint();
-        loc.set(-76,  4,  9);rot.set(0,0.78,0);
-        cps[ 2].setLocRot(loc,rot);
-        cps[ 3] = new CheckPoint();
-        loc.set(-21,  4, 20);rot.set(0,0,0);
-        cps[ 3].setLocRot(loc,rot);
-        cps[ 4] = new CheckPoint();
-        loc.set(-54,  4, 35);rot.set(0,0,0);
-        cps[ 4].setLocRot(loc,rot);
-        cps[ 5] = new CheckPoint();
-        loc.set(-16,  4, 35);rot.set(0,-0.78,0);
-        cps[ 5].setLocRot(loc,rot);
-        cps[ 6] = new CheckPoint();
-        loc.set(-23,  4,-39);rot.set(0,1.57,0);
-        cps[ 6].setLocRot(loc,rot);
-        cps[ 7] = new CheckPoint();
-        loc.set(-43,  4,  0);rot.set(0,1.57,0);
-        cps[ 7].setLocRot(loc,rot);
-        cps[ 8] = new CheckPoint();
-        loc.set(-53,  4,-38);rot.set(0,1.57,0);
-        cps[ 8].setLocRot(loc,rot);
-        cps[ 9] = new CheckPoint();
-        loc.set(-65,  9, 11);rot.set(0,0,0);
-        cps[ 9].setLocRot(loc,rot);
+        cps[0] = new CheckPoint();
+        loc.set(0, 4, -25);
+        rot.set(0, 0, 0);
+        cps[0].setLocRot(loc, rot);
+        cps[1] = new CheckPoint();
+        loc.set(-37, 4, -56);
+        rot.set(0, 1.57, 0);
+        cps[1].setLocRot(loc, rot);
+        cps[2] = new CheckPoint();
+        loc.set(-76, 4, 9);
+        rot.set(0, 0.78, 0);
+        cps[2].setLocRot(loc, rot);
+        cps[3] = new CheckPoint();
+        loc.set(-21, 4, 20);
+        rot.set(0, 0, 0);
+        cps[3].setLocRot(loc, rot);
+        cps[4] = new CheckPoint();
+        loc.set(-54, 4, 35);
+        rot.set(0, 0, 0);
+        cps[4].setLocRot(loc, rot);
+        cps[5] = new CheckPoint();
+        loc.set(-16, 4, 35);
+        rot.set(0, -0.78, 0);
+        cps[5].setLocRot(loc, rot);
+        cps[6] = new CheckPoint();
+        loc.set(-23, 4, -39);
+        rot.set(0, 1.57, 0);
+        cps[6].setLocRot(loc, rot);
+        cps[7] = new CheckPoint();
+        loc.set(-43, 4, 0);
+        rot.set(0, 1.57, 0);
+        cps[7].setLocRot(loc, rot);
+        cps[8] = new CheckPoint();
+        loc.set(-53, 4, -38);
+        rot.set(0, 1.57, 0);
+        cps[8].setLocRot(loc, rot);
+        cps[9] = new CheckPoint();
+        loc.set(-65, 9, 11);
+        rot.set(0, 0, 0);
+        cps[9].setLocRot(loc, rot);
         cps[10] = new CheckPoint();
-        loc.set(-40,  4, 55);rot.set(0,1.57,0);
-        cps[10].setLocRot(loc,rot);
+        loc.set(-40, 4, 55);
+        rot.set(0, 1.57, 0);
+        cps[10].setLocRot(loc, rot);
         cps[11] = new CheckPoint();
-        loc.set(  0,  4, 10);rot.set(0,0,0);
-        cps[11].setLocRot(loc,rot);
+        loc.set(0, 4, 10);
+        rot.set(0, 0, 0);
+        cps[11].setLocRot(loc, rot);
 
-        for (int i=0;i<NUM;i++) {
+        for (int i = 0; i < NUM; i++) {
             world.add(cps[i]);
-            cps[i].getMainA3().setUserData(String.format("cp%02d",i));
+            cps[i].getMainA3().setUserData(String.format("cp%02d", i));
         }
 
         classLoader = makeClassLoader(carClasspath);
 
         String carClass = gui.carClassTF.getText();
-        prefs.put("carClass",carClass);
-        //try{prefs.flush();}catch(Exception e){;}
+        prefs.put("carClass", carClass);
+        // try{prefs.flush();}catch(Exception e){;}
         try {
             Class<?> theClass = classLoader.loadClass(carClass);
-            Class<? extends RaceCarBase> tClass = theClass.asSubclass(RaceCarBase.class);
+            Class<? extends RaceCarBase> tClass = theClass
+                    .asSubclass(RaceCarBase.class);
             car = tClass.newInstance();
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.out.println("Class Load Error!!!");
             e.printStackTrace();
         }
 
-        //下の行の3.1という数値は本来PI=3.141592...ジンバルロック対策でわざと誤差を入れた
-        car.car.init("x-res:///res/stk_tux.a3",world,this);
+        // 下の行の3.1という数値は本来PI=3.141592...ジンバルロック対策でわざと誤差を入れた
+        car.car.init("x-res:///res/stk_tux.a3", world, this);
         world.add(car.car.car);
-        car.car.car.setLocRot(new Vector3d( 0,0.8,-1),new Vector3d(0,3.1,0));
+        car.car.car
+                .setLocRot(new Vector3d(0, 0.8, -1), new Vector3d(0, 3.1, 0));
 
         gui.setCar(car.car);
         activeObjects.add(car.car);
         gui.updateCarInfo(car.car);
         gui.a3csController.init();
     }
-    
+
     URLClassLoader makeClassLoader(String s) {
         try {
             URLClassLoader cl = null;
             URL urls[] = null;
-            if (s==null) {
+            if (s == null) {
                 urls = new URL[0];
             } else if (s.equals("System")) {
                 urls = new URL[0];
             } else if (s.equals("IDE")) {
-                if (workDirURL==null) {
+                if (workDirURL == null) {
                     urls = new URL[0];
                 } else {
-                    urls = new URL[]{new URL(workDirURL)};
+                    urls = new URL[] { new URL(workDirURL) };
                 }
             } else {
-                urls = new URL[]{new URL(s)};
+                urls = new URL[] { new URL(s) };
             }
             final URL urlsF[] = urls;
             final ClassLoader pCL = CarBase.class.getClassLoader();
-            cl = AccessController.doPrivilegedWithCombiner(new PrivilegedAction<URLClassLoader>() {
-                public URLClassLoader run() {
-                    return new URLClassLoader(urlsF,pCL);
-                }
-            });
+            cl = AccessController
+                    .doPrivilegedWithCombiner(new PrivilegedAction<URLClassLoader>() {
+                        public URLClassLoader run() {
+                            return new URLClassLoader(urlsF, pCL);
+                        }
+                    });
 
             return cl;
         } catch (MalformedURLException e) {
@@ -180,10 +198,11 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
             return null;
         }
     }
+
     void startBattle() {
         if (simRunning) {
             return;
-            //throw new IllegalStateException();
+            // throw new IllegalStateException();
         }
         if (battleRunning) {
             world.resume();
@@ -197,6 +216,7 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
             battleRunning = true;
         }
     }
+
     void pauseBattle() {
         if (!battleRunning)
             return;
@@ -208,13 +228,15 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
             simRunning = true;
         }
     }
+
     void stopBattle() {
         battleRunning = false;
-        //clearBattle();
+        // clearBattle();
         world.pause();
         simRunning = false;
         gui.setParamEditable(true);
     }
+
     @Override
     public ArrayList<CarBase> getAllCar() {
         ArrayList<CarBase> ret = new ArrayList<CarBase>();
@@ -238,37 +260,37 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
 
     @Override
     public void collided(PVEPart aa, PVEPart bb) {
-    	PVEObject a = aa.getObject();
-    	PVEObject b = bb.getObject();
-        if ((a instanceof CheckPoint)||(b instanceof CheckPoint)) {
+        PVEObject a = aa.getObject();
+        PVEObject b = bb.getObject();
+        if ((a instanceof CheckPoint) || (b instanceof CheckPoint)) {
             CheckPoint cp = null;
             PVEObject other = null;
             if (a instanceof CheckPoint) {
-                cp = (CheckPoint)a;
+                cp = (CheckPoint) a;
                 other = b;
             } else {
-                cp = (CheckPoint)b;
+                cp = (CheckPoint) b;
                 other = a;
             }
             if (other instanceof SimpleCarObj) {
-                if (checkPointStack.peek()!=cp) {
+                if (checkPointStack.peek() != cp) {
                     checkPointStack.push(cp);
-                    String t = String.format("%4.2f",world.getTime());
-                    System.out.println(cp.getMainA3().getUserData()+":"+t);
+                    String t = String.format("%4.2f", world.getTime());
+                    System.out.println(cp.getMainA3().getUserData() + ":" + t);
                 }
-                if (cp==cps[NUM-1]) {
+                if (cp == cps[NUM - 1]) {
                     finishBattle();
                 }
-            } else if (other instanceof Ground){
+            } else if (other instanceof Ground) {
                 ;
-            } else if (other instanceof Bullet){
+            } else if (other instanceof Bullet) {
                 ;
-            } else if (other instanceof CheckPoint){
+            } else if (other instanceof CheckPoint) {
                 ;
             } else {
             }
         }
-        //System.out.println("gaha a:"+a.a3.getUserData()+" b:"+b.a3.getUserData());
+        // System.out.println("gaha a:"+a.a3.getUserData()+" b:"+b.a3.getUserData());
     }
 
     @Override
@@ -278,58 +300,63 @@ class CarRaceImpl implements Runnable, CollisionListener, CarSim {
             tmp.clear();
             tmp.addAll(activeObjects);
         }
-        for (ActiveObject o: tmp) {
+        for (ActiveObject o : tmp) {
             if (o instanceof CarBase) {
-                ((CarBase)o).beforeExec();
+                ((CarBase) o).beforeExec();
             }
             o.exec();
         }
         gui.updateCarInfo(car.car);
         gui.updateTime(world.getTime());
-//GAHA
-if (debugCount>50){
-//cps[0].setLoc(0,4,-30);
-debugCount=0;
-}
-debugCount++;
+        // GAHA
+        if (debugCount > 50) {
+            // cps[0].setLoc(0,4,-30);
+            debugCount = 0;
+        }
+        debugCount++;
     }
-int debugCount=0;
+
+    int debugCount = 0;
 
     void finishBattle() {
         world.pause();
         simRunning = false;
-        boolean goal=true;
-        for (int i=0;i<NUM;i++) {
-            if (checkPointStack.isEmpty()){
-                goal=false;
+        boolean goal = true;
+        for (int i = 0; i < NUM; i++) {
+            if (checkPointStack.isEmpty()) {
+                goal = false;
                 break;
             }
             CheckPoint cp = checkPointStack.removeLast();
-            if (cps[i]!=cp) {
-                goal=false;
+            if (cps[i] != cp) {
+                goal = false;
                 break;
             }
         }
-        String message = goal ? "goal":"fail";
-        message = message+"\ntime:"+String.format("%4.2f",world.getTime());
-        JOptionPane.showMessageDialog(gui,message);
+        String message = goal ? "goal" : "fail";
+        message = message + "\ntime:" + String.format("%4.2f", world.getTime());
+        JOptionPane.showMessageDialog(gui, message);
 
         stopBattle();
     }
+
     void changeCP(String cp) {
         carClasspath = cp;
-        prefs.put("carClasspath",carClasspath);
+        prefs.put("carClasspath", carClasspath);
     }
+
     void setWorkDirURL(String wdu) {
         workDirURL = wdu;
-        if (workDirURL!=null)
-            prefs.put("workDirURL",workDirURL);
+        if (workDirURL != null)
+            prefs.put("workDirURL", workDirURL);
     }
+
     void setWorkDir(String wd) {
         workDir = wd;
-        if (workDir!=null)
-            prefs.put("workDir",workDir);
+        if (workDir != null)
+            prefs.put("workDir", workDir);
     }
+
     void fastForward(boolean b) {
         world.fastForward(b);
     }
