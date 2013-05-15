@@ -85,6 +85,11 @@ public class Simulator implements CollisionListener {
         bar1.setLocRev(-23, 6, 0, 90, 0, 0);
         w.add(bar1);
 
+        bar2 = new CylinderObj(Type.STATIC, 0, 100, 0.1, "x-res:///res/Cylinder.wrl");
+        bar2.setUserData("bar2");
+        bar2.setLocRev( 23, 6, 0, 90, 0, 0);
+        w.add(bar2);
+
         slope1 = new SlopeObj(10, 1, 10);
         slope1.setUserData("slope1");
         slope1.setLocRev(-42.5, 0.5, 0, 0, -90, 0);
@@ -97,14 +102,14 @@ public class Simulator implements CollisionListener {
 
         lifter1 = new Lifter();
         lifter1.setUserData("elevator1");
-        //lifter1.setLocRev(-32.5, 0.5, 0, 0, 0, 0);
-        lifter1.setLocRev(-32.5, -0.5, 0, 0, 0, 0);
+        lifter1.setLocRev(-32.5, 0.5, 0, 0, 0, 0);
+        //lifter1.setLocRev(-32.5, -0.5, 0, 0, 0, 0);
         w.add(lifter1);
 
         lifter2 = new Lifter();
         lifter2.setUserData("elevator2");
-        //lifter2.setLocRev(32.5, 0.5, 0, 0, 0, 0);
-        lifter2.setLocRev(32.5, -0.5, 0, 0, 0, 0);
+        lifter2.setLocRev(32.5, 0.5, 0, 0, 0, 0);
+        //lifter2.setLocRev(32.5, -0.5, 0, 0, 0, 0);
         w.add(lifter2);
 
         switch1 = new BoxObj(Type.GHOST, 1, new Vector3d(10, 1, 10),
