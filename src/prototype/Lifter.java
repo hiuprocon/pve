@@ -62,31 +62,35 @@ public class Lifter extends PVEObject {
         up = false;
     }
 
+    double lowerLinLimit = -3.5;
+    double upperLinLimit =  0.5;
     void slideUp() {
-        // System.out.println("GAHA:slideUp");
-        rightSlider.setLowerLinLimit(-4.5);
-        rightSlider.setUpperLinLimit(-0.5);
+        //double linDepth = rightSlider.getLinearPos();
+        //System.out.println("GAHA:slideUp"+linDepth);
+        rightSlider.setLowerLinLimit(lowerLinLimit);
+        rightSlider.setUpperLinLimit(upperLinLimit);
         rightSlider.setPoweredLinMotor(true);
         rightSlider.setMaxLinMotorForce(10.0);
         rightSlider.setTargetLinMotorVelocity(-5);
 
-        leftSlider.setLowerLinLimit(-4.5);
-        leftSlider.setUpperLinLimit(-0.5);
+        leftSlider.setLowerLinLimit(lowerLinLimit);
+        leftSlider.setUpperLinLimit(upperLinLimit);
         leftSlider.setPoweredLinMotor(true);
         leftSlider.setMaxLinMotorForce(10.0);
         leftSlider.setTargetLinMotorVelocity(-5);
     }
 
     void slideDown() {
-        // System.out.println("GAHA:slideDown");
-        rightSlider.setLowerLinLimit(-4.5);
-        rightSlider.setUpperLinLimit(-0.5);
+        //double linDepth = rightSlider.getLinearPos();
+        //System.out.println("GAHA:slideDown"+linDepth);
+        rightSlider.setLowerLinLimit(lowerLinLimit);
+        rightSlider.setUpperLinLimit(upperLinLimit);
         rightSlider.setPoweredLinMotor(true);
         rightSlider.setMaxLinMotorForce(10.0);
         rightSlider.setTargetLinMotorVelocity(5);
 
-        leftSlider.setLowerLinLimit(-4.5);
-        leftSlider.setUpperLinLimit(-0.5);
+        leftSlider.setLowerLinLimit(lowerLinLimit);
+        leftSlider.setUpperLinLimit(upperLinLimit);
         leftSlider.setPoweredLinMotor(true);
         leftSlider.setMaxLinMotorForce(10.0);
         leftSlider.setTargetLinMotorVelocity(5);
@@ -95,17 +99,17 @@ public class Lifter extends PVEObject {
     void lockSlider() {
         double linDepth = rightSlider.getLinearPos();
         //System.out.println("GAHA:lockSlider" + linDepth);
-        if (linDepth < -4.5)
-            linDepth = -4.5;
-        if (linDepth > -0.5)
-            linDepth = -0.5;
+        if (linDepth < lowerLinLimit)
+            linDepth = lowerLinLimit;
+        if (linDepth > upperLinLimit)
+            linDepth = upperLinLimit;
         rightSlider.setLowerLinLimit(linDepth);
         rightSlider.setUpperLinLimit(linDepth);
         linDepth = leftSlider.getLinearPos();
-        if (linDepth < -4.5)
-            linDepth = -4.5;
-        if (linDepth > -0.5)
-            linDepth = -0.5;
+        if (linDepth < lowerLinLimit)
+            linDepth = lowerLinLimit;
+        if (linDepth > upperLinLimit)
+            linDepth = upperLinLimit;
         leftSlider.setLowerLinLimit(linDepth);
         leftSlider.setUpperLinLimit(linDepth);
     }

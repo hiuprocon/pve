@@ -17,15 +17,9 @@ public class Test implements CollisionListener {
                 "x-rzip:x-res:///res/stk_racetrack.zip!/racetrack.wrl");
         w.add(ground);
 
-        Luggage o = new Luggage();
-        o.setLocRev(0, 2, 5, 0, 90, 0);
-        w.add(o);
-        SlopeObj s = new SlopeObj(3, 1, 10);
-        s.setLocRev(0, 0.5, 30, 0, 180, 0);
-        w.add(s);
-        Obstacle ob = new Obstacle(new Vector3d(1, 1, 3), new Vector3d(-0.1, 0,
-                0.1));
-        w.add(ob);
+        Chain chain = new Chain();
+        chain.setLocRev(0, 2, 5, 0, 0, 0);
+        w.add(chain);
 
         // KeyboardForkLift c = new
         // KeyboardForkLift(w,"x-res:///res/stk_tux.a3");
