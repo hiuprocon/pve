@@ -7,26 +7,26 @@ public class CylinderObj extends PVEObject {
     String a3url;
     double mass;
     double height;
-    double radius;
+    double diameter;
     Cylinder cylinder;
 
     public CylinderObj() {
         this(Type.DYNAMIC, 1.0, 1, 1, "x-res:///res/Cylinder.wrl");
     }
 
-    public CylinderObj(Type type, double mass, double height, double radius,
+    public CylinderObj(Type type, double mass, double height, double diameter,
             String a3url) {
         this.type = type;
         this.mass = mass;
         this.a3url = a3url;
         this.height = height;
-        this.radius = radius;
+        this.diameter = diameter;
         init();
     }
 
     @Override
     protected PVEPart[] createParts() {
-        cylinder = new Cylinder(type, mass, height, radius, a3url);
+        cylinder = new Cylinder(type, mass, height, diameter, a3url);
         // cylinder.setInitLocRot(0,0,0, 0,0,0);
         return new PVEPart[] { cylinder };
     }

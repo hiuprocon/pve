@@ -10,6 +10,8 @@ import jp.sourceforge.acerola3d.a3.Util;
 
 public class CarA extends SimpleCarObj implements PVEMsgListener {
     Simulator simulator;
+    double speed;
+    double handle;
 
     public CarA(Simulator simulator, int port) {
         super(simulator.w, "x-res:///res/prototype/carA/carA.a3", shassisShape());
@@ -41,7 +43,18 @@ public class CarA extends SimpleCarObj implements PVEMsgListener {
         b3.basis.rotY(-0.785f);
         compound.addChildShape(b3, s3);
 
+        CollisionShape s4 = new CylinderShape(new Vector3f(0.1f, 1.0f, 0.1f));
+        Transform b4 = new Transform();
+        b4.setIdentity();
+        b4.origin.set(0.0f, 1.0f, 0.0f);
+        compound.addChildShape(b4, s4);
+
         return compound;
+    }
+
+    @Override
+    protected void postSimulation() {
+        setForce(speed,handle,0,0);
     }
 
     @Override
@@ -59,11 +72,10 @@ public class CarA extends SimpleCarObj implements PVEMsgListener {
 
     String msgDrive(String line) {
         String s[] = line.split("\\s");
-        double speed = Double.parseDouble(s[1]);
-        double handle = Double.parseDouble(s[2]);
+        speed = Double.parseDouble(s[1]);
+        handle = Double.parseDouble(s[2]);
         speed = 500*speed;
         handle = 2*handle;
-        setForce(speed, handle, 0, 0);
         return "OK";
     }
     String msgGetLoc(String line) {

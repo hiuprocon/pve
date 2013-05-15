@@ -14,6 +14,8 @@ public class Simulator implements CollisionListener {
     PVEObject wall4;
     PVEObject wall5;
     PVEObject wall6;
+    PVEObject bar1;
+    PVEObject bar2;
     PVEObject slope1;
     PVEObject slope2;
     Lifter lifter1;
@@ -78,6 +80,11 @@ public class Simulator implements CollisionListener {
         wall6.setLocRev(125.5, 2.5, 0, 0, 0, 0);
         w.add(wall6);
 
+        bar1 = new CylinderObj(Type.STATIC, 0, 100, 0.1, "x-res:///res/Cylinder.wrl");
+        bar1.setUserData("bar1");
+        bar1.setLocRev(-23, 6, 0, 90, 0, 0);
+        w.add(bar1);
+
         slope1 = new SlopeObj(10, 1, 10);
         slope1.setUserData("slope1");
         slope1.setLocRev(-42.5, 0.5, 0, 0, -90, 0);
@@ -101,13 +108,13 @@ public class Simulator implements CollisionListener {
         w.add(lifter2);
 
         switch1 = new BoxObj(Type.GHOST, 1, new Vector3d(10, 1, 10),
-                "x-res:///res/ClearBox.wrl");
+                "x-res:///res/prototype/Switch.wrl");
         switch1.setUserData("switch1");
         switch1.setLocRev(-17.5, 0.5, 10, 0, 0, 0);
         w.add(switch1);
 
         switch2 = new BoxObj(Type.GHOST, 1, new Vector3d(10, 1, 10),
-                "x-res:///res/ClearBox.wrl");
+                "x-res:///res/prototype/Switch.wrl");
         switch2.setUserData("switch2");
         switch2.setLocRev(17.5, 0.5, -10, 0, 0, 0);
         w.add(switch2);
