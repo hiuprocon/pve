@@ -13,6 +13,9 @@ public class Client implements Runnable {
     public Client(int port) {
         this.port = port;
         new Thread(this).start();
+        while(closed==true) {
+            try{Thread.sleep(10);}catch(Exception e){;}
+        }
     }
 
     public void run() {

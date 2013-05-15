@@ -96,6 +96,10 @@ public class CarB extends PVEObject implements PVEMsgListener {
         Vector3d angVel = new Vector3d(0, handle, 0);
         loc.add(front);
         rev.add(angVel);
+        if (loc.x<-25) loc.x=-25;
+        if (loc.x> 25) loc.x= 25;
+        if (loc.z<-50) loc.z=-50;
+        if (loc.z> 50) loc.z= 50;
         chassis.setLoc(loc);
         chassis.setRev(rev);
     }

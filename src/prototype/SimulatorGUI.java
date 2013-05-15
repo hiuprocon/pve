@@ -1,5 +1,6 @@
 package prototype;
 
+import java.awt.Dimension;
 import javax.swing.*;
 import javax.vecmath.*;
 import jp.sourceforge.acerola3d.a3.*;
@@ -11,6 +12,7 @@ public class SimulatorGUI extends JFrame {
     A3SubCanvas sc1;
     A3SubCanvas sc2;
     A3SubCanvas sc3;
+    JTextArea textArea;
     Vector3d lookAt = new Vector3d(0.0, 0.0, 6.0);
     Vector3d camera = new Vector3d(0.0, 3.0, -6.0);
     Vector3d up = new Vector3d(0.0, 1.0, 0.0);
@@ -18,6 +20,11 @@ public class SimulatorGUI extends JFrame {
     public SimulatorGUI(A3CanvasInterface c) {
         super("Simulator");
         HBox box1 = new HBox();
+        VBox box3 = new VBox();
+        textArea = new JTextArea();
+        textArea.setEditable(false);
+        JScrollPane sp = new JScrollPane(textArea);
+        sp.setPreferredSize(new Dimension(800,150));
         canvas = (A3Canvas) c;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         double y = 50;
@@ -26,7 +33,7 @@ public class SimulatorGUI extends JFrame {
         canvas.setCameraLookAtPointImmediately(0, 0, 0);
         canvas.setNavigationMode(A3CanvasInterface.NaviMode.SIMPLE,
                 Math.sqrt(y * y + z * z));
-        canvas.setSize(800, 700);
+        canvas.setSize(800, 550);
 
         VBox box2 = new VBox();
 
@@ -42,8 +49,10 @@ public class SimulatorGUI extends JFrame {
         canvas.addA3SubCanvas(sc3);
         box2.myAdd(sc3, 1);
 
+        box3.myAdd(sp,1);
+        box3.myAdd(canvas,1);
         box1.myAdd(box2, 1);
-        box1.myAdd(canvas, 1);
+        box1.myAdd(box3, 1);
         add(box1);
         //pack();
         setBounds(500,0,1000,700);
@@ -68,5 +77,8 @@ public class SimulatorGUI extends JFrame {
         sc3.setAvatar(c.getMainA3());
         sc3.setNavigationMode(A3CanvasInterface.NaviMode.CHASE, lookAt, camera,
                 up, 10.0);
+    }
+    public void appendText(String s) {
+        textArea.append(s+"\n");
     }
 }

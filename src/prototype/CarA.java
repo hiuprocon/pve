@@ -62,7 +62,7 @@ public class CarA extends SimpleCarObj implements PVEMsgListener {
         double speed = Double.parseDouble(s[1]);
         double handle = Double.parseDouble(s[2]);
         speed = 500*speed;
-        handle = 3*handle;
+        handle = 2*handle;
         setForce(speed, handle, 0, 0);
         return "OK";
     }

@@ -94,7 +94,7 @@ public class Lifter extends PVEObject {
 
     void lockSlider() {
         double linDepth = rightSlider.getLinearPos();
-        System.out.println("GAHA:lockSlider" + linDepth);
+        //System.out.println("GAHA:lockSlider" + linDepth);
         if (linDepth < -4.5)
             linDepth = -4.5;
         if (linDepth > -0.5)
