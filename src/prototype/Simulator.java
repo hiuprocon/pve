@@ -27,9 +27,9 @@ public class Simulator implements CollisionListener {
     Obstacle obstacle1;
     Obstacle obstacle2;
     //CarA carA1;
-    CarC carA1;
-    CarA carA2;
-    CarB carB;
+    CarInterface car1;
+    CarInterface car2;
+    CarInterface car3;
     ArrayList<Jewel> jewels = new ArrayList<Jewel>();
     SimulatorGUI gui;
 
@@ -150,24 +150,24 @@ public class Simulator implements CollisionListener {
         w.add(obstacle2);
 
         //carA1 = new CarA(this, 10000);
-        carA1 = new CarC(this, 10000);
-        carA1.setUserData("carA1");
-        carA1.setLocRev(-80, 0, 0, 0, 90, 0);
-        w.add(carA1);
-        //gui.setCarA1(carA1);
-        gui.setCarC1(carA1);
+        car1 = new CarC(this, 10000);
+        car1.setUserData("carA1");
+        car1.setLocRev(-80, 0, 0, 0, 90, 0);
+        w.add((PVEObject)car1);
+        gui.setCar1(car1);
 
-        carA2 = new CarA(this, 20000);
-        carA2.setUserData("carA2");
-        carA2.setLocRev(80, 0, 0, 0, -90, 0);
-        w.add(carA2);
-        gui.setCarA2(carA2);
+        car2 = new CarA(this, 20000);
+        car2.setUserData("carA2");
+        car2.setLocRev(80, 0, 0, 0, -90, 0);
+        w.add((PVEObject)car2);
+        gui.setCar2(car2);
 
-        carB = new CarB(this, 30000);
-        carB.setUserData("carB");
-        carB.setLocRev(0, 0, 0, 0, 90, 0);
-        w.add(carB);
-        gui.setCarB(carB);
+        //car3 = new CarB(this, 30000);
+        car3 = new CarC(this, 30000);
+        car3.setUserData("carB");
+        car3.setLocRev(0, 0, 0, 0, 90, 0);
+        w.add((PVEObject)car3);
+        gui.setCar3(car3);
 
         for (int i = 0; i < 10; i++) {
             Jewel j = new Jewel();
@@ -197,13 +197,13 @@ public class Simulator implements CollisionListener {
             return;
         // System.out.println("collided "+(String)(aa.getUserData())+":"+
         // ((String)bb.getUserData()));
-        if (aa == switch1 && bb == carB)
+        if (aa == switch1 && bb == car3)
             lifter1.setUp();
-        if (aa == carB && bb == switch1)
+        if (aa == car3 && bb == switch1)
             lifter1.setUp();
-        if (aa == switch2 && bb == carB)
+        if (aa == switch2 && bb == car3)
             lifter2.setUp();
-        if (aa == carB && bb == switch2)
+        if (aa == car3 && bb == switch2)
             lifter2.setUp();
         if ((aa == goal1 || aa == goal2) && bb instanceof Jewel) {
             gui.appendText("goal!");

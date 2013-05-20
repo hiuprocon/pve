@@ -10,7 +10,7 @@ import com.bulletphysics.linearmath.Transform;
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.ui.Server;
 
-public class CarC extends PVEObject implements PVEMsgListener {
+public class CarC extends PVEObject implements PVEMsgListener, CarInterface {
     Simulator simulator;
     PVEPart chassis;
     double speed;

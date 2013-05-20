@@ -61,27 +61,21 @@ public class SimulatorGUI extends JFrame {
         canvas.setBackground(new A3Background(0.1f, 0.3f, 0.5f));
     }
 
-    public void setCarA1(CarA c) {
+    public void setCar1(CarInterface c) {
         sc1.setAvatar(c.getMainA3());
         sc1.setNavigationMode(A3CanvasInterface.NaviMode.CHASE, lookAt, camera,
                 up, 10.0);
     }
 
-    public void setCarA2(CarA c) {
+    public void setCar2(CarInterface c) {
         sc2.setAvatar(c.getMainA3());
         sc2.setNavigationMode(A3CanvasInterface.NaviMode.CHASE, lookAt, camera,
                 up, 10.0);
     }
 
-    public void setCarB(CarB c) {
+    public void setCar3(CarInterface c) {
         sc3.setAvatar(c.getMainA3());
         sc3.setNavigationMode(A3CanvasInterface.NaviMode.CHASE, lookAt, camera,
-                up, 10.0);
-    }
-
-    public void setCarC1(CarC c) {
-        sc1.setAvatar(c.getMainA3());
-        sc1.setNavigationMode(A3CanvasInterface.NaviMode.CHASE, lookAt, camera,
                 up, 10.0);
     }
 

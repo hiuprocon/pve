@@ -8,7 +8,7 @@ import com.bulletphysics.linearmath.*;
 import javax.vecmath.*;
 import jp.sourceforge.acerola3d.a3.Util;
 
-public class CarA extends SimpleCarObj implements PVEMsgListener {
+public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
     Simulator simulator;
     double speed;
     double handle;

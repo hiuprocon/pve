@@ -7,7 +7,7 @@ import com.github.hiuprocon.pve.ui.Server;
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.linearmath.*;
 
-public class CarB extends PVEObject implements PVEMsgListener {
+public class CarB extends PVEObject implements PVEMsgListener, CarInterface {
     Simulator simulator;
     // FreeShapeD chassis;
     PVEPart chassis;
