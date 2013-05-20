@@ -1,25 +1,29 @@
 package prototype;
 
-import com.github.hiuprocon.pve.core.*;
-import com.github.hiuprocon.pve.obj.*;
-import com.github.hiuprocon.pve.ui.Server;
-import com.bulletphysics.collision.shapes.*;
-import com.bulletphysics.linearmath.*;
 import javax.vecmath.*;
 import jp.sourceforge.acerola3d.a3.Util;
+import com.bulletphysics.collision.shapes.BoxShape;
+import com.bulletphysics.collision.shapes.CollisionShape;
+import com.bulletphysics.collision.shapes.CompoundShape;
+import com.bulletphysics.collision.shapes.CylinderShape;
+import com.bulletphysics.linearmath.Transform;
+import com.github.hiuprocon.pve.core.*;
+import com.github.hiuprocon.pve.ui.Server;
 
-public class CarA extends SimpleCarObj implements PVEMsgListener {
+public class CarC extends PVEObject implements PVEMsgListener {
     Simulator simulator;
+    PVEPart chassis;
     double speed;
     double handle;
 
-    public CarA(Simulator simulator, int port) {
-        super(simulator.w, "x-res:///res/prototype/carA/carA.a3", shassisShape());
+    public CarC(Simulator simulator,int port) {
         this.simulator = simulator;
-        new Server(port, this);
+        init();
+        new Server(port,this);
     }
 
-    static CollisionShape shassisShape() {
+    @Override
+    protected PVEPart[] createParts() {
         CompoundShape compound = new CompoundShape();
 
         CollisionShape chassisShape = new BoxShape(new Vector3f(0.4f, 0.25f,
@@ -49,12 +53,37 @@ public class CarA extends SimpleCarObj implements PVEMsgListener {
         b4.origin.set(0.0f, 1.0f, 0.0f);
         compound.addChildShape(b4, s4);
 
-        return compound;
+        chassis = new FreeShapeD(Type.DYNAMIC, 10.0,"x-res:///res/prototype/carA/chassis.wrl",compound);
+        chassis.setInitLocRev(0, 0, 0, 0, 0, 0);
+        chassis.disableDeactivation(true);
+        chassis.setDamping(0.9, 0.0);
+        // chassis.setAngularFactor(0);
+        return new PVEPart[] { chassis };
+    }
+
+    @Override
+    protected Constraint[] createConstraints() {
+        return new Constraint[] {};
+    }
+
+    @Override
+    protected PVEPart getMainPart() {
+        return chassis;
+    }
+
+    public void drive(double speed, double handle) {
+        this.speed = speed;
+        this.handle = handle;
     }
 
     @Override
     protected void postSimulation() {
-        setForce(speed,handle,0,0);
+        Quat4d q = chassis.getQuat();
+        Vector3d front = Util.trans(q, new Vector3d(0, 0, 1));
+        front.scale(10 * speed);
+        Vector3d angVel = new Vector3d(0, handle, 0);
+        chassis.applyCentralForce(front);
+        chassis.setAngularVelocity(angVel);
     }
 
     @Override
@@ -72,10 +101,11 @@ public class CarA extends SimpleCarObj implements PVEMsgListener {
 
     String msgDrive(String line) {
         String s[] = line.split("\\s");
-        speed = Double.parseDouble(s[1]);
-        handle = Double.parseDouble(s[2]);
-        speed = 500*speed;
-        handle = 2*handle;
+        double speed = Double.parseDouble(s[1]);
+        double handle = Double.parseDouble(s[2]);
+        speed = 20*speed;
+        handle = -0.5*handle;
+        drive(speed, handle);
         return "OK";
     }
     String msgGetLoc(String line) {

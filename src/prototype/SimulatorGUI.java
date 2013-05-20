@@ -78,6 +78,13 @@ public class SimulatorGUI extends JFrame {
         sc3.setNavigationMode(A3CanvasInterface.NaviMode.CHASE, lookAt, camera,
                 up, 10.0);
     }
+
+    public void setCarC1(CarC c) {
+        sc1.setAvatar(c.getMainA3());
+        sc1.setNavigationMode(A3CanvasInterface.NaviMode.CHASE, lookAt, camera,
+                up, 10.0);
+    }
+
     public void appendText(String s) {
         textArea.append(s+"\n");
     }

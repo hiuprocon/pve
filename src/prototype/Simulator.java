@@ -26,7 +26,8 @@ public class Simulator implements CollisionListener {
     PVEObject goal2;
     Obstacle obstacle1;
     Obstacle obstacle2;
-    CarA carA1;
+    //CarA carA1;
+    CarC carA1;
     CarA carA2;
     CarB carB;
     ArrayList<Jewel> jewels = new ArrayList<Jewel>();
@@ -80,12 +81,12 @@ public class Simulator implements CollisionListener {
         wall6.setLocRev(125.5, 2.5, 0, 0, 0, 0);
         w.add(wall6);
 
-        bar1 = new CylinderObj(Type.STATIC, 0, 100, 0.1, "x-res:///res/Cylinder.wrl");
+        bar1 = new CylinderObj(Type.STATIC, 0, 100, 0.4, "x-res:///res/Cylinder.wrl");
         bar1.setUserData("bar1");
         bar1.setLocRev(-23, 6, 0, 90, 0, 0);
         w.add(bar1);
 
-        bar2 = new CylinderObj(Type.STATIC, 0, 100, 0.1, "x-res:///res/Cylinder.wrl");
+        bar2 = new CylinderObj(Type.STATIC, 0, 100, 0.4, "x-res:///res/Cylinder.wrl");
         bar2.setUserData("bar2");
         bar2.setLocRev( 23, 6, 0, 90, 0, 0);
         w.add(bar2);
@@ -136,21 +137,25 @@ public class Simulator implements CollisionListener {
         goal2.setLocRev(0, 0.5, -45, 0, 0, 0);
         w.add(goal2);
 
-        obstacle1 = new Obstacle(1,new Vector3d(-50, 1.5, 0), new Vector3d(-0.3,
-                0, 0.3));
+        obstacle1 = new Obstacle(1,new Vector3d(-145, 1.5, 0),
+                //new Vector3d(-0.3, 0, 0.3));
+                new Vector3d(0, 0, 0));
         obstacle1.setUserData("obstacle1");
         w.add(obstacle1);
 
-        obstacle2 = new Obstacle(2,new Vector3d( 50, 1.5, 0), new Vector3d(0.4,
-                0, -0.5));
+        obstacle2 = new Obstacle(2,new Vector3d( 145, 1.5, 0),
+                //new Vector3d(0.4, 0, -0.5));
+                new Vector3d(0, 0, 0));
         obstacle2.setUserData("obstacle2");
         w.add(obstacle2);
 
-        carA1 = new CarA(this, 10000);
+        //carA1 = new CarA(this, 10000);
+        carA1 = new CarC(this, 10000);
         carA1.setUserData("carA1");
         carA1.setLocRev(-80, 0, 0, 0, 90, 0);
         w.add(carA1);
-        gui.setCarA1(carA1);
+        //gui.setCarA1(carA1);
+        gui.setCarC1(carA1);
 
         carA2 = new CarA(this, 20000);
         carA2.setUserData("carA2");
@@ -167,8 +172,8 @@ public class Simulator implements CollisionListener {
         for (int i = 0; i < 10; i++) {
             Jewel j = new Jewel();
             j.setUserData("jA1." + i);
-            double x = 70 * Math.random() - 50 - 80;
-            double z = 70 * Math.random() - 50;
+            double x = 60 * Math.random() - 30 - 85;
+            double z = 80 * Math.random() - 40;
             j.setLocRev(x, 2, z, 0, 0, 0);
             w.add(j);
             jewels.add(j);
@@ -176,8 +181,8 @@ public class Simulator implements CollisionListener {
         for (int i = 0; i < 10; i++) {
             Jewel j = new Jewel();
             j.setUserData("jA2." + i);
-            double x = 70 * Math.random() - 50 + 80;
-            double z = 70 * Math.random() - 50;
+            double x = 60 * Math.random() - 30 + 85;
+            double z = 80 * Math.random() - 40;
             j.setLocRev(x, 2, z, 0, 0, 0);
             w.add(j);
             jewels.add(j);
