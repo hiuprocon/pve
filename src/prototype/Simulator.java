@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import javax.vecmath.Vector3d;
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
+import jp.sourceforge.acerola3d.a3.A3CanvasInterface;
 
 public class Simulator implements CollisionListener {
     PVEWorld w;
@@ -34,8 +35,9 @@ public class Simulator implements CollisionListener {
     SimulatorGUI gui;
 
     public Simulator() throws Exception {
-        w = new PVEWorld(PVEWorld.A3CANVAS);
-        gui = new SimulatorGUI(w.getMainCanvas());
+        //w = new PVEWorld(PVEWorld.A3CANVAS,PVEWorld.MANUAL_STEP);
+        w = new PVEWorld(PVEWorld.A3CANVAS,PVEWorld.AUTO_STEP);
+        gui = new SimulatorGUI(this);
         w.addCollisionListener(this);
         w.resume();
 
@@ -137,33 +139,32 @@ public class Simulator implements CollisionListener {
         goal2.setLocRev(0, 0.5, -45, 0, 0, 0);
         w.add(goal2);
 
-        obstacle1 = new Obstacle(1,new Vector3d(-145, 1.5, 0),
-                //new Vector3d(-0.3, 0, 0.3));
-                new Vector3d(0, 0, 0));
+        obstacle1 = new Obstacle(1,new Vector3d(-120, 1.5, 0),
+                new Vector3d(-0.3, 0, 0.3));
+                //new Vector3d(0, 0, 0));
         obstacle1.setUserData("obstacle1");
         w.add(obstacle1);
 
-        obstacle2 = new Obstacle(2,new Vector3d( 145, 1.5, 0),
-                //new Vector3d(0.4, 0, -0.5));
-                new Vector3d(0, 0, 0));
+        obstacle2 = new Obstacle(2,new Vector3d( 120, 1.5, 0),
+                new Vector3d(0.4, 0, -0.5));
+                //new Vector3d(0, 0, 0));
         obstacle2.setUserData("obstacle2");
         w.add(obstacle2);
 
-        //carA1 = new CarA(this, 10000);
-        car1 = new CarC(this, 10000);
+        car1 = new CarA(this, 10000);
         car1.setUserData("carA1");
         car1.setLocRev(-80, 0, 0, 0, 90, 0);
         w.add((PVEObject)car1);
         gui.setCar1(car1);
 
-        car2 = new CarA(this, 20000);
+        //car2 = new CarA(this, 20000);
+        car2 = new CarC(this, 20000);
         car2.setUserData("carA2");
         car2.setLocRev(80, 0, 0, 0, -90, 0);
         w.add((PVEObject)car2);
         gui.setCar2(car2);
 
-        //car3 = new CarB(this, 30000);
-        car3 = new CarC(this, 30000);
+        car3 = new CarB(this, 30000);
         car3.setUserData("carB");
         car3.setLocRev(0, 0, 0, 0, 90, 0);
         w.add((PVEObject)car3);
@@ -186,6 +187,45 @@ public class Simulator implements CollisionListener {
             j.setLocRev(x, 2, z, 0, 0, 0);
             w.add(j);
             jewels.add(j);
+        }
+        /*
+        A3CanvasInterface mainCanvas = w.getMainCanvas();
+        int waitTime = 33;
+        w.stepForward();
+        while (true) {
+            stepForward("S");
+            //mainCanvas.waitForUpdate(waitTime * 2);
+            //Thread.sleep(waitTime/2);// 微妙
+            Thread.sleep(waitTime);
+        }
+        */
+    }
+    Object waitingRoom = new Object();
+    int noOfActivated = 4; //simulator + cars
+    volatile int noOfWaiting = 0;
+    //ArrayList<Object> waitings = new ArrayList<Object>();
+    void deactivateC1() { noOfActivated--; }
+    void activateC1() {   noOfActivated++; }
+    void deactivateC2() { noOfActivated--; }
+    void activateC2() {   noOfActivated++; }
+    void deactivateC3() { noOfActivated--; }
+    void activateC3() {   noOfActivated++; }
+    void stepForward(String s) {
+        synchronized (waitingRoom) {
+            noOfWaiting++;
+System.out.println("GAHA:"+s);
+            if (noOfWaiting==noOfActivated) {
+                w.stepForward();
+                noOfWaiting = 0;
+System.out.println("GAHA:-----");
+                waitingRoom.notifyAll();
+            } else {
+                try {
+                    waitingRoom.wait();
+                } catch(Exception e) {
+                    ;
+                }
+            }
         }
     }
 

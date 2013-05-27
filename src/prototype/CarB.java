@@ -114,6 +114,8 @@ public class CarB extends PVEObject implements PVEMsgListener, CarInterface {
             return msgGetRev(line);
         else if (line.equals("searchJewels"))
             return msgSearchJewels(line);
+        else if (line.equals("stepForward"))
+            return msgStepForward(line);
         return "ERROR";
     }
 
@@ -136,5 +138,9 @@ public class CarB extends PVEObject implements PVEMsgListener, CarInterface {
     }
     String msgSearchJewels(String line) {
         return simulator.searchJewels();
+    }
+    String msgStepForward(String line) {
+        simulator.stepForward("B");
+        return "OK";
     }
 }

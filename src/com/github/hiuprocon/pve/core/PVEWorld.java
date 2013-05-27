@@ -19,11 +19,18 @@ public class PVEWorld implements Runnable {
     enum CanvasType {
         A3CANVAS, JA3CANVAS, A3WINDOW, JA3WINDOW
     }
+    enum SimType {
+        AUTO_STEP,
+        MANUAL_STEP
+    }
 
     public static CanvasType A3CANVAS = CanvasType.A3CANVAS;
     public static CanvasType JA3CANVAS = CanvasType.JA3CANVAS;
     public static CanvasType A3WINDOW = CanvasType.A3WINDOW;
     public static CanvasType JA3WINDOW = CanvasType.JA3WINDOW;
+
+    public static SimType AUTO_STEP = SimType.AUTO_STEP;
+    public static SimType MANUAL_STEP = SimType.MANUAL_STEP;
 
     static int MAX_PROXIES = 1024;
     public DiscreteDynamicsWorld dynamicsWorld;
@@ -40,17 +47,24 @@ public class PVEWorld implements Runnable {
     boolean fastForward = false;
     public final float stepTime = 1.0f / 30.0f;
     final long waitTime = 33;
+    SimType simType;
 
     // 物理世界の初期化
     public PVEWorld(CanvasType canvasType) {
+        this(canvasType,SimType.AUTO_STEP);
+    }
+    public PVEWorld(CanvasType canvasType,SimType simType) {
         // mainCanvas = new A3Window(500,500);
+        this.simType = simType;
 
         makeDynamicsWorld();
         createMainCanvas(canvasType);
 
         time = 0.0;
-        Thread t = new Thread(this);
-        t.start();
+        if (simType==SimType.AUTO_STEP) { 
+            Thread t = new Thread(this);
+            t.start();
+        }
     }
 
     void makeDynamicsWorld() {
@@ -150,151 +164,7 @@ public class PVEWorld implements Runnable {
     // 座標を変更するのがちょっとやっかい
     public void run() {
         while (true) {
-            synchronized (waitingRoom) {
-                if (pauseRequest == true) {
-                    try {
-                        waitingRoom.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            synchronized (newObjects) {
-                for (PVEObject o : newObjects) {
-                    for (PVEPart p : o.parts) {
-                        dynamicsWorld.addRigidBody(p.body, p.group, p.mask);
-                        if (mainCanvas != null)
-                            mainCanvas.add(p.a3);
-                    }
-                    for (Constraint c : o.constraints)
-                        if (c.con instanceof RaycastVehicle)
-                            dynamicsWorld.addVehicle((RaycastVehicle) (c.con));
-                        else
-                            dynamicsWorld.addConstraint(c.con,
-                                    c.disableCollisionsBetweenLinkedBodies);
-                    objects.add(o);
-                }
-                newObjects.clear();
-            }
-
-            synchronized (delObjects) {
-                for (PVEObject o : delObjects) {
-                    for (PVEPart p : o.parts) {
-                        dynamicsWorld.removeRigidBody(p.body);
-                        if (mainCanvas != null)
-                            mainCanvas.del(p.a3);
-                    }
-                    for (Constraint c : o.constraints)
-                        if (c.con instanceof RaycastVehicle)
-                            dynamicsWorld
-                                    .removeVehicle((RaycastVehicle) (c.con));
-                        else
-                            dynamicsWorld.removeConstraint(c.con);
-                    objects.remove(o);
-                }
-                delObjects.clear();
-            }
-
-            for (PVEObject o : objects) {
-                for (PVEPart p : o.parts) {
-                    if ((p.locRequest == null) && (p.quatRequest == null))
-                        continue;
-                    Transform t = new Transform();
-                    t = p.motionState.getWorldTransform(t);
-                    if (p.locRequest != null)
-                        t.origin.set(p.locRequest);
-                    if (p.quatRequest != null)
-                        t.setRotation(new Quat4f(p.quatRequest));
-                    p.motionState.setWorldTransform(t);
-                    if (p.type == Type.DYNAMIC)
-                        p.setKinematicTemp();
-                }
-            }
-
-            // System.out.println("PhysicalWorld:-----gaha-----1");
-            // ここで物理計算
-            dynamicsWorld.stepSimulation(stepTime, 10);
-            // dynamicsWorld.stepSimulation(stepTime,2);
-            time += stepTime;
-            // System.out.println("PhysicalWorld:-----gaha-----2");
-
-            // 衝突
-            int numManifolds = dynamicsWorld.getDispatcher().getNumManifolds();
-            for (int ii = 0; ii < numManifolds; ii++) {
-                PersistentManifold contactManifold = dynamicsWorld
-                        .getDispatcher().getManifoldByIndexInternal(ii);
-                int numContacts = contactManifold.getNumContacts();
-                if (numContacts == 0)
-                    continue;
-                CollisionObject obA = (CollisionObject) contactManifold
-                        .getBody0();
-                CollisionObject obB = (CollisionObject) contactManifold
-                        .getBody1();
-                /*
-                 * for (int j=0;j<numContacts;j++) { ManifoldPoint pt =
-                 * contactManifold.getContactPoint(j); if
-                 * (pt.getDistance()<0.0f) {
-                 * System.out.println("-----------------");
-                 * System.out.println("ii:"+ii+"    j:"+j);
-                 * System.out.println("getLifeTime:"+pt.getLifeTime());
-                 * System.out.println("PositionWorldOnA:"+pt.positionWorldOnA);
-                 * System.out.println("PositionWorldOnB:"+pt.positionWorldOnB);
-                 * System.out.println("normalWorldOnB:"+pt.normalWorldOnB);
-                 * System.out.println("-----------------"); } }
-                 */
-
-                // ロックしすぎ？
-                synchronized (collisionListeners) {
-                    for (CollisionListener cl : collisionListeners) {
-                        cl.collided(((PVEPart) obA.getUserPointer()),
-                                ((PVEPart) obB.getUserPointer()));
-                    }
-                }
-            }
-
-            for (PVEObject o : objects) {
-                for (PVEPart p : o.parts) {
-                    if (p.locRequest == null && p.quatRequest == null)
-                        continue;
-                    p.resetKinematicTemp();
-                    p.locRequest = null;
-                    p.quatRequest = null;
-                }
-            }
-
-            for (PVEObject o : objects) {
-                for (PVEPart p : o.parts) {
-                    if (p.velRequest == null)
-                        continue;
-                    p.body.setLinearVelocity(p.velRequest);
-                    p.velRequest = null;
-                }
-            }
-
-            // いまのところ車の車輪の更新にしか使われていない。
-            for (PVEObject o : objects) {
-                for (PVEPart p : o.parts) {
-                    p.postSimulation();
-                    if (p.disableDeactivation == true)
-                        p.body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);// 毎回必要みたい
-                }
-                o.postSimulation();
-            }
-
-            /*
-             * //光線テストの実験 RayResultCallback rayRC = new
-             * CollisionWorld.ClosestRayResultCallback(new
-             * Vector3f(0,0.5f,0),new Vector3f(0,0.5f,5));
-             * dynamicsWorld.rayTest(new Vector3f(0,0.5f,0), new
-             * Vector3f(0,0.5f,5), rayRC);
-             * System.out.println("gaha:"+rayRC.hasHit());
-             */
-
-            synchronized (tasks) {
-                for (Runnable r : tasks) {
-                    r.run();
-                }
-            }
+            stepForward();
             if (fastForward == false) {
                 if (mainCanvas != null) {
                     mainCanvas.waitForUpdate(waitTime * 2);
@@ -314,6 +184,152 @@ public class PVEWorld implements Runnable {
         }
     }
 
+    public void stepForward() {
+        synchronized (waitingRoom) {
+            if (pauseRequest == true) {
+                try {
+                    waitingRoom.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        synchronized (newObjects) {
+            for (PVEObject o : newObjects) {
+                for (PVEPart p : o.parts) {
+                    dynamicsWorld.addRigidBody(p.body, p.group, p.mask);
+                    if (mainCanvas != null)
+                        mainCanvas.add(p.a3);
+                }
+                for (Constraint c : o.constraints)
+                    if (c.con instanceof RaycastVehicle)
+                        dynamicsWorld.addVehicle((RaycastVehicle) (c.con));
+                    else
+                        dynamicsWorld.addConstraint(c.con,
+                                c.disableCollisionsBetweenLinkedBodies);
+                objects.add(o);
+            }
+            newObjects.clear();
+        }
+
+        synchronized (delObjects) {
+            for (PVEObject o : delObjects) {
+                for (PVEPart p : o.parts) {
+                    dynamicsWorld.removeRigidBody(p.body);
+                    if (mainCanvas != null)
+                        mainCanvas.del(p.a3);
+                }
+                for (Constraint c : o.constraints)
+                    if (c.con instanceof RaycastVehicle)
+                        dynamicsWorld
+                                .removeVehicle((RaycastVehicle) (c.con));
+                    else
+                        dynamicsWorld.removeConstraint(c.con);
+                objects.remove(o);
+            }
+            delObjects.clear();
+        }
+
+        for (PVEObject o : objects) {
+            for (PVEPart p : o.parts) {
+                if ((p.locRequest == null) && (p.quatRequest == null))
+                    continue;
+                Transform t = new Transform();
+                t = p.motionState.getWorldTransform(t);
+                if (p.locRequest != null)
+                    t.origin.set(p.locRequest);
+                if (p.quatRequest != null)
+                    t.setRotation(new Quat4f(p.quatRequest));
+                p.motionState.setWorldTransform(t);
+                if (p.type == Type.DYNAMIC)
+                    p.setKinematicTemp();
+            }
+        }
+
+        // System.out.println("PhysicalWorld:-----gaha-----1");
+        // ここで物理計算
+        dynamicsWorld.stepSimulation(stepTime, 10);
+        // dynamicsWorld.stepSimulation(stepTime,2);
+        time += stepTime;
+        // System.out.println("PhysicalWorld:-----gaha-----2");
+
+        // 衝突
+        int numManifolds = dynamicsWorld.getDispatcher().getNumManifolds();
+        for (int ii = 0; ii < numManifolds; ii++) {
+            PersistentManifold contactManifold = dynamicsWorld
+                    .getDispatcher().getManifoldByIndexInternal(ii);
+            int numContacts = contactManifold.getNumContacts();
+            if (numContacts == 0)
+                continue;
+            CollisionObject obA = (CollisionObject) contactManifold
+                    .getBody0();
+            CollisionObject obB = (CollisionObject) contactManifold
+                    .getBody1();
+            /*
+             * for (int j=0;j<numContacts;j++) { ManifoldPoint pt =
+             * contactManifold.getContactPoint(j); if
+             * (pt.getDistance()<0.0f) {
+             * System.out.println("-----------------");
+             * System.out.println("ii:"+ii+"    j:"+j);
+             * System.out.println("getLifeTime:"+pt.getLifeTime());
+             * System.out.println("PositionWorldOnA:"+pt.positionWorldOnA);
+             * System.out.println("PositionWorldOnB:"+pt.positionWorldOnB);
+             * System.out.println("normalWorldOnB:"+pt.normalWorldOnB);
+             * System.out.println("-----------------"); } }
+             */
+
+            // ロックしすぎ？
+            synchronized (collisionListeners) {
+                for (CollisionListener cl : collisionListeners) {
+                    cl.collided(((PVEPart) obA.getUserPointer()),
+                            ((PVEPart) obB.getUserPointer()));
+                }
+            }
+        }
+
+        for (PVEObject o : objects) {
+            for (PVEPart p : o.parts) {
+                if (p.locRequest == null && p.quatRequest == null)
+                    continue;
+                p.resetKinematicTemp();
+                p.locRequest = null;
+                p.quatRequest = null;
+            }
+        }
+
+        for (PVEObject o : objects) {
+            for (PVEPart p : o.parts) {
+                if (p.velRequest == null)
+                    continue;
+                p.body.setLinearVelocity(p.velRequest);
+                p.velRequest = null;
+            }
+        }
+
+        for (PVEObject o : objects) {
+            for (PVEPart p : o.parts) {
+                p.postSimulation();
+                if (p.disableDeactivation == true)
+                    p.body.setActivationState(CollisionObject.DISABLE_DEACTIVATION);// 毎回必要みたい
+            }
+            o.postSimulation();
+        }
+
+        /*
+         * //光線テストの実験 RayResultCallback rayRC = new
+         * CollisionWorld.ClosestRayResultCallback(new
+         * Vector3f(0,0.5f,0),new Vector3f(0,0.5f,5));
+         * dynamicsWorld.rayTest(new Vector3f(0,0.5f,0), new
+         * Vector3f(0,0.5f,5), rayRC);
+         * System.out.println("gaha:"+rayRC.hasHit());
+         */
+
+        synchronized (tasks) {
+            for (Runnable r : tasks) {
+                r.run();
+            }
+        }
+    }
     public void addCollisionListener(CollisionListener cl) {
         synchronized (collisionListeners) {
             collisionListeners.add(cl);

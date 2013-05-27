@@ -67,6 +67,8 @@ public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
             return msgGetRev(line);
         else if (line.equals("searchJewels"))
             return msgSearchJewels(line);
+        else if (line.equals("stepForward"))
+            return msgStepForward(line);
         return "ERROR";
     }
 
@@ -75,7 +77,7 @@ public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
         speed = Double.parseDouble(s[1]);
         handle = Double.parseDouble(s[2]);
         speed = 500*speed;
-        handle = 2*handle;
+        handle = -0.1*handle;
         return "OK";
     }
     String msgGetLoc(String line) {
@@ -88,5 +90,9 @@ public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
     }
     String msgSearchJewels(String line) {
         return simulator.searchJewels();
+    }
+    String msgStepForward(String line) {
+        simulator.stepForward("A");
+        return "OK";
     }
 }

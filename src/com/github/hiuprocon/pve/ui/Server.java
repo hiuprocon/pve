@@ -11,7 +11,7 @@ public class Server implements Runnable {
     public Server(int port, PVEMsgListener ml) {
         this.port = port;
         this.ml = ml;
-        new Thread(this).start();
+        new Thread(this,"PVEServerPort="+port).start();
     }
 
     public void run() {

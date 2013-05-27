@@ -12,7 +12,7 @@ public class Client implements Runnable {
 
     public Client(int port) {
         this.port = port;
-        new Thread(this).start();
+        new Thread(this,"PVEClientPort="+port).start();
         while(closed==true) {
             try{Thread.sleep(10);}catch(Exception e){;}
         }
