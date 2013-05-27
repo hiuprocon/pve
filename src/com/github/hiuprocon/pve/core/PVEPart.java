@@ -18,6 +18,7 @@ public abstract class PVEPart {
 
     PVEObject obj;
     final Type type;
+    protected String a3url;
     protected A3Object a3;
     protected MotionState motionState;// JBulletと座標をやりとりするオブジェクト
     protected RigidBody body;// JBulletにおける剛体などを表すオブジェクト
@@ -52,14 +53,19 @@ public abstract class PVEPart {
         }
         this.type = type;
         this.mass = (float) mass;
-        a3 = PVEUtil.loadA3(a3url);
+        this.a3url = a3url;
         this.localInertia = new Vector3f(localInertia);
+    }
+
+    protected A3Object makeA3Object(String a3url) {
+        return PVEUtil.loadA3(a3url);
     }
 
     /**
      * このメソッドはコンストラクタの中で必ず呼び出さなければならない。
      */
     protected final void init() {
+        a3 = makeA3Object(a3url);
         Transform t = new Transform();
         t.setIdentity();
         if (this instanceof SimpleCar)
