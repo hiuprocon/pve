@@ -117,14 +117,14 @@ public class CarController extends JFrame implements KeyListener, Runnable, Acti
 
             // System.out.println(client.post("drive "+engine+" "+steering));
             client.post("drive " + engine + " " + steering);
-            //client.post("stepForward");
-            /* */
+            client.post("stepForward");
+            /*
             try {
                 Thread.sleep(100);
             } catch (Exception e) {
                 ;
             }
-            /* */
+            */
         }
     }
 

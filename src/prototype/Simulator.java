@@ -2,9 +2,9 @@ package prototype;
 
 import java.util.ArrayList;
 import javax.vecmath.Vector3d;
+import jp.sourceforge.acerola3d.a3.A3CanvasInterface;
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
-import jp.sourceforge.acerola3d.a3.A3CanvasInterface;
 
 public class Simulator implements CollisionListener {
     PVEWorld w;
@@ -35,8 +35,8 @@ public class Simulator implements CollisionListener {
     SimulatorGUI gui;
 
     public Simulator() throws Exception {
-        //w = new PVEWorld(PVEWorld.A3CANVAS,PVEWorld.MANUAL_STEP);
-        w = new PVEWorld(PVEWorld.A3CANVAS,PVEWorld.AUTO_STEP);
+        w = new PVEWorld(PVEWorld.A3CANVAS,PVEWorld.MANUAL_STEP);
+        //w = new PVEWorld(PVEWorld.A3CANVAS,PVEWorld.AUTO_STEP);
         gui = new SimulatorGUI(this);
         w.addCollisionListener(this);
         w.resume();
@@ -188,7 +188,7 @@ public class Simulator implements CollisionListener {
             w.add(j);
             jewels.add(j);
         }
-        /*
+
         A3CanvasInterface mainCanvas = w.getMainCanvas();
         int waitTime = 33;
         w.stepForward();
@@ -198,7 +198,6 @@ public class Simulator implements CollisionListener {
             //Thread.sleep(waitTime/2);// 微妙
             Thread.sleep(waitTime);
         }
-        */
     }
     Object waitingRoom = new Object();
     int noOfActivated = 4; //simulator + cars

@@ -53,7 +53,7 @@ public class CarC extends PVEObject implements PVEMsgListener, CarInterface {
         b4.origin.set(0.0f, 1.0f, 0.0f);
         compound.addChildShape(b4, s4);
 
-        chassis = new FreeShapeD(Type.DYNAMIC, 10.0,"x-res:///res/prototype/carA/chassis.wrl",compound);
+        chassis = new FreeShapeD(Type.DYNAMIC, 10.0,"x-res:///res/prototype/carC.wrl",compound);
         chassis.setInitLocRev(0, 0, 0, 0, 0, 0);
         chassis.disableDeactivation(true);
         chassis.setDamping(0.9, 0.0);
