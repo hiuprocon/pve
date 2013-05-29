@@ -27,7 +27,6 @@ public class Simulator implements CollisionListener {
     PVEObject goal2;
     Obstacle obstacle1;
     Obstacle obstacle2;
-    //CarA carA1;
     CarInterface car1;
     CarInterface car2;
     CarInterface car3;
@@ -140,14 +139,14 @@ public class Simulator implements CollisionListener {
         w.add(goal2);
 
         obstacle1 = new Obstacle(1,new Vector3d(-120, 1.5, 0),
-                new Vector3d(-0.3, 0, 0.3));
-                //new Vector3d(0, 0, 0));
+                //new Vector3d(-0.3, 0, 0.3));
+                new Vector3d(0, 0, 0));
         obstacle1.setUserData("obstacle1");
         w.add(obstacle1);
 
         obstacle2 = new Obstacle(2,new Vector3d( 120, 1.5, 0),
-                new Vector3d(0.4, 0, -0.5));
-                //new Vector3d(0, 0, 0));
+                //new Vector3d(0.4, 0, -0.5));
+                new Vector3d(0, 0, 0));
         obstacle2.setUserData("obstacle2");
         w.add(obstacle2);
 
