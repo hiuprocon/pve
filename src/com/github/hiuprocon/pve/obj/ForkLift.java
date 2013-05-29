@@ -37,12 +37,10 @@ public class ForkLift extends PVEObject {
     protected Constraint[] createConstraints() {
         liftHinge = new Hinge(car, lift, new Vector3d(0, 0.1, 1.0),
                 new Vector3d(1, 0, 0));
-        liftHinge.disableCollisionsBetweenLinkedBodies = true;
         // forkSlider = new Slider(lift,fork,new Vector3d(0,0,1.6),new
         // Vector3d(0,1,0));
         forkSlider = new Slider(lift, fork, new Vector3d(0, 0, 1.6),
                 new Vector3d(0, 0, 1));// ????
-        forkSlider.disableCollisionsBetweenLinkedBodies = true;
         return new Constraint[] { car.carConstraint, liftHinge, forkSlider };
     }
 

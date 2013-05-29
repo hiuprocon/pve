@@ -31,8 +31,6 @@ public class Seesaw extends PVEObject {
                 new Vector3d(1, 0, 0));
         leftHinge = new Hinge(plate, leftLeg, new Vector3d(-1.5, 1, 0),
                 new Vector3d(1, 0, 0));
-        rightHinge.disableCollisionsBetweenLinkedBodies = true;
-        leftHinge.disableCollisionsBetweenLinkedBodies = true;
         return new Constraint[] { rightHinge, leftHinge };
     }
 

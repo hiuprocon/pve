@@ -18,21 +18,23 @@ public class Lifter extends PVEObject {
     @Override
     protected PVEPart[] createParts() {
         plate = new Box(Type.DYNAMIC, 1.0, new Vector3d(10, 1, 10));
+        rightLeg = new Box(Type.STATIC, 0.0, new Vector3d(1, 5, 10),"x-res:///res/ClearBox.wrl");
+        leftLeg = new Box(Type.STATIC, 0.0, new Vector3d(1, 5, 10),"x-res:///res/ClearBox.wrl");
         plate.disableDeactivation(true);
-        rightLeg = new Box(Type.STATIC, 0.0, new Vector3d(10, 5, 1),"x-res:///res/ClearBox.wrl");
-        leftLeg = new Box(Type.STATIC, 0.0, new Vector3d(10, 5, 1),"x-res:///res/ClearBox.wrl");
         plate.setInitLocRev(0, 0.5, 0, 0, 0, 0);
-        rightLeg.setInitLocRev(0, 2, 5.5, 0, 0, 0);
-        leftLeg.setInitLocRev(0, 2, -5.5, 0, 0, 0);
+        rightLeg.setInitLocRev(5.5, 2.5, 0, 0, 0, 0);
+        leftLeg.setInitLocRev(-5.5, 2.5, 0, 0, 0, 0);
         return new PVEPart[] { plate, rightLeg, leftLeg };
     }
 
     @Override
     protected Constraint[] createConstraints() {
-        rightSlider = new Slider(plate, rightLeg, new Vector3d(0, 0.5, 5),
-                new Vector3d(0, 0, 1));
-        leftSlider = new Slider(plate, rightLeg, new Vector3d(0, 0.5, -5),
-                new Vector3d(0, 0, 1));
+        rightSlider = new Slider(plate, rightLeg, new Vector3d(5, 0.5, 0),
+                new Vector3d(0, 1, 0));
+        leftSlider = new Slider(plate, rightLeg, new Vector3d(-5, 0.5, 0),
+                new Vector3d(0, 1, 0));
+double linDepth = rightSlider.getLinearPos();
+System.out.println("GAHA0:"+linDepth);
         return new Constraint[] { rightSlider, leftSlider };
     }
 
@@ -48,6 +50,10 @@ public class Lifter extends PVEObject {
     @Override
     protected void postSimulation() {
         Vector3d v = plate.getLoc();
+if (v.x>0){
+double linDepth = rightSlider.getLinearPos();
+System.out.println("GAHA:"+linDepth);
+}
         if (up == true) {
             if (v.y < 4.5)
                 slideUp();
@@ -62,27 +68,11 @@ public class Lifter extends PVEObject {
         up = false;
     }
 
-    double lowerLinLimit = -3.5;
-    double upperLinLimit =  0.5;
+    double lowerLinLimit = 0.0;
+    double upperLinLimit = 4.0;
     void slideUp() {
         //double linDepth = rightSlider.getLinearPos();
         //System.out.println("GAHA:slideUp"+linDepth);
-        rightSlider.setLowerLinLimit(lowerLinLimit);
-        rightSlider.setUpperLinLimit(upperLinLimit);
-        rightSlider.setPoweredLinMotor(true);
-        rightSlider.setMaxLinMotorForce(10.0);
-        rightSlider.setTargetLinMotorVelocity(-5);
-
-        leftSlider.setLowerLinLimit(lowerLinLimit);
-        leftSlider.setUpperLinLimit(upperLinLimit);
-        leftSlider.setPoweredLinMotor(true);
-        leftSlider.setMaxLinMotorForce(10.0);
-        leftSlider.setTargetLinMotorVelocity(-5);
-    }
-
-    void slideDown() {
-        //double linDepth = rightSlider.getLinearPos();
-        //System.out.println("GAHA:slideDown"+linDepth);
         rightSlider.setLowerLinLimit(lowerLinLimit);
         rightSlider.setUpperLinLimit(upperLinLimit);
         rightSlider.setPoweredLinMotor(true);
@@ -94,6 +84,22 @@ public class Lifter extends PVEObject {
         leftSlider.setPoweredLinMotor(true);
         leftSlider.setMaxLinMotorForce(10.0);
         leftSlider.setTargetLinMotorVelocity(5);
+    }
+
+    void slideDown() {
+        //double linDepth = rightSlider.getLinearPos();
+        //System.out.println("GAHA:slideDown"+linDepth);
+        rightSlider.setLowerLinLimit(lowerLinLimit);
+        rightSlider.setUpperLinLimit(upperLinLimit);
+        rightSlider.setPoweredLinMotor(true);
+        rightSlider.setMaxLinMotorForce(10.0);
+        rightSlider.setTargetLinMotorVelocity(-5);
+
+        leftSlider.setLowerLinLimit(lowerLinLimit);
+        leftSlider.setUpperLinLimit(upperLinLimit);
+        leftSlider.setPoweredLinMotor(true);
+        leftSlider.setMaxLinMotorForce(10.0);
+        leftSlider.setTargetLinMotorVelocity(-5);
     }
 
     void lockSlider() {

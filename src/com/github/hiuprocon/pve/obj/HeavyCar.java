@@ -51,10 +51,6 @@ public class HeavyCar extends PVEObject {
                 new Vector3d(-1, 0, 0));
         axle3 = new Hinge(chassis, tire3, new Vector3d(-0.666, 0.333, -0.5),
                 new Vector3d(-1, 0, 0));
-        handle.disableCollisionsBetweenLinkedBodies = true;
-        axle1.disableCollisionsBetweenLinkedBodies = true;
-        axle2.disableCollisionsBetweenLinkedBodies = true;
-        axle3.disableCollisionsBetweenLinkedBodies = true;
         return new Constraint[] { handle, axle1, axle2, axle3 };
     }
 
