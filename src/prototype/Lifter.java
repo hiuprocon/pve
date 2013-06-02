@@ -29,12 +29,10 @@ public class Lifter extends PVEObject {
 
     @Override
     protected Constraint[] createConstraints() {
-        rightSlider = new Slider(plate, rightLeg, new Vector3d(5, 0.5, 0),
+        rightSlider = new Slider(rightLeg, plate, new Vector3d(5, 0.5, 0),
                 new Vector3d(0, 1, 0));
-        leftSlider = new Slider(plate, rightLeg, new Vector3d(-5, 0.5, 0),
+        leftSlider = new Slider(rightLeg, plate, new Vector3d(-5, 0.5, 0),
                 new Vector3d(0, 1, 0));
-double linDepth = rightSlider.getLinearPos();
-System.out.println("GAHA0:"+linDepth);
         return new Constraint[] { rightSlider, leftSlider };
     }
 
@@ -50,10 +48,7 @@ System.out.println("GAHA0:"+linDepth);
     @Override
     protected void postSimulation() {
         Vector3d v = plate.getLoc();
-if (v.x>0){
-double linDepth = rightSlider.getLinearPos();
-System.out.println("GAHA:"+linDepth);
-}
+
         if (up == true) {
             if (v.y < 4.5)
                 slideUp();

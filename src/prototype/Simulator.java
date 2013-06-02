@@ -109,7 +109,7 @@ public class Simulator implements CollisionListener {
 
         lifter2 = new Lifter();
         lifter2.setUserData("elevator2");
-        lifter2.setLocRev(32.5, 5, 0, 0, 90, 0);
+        lifter2.setLocRev(32.5, 0, 0, 0, 90, 0);
         w.add(lifter2);
 
         switch1 = new BoxObj(Type.GHOST, 1, new Vector3d(10, 1, 10),

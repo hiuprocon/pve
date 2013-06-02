@@ -20,10 +20,10 @@ public class Test implements CollisionListener {
         chain.setLocRev(0, 2, 5, 0, 0, 0);
         w.add(chain);
 
-        // KeyboardForkLift c = new
-        // KeyboardForkLift(w,"x-res:///res/stk_tux.a3");
+        KeyboardForkLift c = new
+           KeyboardForkLift(w,"x-res:///res/stk_tux.a3");
         // KeyboardHeavyCar c = new KeyboardHeavyCar();
-        KeyboardHovercraft c = new KeyboardHovercraft();
+        // KeyboardHovercraft c = new KeyboardHovercraft();
         c.setLocRev(0, 1, 0, 0, 0, 0);
         w.add(c);
         gui.setCar(c);

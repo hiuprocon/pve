@@ -21,8 +21,8 @@ public class Slider extends Constraint {
 
         vTmp = Util.trans(q1,nAxis);
         q2 = Util.a2bQuat(new Vector3d(1,0,0),vTmp);
-System.out.println(pivotDir);
-System.out.println(Util.quat2euler(q2));
+//System.out.println(pivotDir);
+//System.out.println(Util.quat2euler(q2));
 
         Transform localA = new Transform();
         localA.setIdentity();
@@ -36,8 +36,8 @@ System.out.println(Util.quat2euler(q2));
 
         vTmp = Util.trans(q1,nAxis);
         q2 = Util.a2bQuat(new Vector3d(1,0,0),vTmp);
-System.out.println(pivotDir);
-System.out.println(Util.quat2euler(q2));
+//System.out.println(pivotDir);
+//System.out.println(Util.quat2euler(q2));
 
         Transform localB = new Transform();
         localB.setIdentity();
