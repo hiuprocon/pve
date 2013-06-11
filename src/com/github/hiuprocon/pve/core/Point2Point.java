@@ -12,10 +12,12 @@ public class Point2Point extends Constraint {
 
         pivotInA.sub(pivot, a.innerLoc);
         q = Util.euler2quat(a.innerRot);
+        q.conjugate();
         pivotInA = Util.trans(q, pivotInA);
 
         pivotInB.sub(pivot, b.innerLoc);
         q = Util.euler2quat(b.innerRot);
+        q.conjugate();
         pivotInB = Util.trans(q, pivotInB);
 
         con = new Point2PointConstraint(a.body, b.body, new Vector3f(pivotInA), new Vector3f(pivotInB));

@@ -28,7 +28,7 @@ public class ForkLift extends PVEObject {
                 "x-res:///res/ClearBox.wrl");
         car.setInitLocRot(0.0, 0.0, 0.0, 0, 0, 0);
         lift.setInitLocRot(0.0, 1.1, 1.0, 0, 0, 0);
-        fork.setInitLocRot(0.0, 0.0, 1.6, 0, 0, 0);
+        fork.setInitLocRot(0.0, 0.2, 1.6, 0, 0, 0);
 
         return new PVEPart[] { car, lift, fork };
     }
@@ -37,7 +37,7 @@ public class ForkLift extends PVEObject {
     protected Constraint[] createConstraints() {
         liftHinge = new Hinge(car, lift, new Vector3d(0, 0.1, 1.0),
                 new Vector3d(1, 0, 0));
-        forkSlider = new Slider(lift,fork, new Vector3d(0,0,1.6),new
+        forkSlider = new Slider(lift,fork, new Vector3d(0,0.2,1.6),new
          Vector3d(0,1,0));
         //forkSlider = new Slider(lift, fork, new Vector3d(0, 0, 1.6),
         //       new Vector3d(0, 0, 1));// ????

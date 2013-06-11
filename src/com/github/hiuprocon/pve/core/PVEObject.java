@@ -45,7 +45,7 @@ public abstract class PVEObject {
             v = Util.trans(q, v);
             p.setLoc(x + v.x, y + v.y, z + v.z);
             Quat4d qq = Util.euler2quat(p.innerRot);
-            qq.mul(q);
+            qq.mul(q,qq);
             p.setQuat(qq);
         }
     }
@@ -66,7 +66,7 @@ public abstract class PVEObject {
             v = Util.trans(q, v);
             p.setLoc(x + v.x, y + v.y, z + v.z);
             Quat4d qq = Util.euler2quat(p.innerRot);
-            qq.mul(q);
+            qq.mul(q,qq);
             p.setQuat(qq);
         }
     }
@@ -85,23 +85,35 @@ public abstract class PVEObject {
         setVel(vel.x, vel.y, vel.z);
     }
 
+    //ラグがあるので注意
     public Vector3d getLoc() {
         Vector3d v = mainPart.getLoc();
-        v.sub(mainPart.innerLoc);
+        Quat4d q = getQuat();
+        Vector3d vv = new Vector3d(mainPart.innerLoc);
+        vv = Util.trans(q,vv);
+        v.sub(vv);
         return v;
     }
 
-    // 自信なし。テストすべし。
+    //ラグがあるので注意
     public Quat4d getQuat() {
         Quat4d q = mainPart.getQuat();
         Quat4d qq = Util.euler2quat(mainPart.innerRot);
+        qq.conjugate();
         q.mul(qq);
         return q;
     }
 
-    // 自信なし。テストすべし。
+    //ラグがあるので注意
     public Vector3d getRot() {
         return Util.quat2euler(getQuat());
+    }
+
+    //ラグがあるので注意
+    public Vector3d getRev() {
+        Vector3d r = Util.quat2euler(getQuat());
+        r.scale(180/Math.PI);
+        return r;
     }
 
     public A3Object getMainA3() {

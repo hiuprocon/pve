@@ -23,10 +23,8 @@ public class Demo implements CollisionListener {
         w.add(ground);
 
         // SimpleCarObj c = new SimpleCarObj(w,"x-res:///res/stk_tux.a3");
-        // KeyboardSimpleCar c = new
-        // KeyboardSimpleCar(w,"x-res:///res/stk_tux.a3");
-        // KeyboardForkLift c = new
-        // KeyboardForkLift(w,"x-res:///res/stk_tux.a3");
+        // KeyboardSimpleCar c = new KeyboardSimpleCar(w,"x-res:///res/stk_tux.a3");
+        // KeyboardForkLift c = new KeyboardForkLift(w,"x-res:///res/stk_tux.a3");
         KeyboardHeavyCar c = new KeyboardHeavyCar();
         c.setLocRev(0, 1, 0, 0, 0, 0);
         w.add(c);

@@ -44,13 +44,13 @@ public class HeavyCar extends PVEObject {
     @Override
     protected Constraint[] createConstraints() {
         handle = new Hinge(chassis, joint, new Vector3d(0, 0.5, 1),
-                new Vector3d(0, -1, 0));
+                new Vector3d(0, 1, 0));
         axle1 = new Hinge(joint, tire1, new Vector3d(0, 0.333, 1),
-                new Vector3d(-1, 0, 0));
+                new Vector3d(1, 0, 0));
         axle2 = new Hinge(chassis, tire2, new Vector3d(0.666, 0.333, -0.5),
-                new Vector3d(-1, 0, 0));
+                new Vector3d(1, 0, 0));
         axle3 = new Hinge(chassis, tire3, new Vector3d(-0.666, 0.333, -0.5),
-                new Vector3d(-1, 0, 0));
+                new Vector3d(1, 0, 0));
         return new Constraint[] { handle, axle1, axle2, axle3 };
     }
 
