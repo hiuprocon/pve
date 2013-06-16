@@ -2,7 +2,7 @@ package prototype;
 
 import java.util.ArrayList;
 import javax.vecmath.Vector3d;
-import jp.sourceforge.acerola3d.a3.A3CanvasInterface;
+//import jp.sourceforge.acerola3d.a3.A3CanvasInterface;
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 
@@ -186,11 +186,11 @@ public class Simulator implements CollisionListener {
             jewels.add(j);
         }
 
-        A3CanvasInterface mainCanvas = w.getMainCanvas();
+        //A3CanvasInterface mainCanvas = w.getMainCanvas();
         int waitTime = 33;
         w.stepForward();
         while (true) {
-            stepForward("S");
+            stepForward();
             //mainCanvas.waitForUpdate(waitTime * 2);
             //Thread.sleep(waitTime/2);// 微妙
             Thread.sleep(waitTime);
@@ -206,7 +206,7 @@ public class Simulator implements CollisionListener {
     void activateC2() {   noOfActivated++; }
     void deactivateC3() { noOfActivated--; }
     void activateC3() {   noOfActivated++; }
-    void stepForward(String s) {
+    void stepForward() {
         synchronized (waitingRoom) {
             noOfWaiting++;
             if (noOfWaiting==noOfActivated) {

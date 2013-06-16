@@ -144,4 +144,17 @@
         </java>
     </target>
 
+    <target name="PServer2" depends="jar">
+        <java classname="prototype.Simulator2" fork="true">
+            <classpath refid="my.exec.class.path"/>
+            <jvmarg value="-Djava.library.path=${my.lib.path}"/>
+        </java>
+    </target>
+
+    <target name="PClient2" depends="jar">
+        <java classname="prototype.AllClients2" fork="true">
+            <classpath refid="my.exec.class.path"/>
+            <jvmarg value="-Djava.library.path=${my.lib.path}"/>
+        </java>
+    </target>
 </project>

@@ -35,7 +35,9 @@ public abstract class PVEObject {
     }
 
     /**
-     * setLocRot。 パーツの相対的な関係などの情報は失われる
+     * setLocRot。 パーツの相対的な関係などの情報は失われる。
+     * これをオーバーライドすればsetLocRot(Vector3d,Vector3d),setLocRev(double,double,double,double,double,double),
+     * setLocRev(Vector3d,Vector3d)を実行した時にも呼ばれるようにしてある。
      */
     public void setLocRot(double x, double y, double z, double rx, double ry,
             double rz) {
@@ -59,16 +61,7 @@ public abstract class PVEObject {
      */
     public void setLocRev(double x, double y, double z, double rx, double ry,
             double rz) {
-        Quat4d q = Util.euler2quat(rx / 180.0 * Math.PI, ry / 180.0 * Math.PI,
-                rz / 180.0 * Math.PI);
-        for (PVEPart p : parts) {
-            Vector3d v = new Vector3d(p.innerLoc);
-            v = Util.trans(q, v);
-            p.setLoc(x + v.x, y + v.y, z + v.z);
-            Quat4d qq = Util.euler2quat(p.innerRot);
-            qq.mul(q,qq);
-            p.setQuat(qq);
-        }
+        setLocRot(x,y,z,rx/180.0*Math.PI,ry/180.0*Math.PI,rz/180.0*Math.PI);
     }
 
     public void setLocRev(Vector3d loc, Vector3d rev) {

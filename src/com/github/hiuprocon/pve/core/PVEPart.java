@@ -61,6 +61,10 @@ public abstract class PVEPart {
         return PVEUtil.loadA3(a3url);
     }
 
+    public A3Object getA3Object() {
+        return a3;
+    }
+
     /**
      * このメソッドはコンストラクタの中で必ず呼び出さなければならない。
      */

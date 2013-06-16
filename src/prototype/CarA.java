@@ -92,7 +92,7 @@ public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
         return simulator.searchJewels();
     }
     String msgStepForward(String line) {
-        simulator.stepForward("A");
+        simulator.stepForward();
         return "OK";
     }
 }

@@ -122,7 +122,7 @@ public class CarC extends PVEObject implements PVEMsgListener, CarInterface {
         return simulator.searchJewels();
     }
     String msgStepForward(String line) {
-        simulator.stepForward("C");
+        simulator.stepForward();
         return "OK";
     }
 }

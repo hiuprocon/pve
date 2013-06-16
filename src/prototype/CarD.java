@@ -1,25 +1,33 @@
 package prototype;
 
+import java.util.ArrayList;
 import javax.vecmath.*;
 import jp.sourceforge.acerola3d.a3.Util;
+import com.bulletphysics.collision.shapes.BoxShape;
+import com.bulletphysics.collision.shapes.CollisionShape;
+import com.bulletphysics.collision.shapes.CompoundShape;
+import com.bulletphysics.linearmath.Transform;
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.ui.Server;
-import com.bulletphysics.collision.shapes.*;
-import com.bulletphysics.linearmath.*;
+import jp.sourceforge.acerola3d.a3.Action3D;
 
-public class CarB extends PVEObject implements PVEMsgListener, CarInterface {
-    Simulator simulator;
-    // FreeShapeD chassis;
+public class CarD extends PVEObject implements PVEMsgListener, CarInterface {
+    Simulator2 simulator;
     PVEPart chassis;
     double speed;
     double handle;
-    Vector3d loc = new Vector3d();
-    Vector3d rev = new Vector3d();
+    CarD anotherCar;
+    ArrayList<String> messages = new ArrayList<String>();
 
-    public CarB(Simulator simulator,int port) {
+    public CarD(Simulator2 simulator,int port) {
         this.simulator = simulator;
         init();
-        new Server(port, this);
+        new Server(port,this);
+        if (port==10000) {
+            ((Action3D)chassis.getA3Object()).change("red");
+        } else if (port==20000) {
+            ((Action3D)chassis.getA3Object()).change("blue");
+        }
     }
 
     @Override
@@ -47,12 +55,10 @@ public class CarB extends PVEObject implements PVEMsgListener, CarInterface {
         b3.basis.rotY(-0.785f);
         compound.addChildShape(b3, s3);
 
-        chassis = new FreeShapeD(Type.KINEMATIC, 80.0,
-                "x-res:///res/prototype/carB.wrl", compound);
-        // chassis = new Box(Type.DYNAMIC,80.0,new Vector3d(3,1,4));
-        chassis.setInitLocRev(0, 0.25, 0, 0, 0, 0);
+        chassis = new FreeShapeD(Type.DYNAMIC, 10.0,"x-res:///res/prototype/carD.a3",compound);
+        chassis.setInitLocRev(0, 0, 0, 0, 0, 0);
         chassis.disableDeactivation(true);
-        chassis.setDamping(0.5, 0.0);
+        chassis.setDamping(0.9, 0.0);
         // chassis.setAngularFactor(0);
         return new PVEPart[] { chassis };
     }
@@ -67,12 +73,8 @@ public class CarB extends PVEObject implements PVEMsgListener, CarInterface {
         return chassis;
     }
 
-    @Override
-    public void setLocRot(double x, double y, double z, double rx, double ry,
-            double rz) {
-        super.setLocRot(x, y, z, rx, ry, rz);
-        loc.set(x, y, z);
-        rev.set(180 * rx / Math.PI, 180 * ry / Math.PI, 180 * rz / Math.PI);
+    public void setAnotherCar(CarD ac) {
+        anotherCar = ac;
     }
 
     public void drive(double speed, double handle) {
@@ -84,16 +86,10 @@ public class CarB extends PVEObject implements PVEMsgListener, CarInterface {
     protected void postSimulation() {
         Quat4d q = chassis.getQuat();
         Vector3d front = Util.trans(q, new Vector3d(0, 0, 1));
-        front.scale(speed / 10.0);
+        front.scale(10 * speed);
         Vector3d angVel = new Vector3d(0, handle, 0);
-        loc.add(front);
-        rev.add(angVel);
-        if (loc.x<-21.5) loc.x=-21.5;
-        if (loc.x> 21.5) loc.x= 21.5;
-        if (loc.z<-50) loc.z=-50;
-        if (loc.z> 50) loc.z= 50;
-        chassis.setLoc(loc);
-        chassis.setRev(rev);
+        chassis.applyCentralForce(front);
+        chassis.setAngularVelocity(angVel);
     }
 
     @Override
@@ -108,6 +104,10 @@ public class CarB extends PVEObject implements PVEMsgListener, CarInterface {
             return msgSearchJewels(line);
         else if (line.equals("stepForward"))
             return msgStepForward(line);
+        else if (line.startsWith("sendMessage"))
+            return msgSendMessage(line);
+        else if (line.equals("receiveMessages"))
+            return msgReceiveMessages(line);
         return "ERROR";
     }
 
@@ -115,8 +115,8 @@ public class CarB extends PVEObject implements PVEMsgListener, CarInterface {
         String s[] = line.split("\\s");
         double speed = Double.parseDouble(s[1]);
         double handle = Double.parseDouble(s[2]);
-        speed = 1*speed;
-        handle = -1*handle;
+        speed = 20*speed;
+        handle = -0.5*handle;
         drive(speed, handle);
         return "OK";
     }
@@ -134,5 +134,29 @@ public class CarB extends PVEObject implements PVEMsgListener, CarInterface {
     String msgStepForward(String line) {
         simulator.stepForward();
         return "OK";
+    }
+    String msgSendMessage(String line) {
+        synchronized(anotherCar.messages){
+            String msg = line.substring(11);
+            msg = msg.trim();
+            anotherCar.messages.add(msg);
+        }
+        return "OK";
+    }
+    String msgReceiveMessages(String line) {
+        String msgs = "";
+        synchronized (messages) {
+            boolean first=true;
+            for (String s : messages) {
+                if (first==true) {
+                    msgs = msgs+" "+s;
+                    first = false;
+                } else {
+                    msgs = msgs+","+s;
+                }
+            }
+            messages.clear();
+        }
+        return "messages:"+msgs;
     }
 }
