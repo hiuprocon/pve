@@ -97,16 +97,16 @@ public abstract class SampleBase {
     protected abstract void move() throws Exception;
 
     protected void goToDestination(Vector v) throws Exception {
-        double power;
-        double steering;
+        double power = 0.0;
+        double steering = 0.0;
 
         Vector tmpV = new Vector();
         tmpV.sub(v,loc);
         tmpV.normalize();
 
-        power = 10.0 * tmpV.dot(front);
-        //power = Math.abs(power)>5 ? 
         steering = -10.0 * tmpV.dot(left);
+        if (Math.abs(steering)<0.1)
+            power = 1.0;
 
         socket.send("drive "+power+" "+steering);
         System.out.println("drive "+power+" "+steering);
