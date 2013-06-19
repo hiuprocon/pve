@@ -22,6 +22,8 @@ public abstract class SampleBase {
 
     // current simulation time
     protected double currentTime;
+    // counter of simulation step
+    protected int counter;
     // socket
     protected MySocket socket;
     // Location of this car
@@ -38,13 +40,10 @@ public abstract class SampleBase {
     protected Vector vel;
     // Manager of jewels
     protected JewelSet jewelSet;
-    // Messages
-    protected ArrayList<String> messages;
-    // Mode
-    protected Mode mode;
 
     protected SampleBase(int port) throws Exception {
         currentTime = 0.0;
+        counter = 0;
         socket = new MySocket(port);
         loc = new Vector();
         rot = new Vector();
@@ -53,21 +52,16 @@ public abstract class SampleBase {
         oldLoc = new Vector();
         vel = new Vector();
         jewelSet = new JewelSet();
-        messages = new ArrayList<String>();
     }
 
     protected void start() throws Exception {
         while (true) {
             stateCheck();
             move();
-            debug();
-            messages.clear();
             socket.send("stepForward");
             currentTime += dt;
+            counter++;
         }
-    }
-
-    protected void debug() {
     }
 
     // Check current status
@@ -87,13 +81,16 @@ public abstract class SampleBase {
         jewelSet.load(ret);
         ret = socket.send("receiveMessages");
         if (ret.length()>9) {
-            ret = ret.substring(9);
+            ret = ret.substring(10);
             String[] ss = ret.split(",");
-            for (String s:ss)
-                messages.add(s);
+            for (String s:ss) {
+                MessageEvent me = new MessageEvent(s);
+                processEvent(me);
+            }
         }
     }
 
+    protected abstract void processEvent(Event e);
     protected abstract void move() throws Exception;
 
     protected void goToDestination(Vector v) throws Exception {
@@ -104,11 +101,30 @@ public abstract class SampleBase {
         tmpV.sub(v,loc);
         tmpV.normalize();
 
-        steering = -10.0 * tmpV.dot(left);
+        if (tmpV.dot(front)<0.0)
+            steering = 3.0;
+        else
+            steering = -3.0 * tmpV.dot(left);
         if (Math.abs(steering)<0.1)
-            power = 1.0;
+            power = 1.0 * tmpV.dot(front);
 
         socket.send("drive "+power+" "+steering);
-        System.out.println("drive "+power+" "+steering);
+    }
+
+    protected void goToDestinationWithJewel(Vector v) throws Exception {
+        double power = 0.0;
+        double steering = 0.0;
+
+        Vector tmpV = new Vector();
+        tmpV.sub(v,loc);
+        tmpV.normalize();
+
+        if (tmpV.dot(front)<0.0)
+            steering = 1.0;
+        else
+            steering = -1.0 * tmpV.dot(left);
+        power = 1.0 * tmpV.dot(front);
+
+        socket.send("drive "+power+" "+steering);
     }
 }

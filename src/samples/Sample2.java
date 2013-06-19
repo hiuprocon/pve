@@ -1,35 +1,36 @@
 package samples;
 
-enum S2Mode {
-    S0,
-    S1,
-    S2,
-    S3,
-    S4
-}
-
 /*
  * Sample2
  */
 public class Sample2 extends SampleBase {
-    static final Vector waitPoint = new Vector(0,0,20);
+    static final Vector waitingPoint = new Vector(0,0,20);
 
-    S2Mode mode;
     Vector destination;
 
     public Sample2() throws Exception {
         super(20000);
-        mode = S2Mode.S0;
+        destination = new Vector(waitingPoint);
+    }
+
+    @Override
+    protected void processEvent(Event e) {
+        if (e instanceof MessageEvent) {
+            String message = ((MessageEvent)e).message;
+System.out.println("Sample2:reciveMessage: "+message);
+            if (message.equals("wait")) {
+                destination.set(waitingPoint);
+            } else if (message.equals("pushSwitch")) {
+                destination.set(switch2);
+            }
+        } else {
+            System.out.println("Unknown event: "+e.getClass().getName());
+        }
     }
 
     @Override
     protected void move() throws Exception {
-        goToDestination(waitPoint);
-    }
-
-    @Override
-    protected void debug() {
-        System.out.println("Sample2.debug();"+loc);
+        goToDestination(destination);
     }
 
     public static void main(String args[]) throws Exception {
