@@ -169,4 +169,10 @@
             <classpath refid="my.exec.class.path"/>
         </java>
     </target>
+
+    <target name="Sample2" depends="jar">
+        <java classname="samples.Sample2" fork="true">
+            <classpath refid="my.exec.class.path"/>
+        </java>
+    </target>
 </project>

@@ -111,7 +111,7 @@ public class Vector {
 
     public void normalize() {
         double l = length();
-        x /= 1.0/l; y /= 1.0/l; z /= 1.0/l;
+        x /= l; y /= l; z /= l;
     }
 
     public double dot(Vector v) {
