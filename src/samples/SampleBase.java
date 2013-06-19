@@ -90,7 +90,7 @@ public abstract class SampleBase {
         }
     }
 
-    protected abstract void processEvent(Event e);
+    protected abstract void processEvent(Event e) throws Exception;
     protected abstract void move() throws Exception;
 
     protected void goToDestination(Vector v) throws Exception {

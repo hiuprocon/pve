@@ -26,18 +26,19 @@ public class JewelSet {
         return jewels.get(id);
     }
 
-    public Vector getNearest(Vector v) {
+    public String getNearest(Vector v) {
         double min = Double.MAX_VALUE;
-        Vector retV = null;
+        String retId = null;
         Vector tmpV = new Vector();
-        for (Vector jv : jewels.values()) {
+        for (String id : jewels.keySet()) {
+            Vector jv = jewels.get(id);
             tmpV.sub(jv,v);
             double l = tmpV.lengthSquared();
             if (min>l) {
-                retV = jv;
+                retId = id;
                 min = l;
             }
         }
-        return retV;
+        return retId;
     }
 }

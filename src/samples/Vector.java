@@ -82,9 +82,9 @@ public class Vector {
     }
 
     public void add(Vector v1,Vector v2) {
-        x += v1.x + v2.x;
-        y += v1.y + v2.y;
-        z += v1.z + v2.z;
+        x = v1.x + v2.x;
+        y = v1.y + v2.y;
+        z = v1.z + v2.z;
     }
 
     public void sub(Vector v) {
@@ -92,9 +92,9 @@ public class Vector {
     }
 
     public void sub(Vector v1,Vector v2) {
-        x += v1.x - v2.x;
-        y += v1.y - v2.y;
-        z += v1.z - v2.z;
+        x = v1.x - v2.x;
+        y = v1.y - v2.y;
+        z = v1.z - v2.z;
     }
 
     public void scale(double s) {
