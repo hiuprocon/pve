@@ -8,6 +8,8 @@ enum S1Mode {
     GET_ON_ELEVATOR,
     WAIT_UNTIL_TOP,
     GO_TO_GOAL,
+    BACK_TO_ELEVATOR_TOP,
+    WAIT_UNTIL_BOTTOM,
     END
 }
 
@@ -16,8 +18,8 @@ class HoldingJewelEvent extends Event {}
 class NotHoldingJewelEvent extends Event {}
 class DetermineViaPointEvent extends Event {}
 class ArrivalViaPointEvent extends Event {}
-class ArrivalElevatorEvent extends Event {}
-class ArrivalTopEvent extends Event {}
+class ArrivalElevatorBottomEvent extends Event {}
+class ArrivalElevatorTopEvent extends Event {}
 class ArrivalGoalEvent extends Event {}
 
 /*
@@ -41,7 +43,7 @@ public class Sample1 extends SampleBase {
     Vector targetViaPoint;
     Vector targetGoal;
 
-    public Sample1() throws Exception {
+    public Sample1() {
         super(10000);
         mode = S1Mode.DETERMINE_TARGET_JEWEL;
         targetJewel = null;
@@ -50,7 +52,7 @@ public class Sample1 extends SampleBase {
     }
 
     @Override
-    protected void stateCheck() throws Exception {
+    protected void stateCheck() {
         super.stateCheck();
         Vector tmpV = new Vector();
 
@@ -79,16 +81,15 @@ public class Sample1 extends SampleBase {
                 processEvent(new ArrivalViaPointEvent());
         }
 
-        // car has got on the elevator?
-        if (targetViaPoint!=null) {
-            tmpV.sub(elevator,loc);
-            if (tmpV.length()<2.0)
-                processEvent(new ArrivalElevatorEvent());
-        }
+        // car has arrived at the elevator bottom?
+        tmpV.sub(elevatorBottom,loc);
+        if (tmpV.length()<1.0)
+            processEvent(new ArrivalElevatorBottomEvent());
 
-        // car has arrived at the top of the elevator?
-        if (loc.y>14.5)
-            processEvent(new ArrivalTopEvent());
+        // car has arrived at the elevator top?
+        tmpV.sub(elevatorTop,loc);
+        if (tmpV.length()<1.0)
+            processEvent(new ArrivalElevatorTopEvent());
 
         // car has arrived at the goal?
         if (targetGoal!=null) {
@@ -100,7 +101,7 @@ public class Sample1 extends SampleBase {
 
     // This method implements a Finite Automaton
     @Override
-    protected void processEvent(Event e) throws Exception {
+    protected void processEvent(Event e) {
 //System.out.println(e.getClass().getName());
         String s;
         if ((mode==S1Mode.DETERMINE_TARGET_JEWEL)
@@ -118,18 +119,24 @@ System.out.println("Sample1:sendMessage(wait):"+s);
                  &&(e instanceof ArrivalViaPointEvent)) {
             mode = S1Mode.GET_ON_ELEVATOR;
         } else if ((mode==S1Mode.GET_ON_ELEVATOR)
-                 &&(e instanceof ArrivalElevatorEvent)) {
+                 &&(e instanceof ArrivalElevatorBottomEvent)) {
             mode = S1Mode.WAIT_UNTIL_TOP;
             s = socket.send("sendMessage pushSwitch");
 System.out.println("Sample1:sendMessage(pushSwitch):"+s);
         } else if ((mode==S1Mode.WAIT_UNTIL_TOP)
-                 &&(e instanceof ArrivalTopEvent)) {
+                 &&(e instanceof ArrivalElevatorTopEvent)) {
             mode = S1Mode.GO_TO_GOAL;
         } else if ((mode==S1Mode.GO_TO_GOAL)
                  &&(e instanceof ArrivalGoalEvent)) {
-            mode = S1Mode.END;
+            mode = S1Mode.BACK_TO_ELEVATOR_TOP;
+        } else if ((mode==S1Mode.BACK_TO_ELEVATOR_TOP)
+                 &&(e instanceof ArrivalElevatorTopEvent)) {
+            mode = S1Mode.WAIT_UNTIL_BOTTOM;
             s = socket.send("sendMessage wait");
 System.out.println("Sample1:sendMessage(wait):"+s);
+        } else if ((mode==S1Mode.WAIT_UNTIL_BOTTOM)
+                 &&(e instanceof ArrivalElevatorBottomEvent)) {
+            mode = S1Mode.DETERMINE_TARGET_JEWEL;
         } else if ((true)&&(e instanceof MessageEvent)) {
             String message = ((MessageEvent)e).message;
             System.out.println("Sample1: Message received?: "+message);
@@ -139,8 +146,8 @@ System.out.println("Sample1:sendMessage(wait):"+s);
     }
 
     @Override
-    protected void move() throws Exception {
-//System.out.println("Sample1:mode="+mode);
+    protected void move() {
+System.out.println("Sample1:mode="+mode);
         switch(mode) {
         case DETERMINE_TARGET_JEWEL: determineTargetJewel(); break;
         case GO_TO_TARGET_JEWEL: goToTargetJewel(); break;
@@ -149,22 +156,24 @@ System.out.println("Sample1:sendMessage(wait):"+s);
         case GET_ON_ELEVATOR: getOnElevator(); break;
         case WAIT_UNTIL_TOP: waitUntilTop(); break;
         case GO_TO_GOAL: goToGoal(); break;
+        case BACK_TO_ELEVATOR_TOP: backToElevatorTop(); break;
+        case WAIT_UNTIL_BOTTOM: waitUntilBottom(); break;
         case END: end(); break;
         default: System.out.println("Sample1: Unknown mode?"+mode);
         }
     }
 
-    void determineTargetJewel() throws Exception {
+    void determineTargetJewel() {
         targetJewel = jewelSet.getNearest(loc);
         //if (targetJewel!=null)...
         processEvent(new DetermineTargetJewelEvent());
     }
 
-    void goToTargetJewel() throws Exception {
+    void goToTargetJewel() {
         goToDestination(targetJewelLoc);
     }
 
-    void determineWitchViaPoint() throws Exception {
+    void determineWitchViaPoint() {
         Vector tmpV = new Vector();
         double min = Double.MAX_VALUE;
         for (Vector v : viaPoints1) {
@@ -188,30 +197,38 @@ System.out.println("Sample1:sendMessage(wait):"+s);
         processEvent(new DetermineViaPointEvent());
     }
 
-    void goToViaPoint() throws Exception {
-        //goToDestinationWithJewel(targetViaPoint);
-        goToDestination(targetViaPoint);
+    void goToViaPoint() {
+        goToDestinationWithJewel(targetViaPoint);
+        //goToDestination(targetViaPoint);
     }
 
-    void getOnElevator() throws Exception {
-        //goToDestinationWithJewel(elevator);
-        goToDestination(elevator);
+    void getOnElevator() {
+        goToDestinationWithJewel(elevatorBottom);
+        //goToDestination(elevatoButtomr);
     }
 
-    void waitUntilTop() throws Exception {
+    void waitUntilTop() {
         socket.send("drive 0 0");
     }
 
-    void goToGoal() throws Exception {
-        //goToDestinationWithJewel(targetGoal);
-        goToDestination(targetGoal);
+    void goToGoal() {
+        goToDestinationWithJewel(targetGoal);
+        //goToDestination(targetGoal);
     }
 
-    void end() throws Exception {
+    void backToElevatorTop() {
+        backToDestination(elevatorTop);
+    }
+
+    void waitUntilBottom() {
         socket.send("drive 0 0");
     }
 
-    public static void main(String args[]) throws Exception {
+    void end() {
+        socket.send("drive 0 0");
+    }
+
+    public static void main(String args[]) {
         Sample1 s1 = new Sample1();
         s1.start();
     }

@@ -8,7 +8,7 @@ public class Sample2 extends SampleBase {
 
     Vector destination;
 
-    public Sample2() throws Exception {
+    public Sample2() {
         super(20000);
         destination = new Vector(waitingPoint);
     }
@@ -29,11 +29,11 @@ System.out.println("Sample2:reciveMessage: "+message);
     }
 
     @Override
-    protected void move() throws Exception {
+    protected void move() {
         goToDestination(destination);
     }
 
-    public static void main(String args[]) throws Exception {
+    public static void main(String args[]) {
         Sample2 s2 = new Sample2();
         s2.start();
     }

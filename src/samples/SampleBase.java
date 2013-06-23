@@ -9,8 +9,10 @@ import java.util.ArrayList;
 public abstract class SampleBase {
     // Simulation step time
     public static final double dt = 1.0/30.0;
-    // Location of the elevator
-    public static final Vector elevator = new Vector(0,0.5,0);
+    // Location of the elevator bottom
+    public static final Vector elevatorBottom = new Vector(0,1.0,0);
+    // Location of the elevator top
+    public static final Vector elevatorTop = new Vector(0,15.0,0);
     // Location of the switch1
     public static final Vector switch1 = new Vector(0,0.5,-11);
     // Location of the switch2
@@ -41,7 +43,7 @@ public abstract class SampleBase {
     // Manager of jewels
     protected JewelSet jewelSet;
 
-    protected SampleBase(int port) throws Exception {
+    protected SampleBase(int port) {
         currentTime = 0.0;
         counter = 0;
         socket = new MySocket(port);
@@ -54,7 +56,7 @@ public abstract class SampleBase {
         jewelSet = new JewelSet();
     }
 
-    protected void start() throws Exception {
+    protected void start() {
         while (true) {
             stateCheck();
             move();
@@ -65,7 +67,7 @@ public abstract class SampleBase {
     }
 
     // Check current status
-    protected void stateCheck() throws Exception {
+    protected void stateCheck() {
         oldLoc.set(loc);
         String ret = socket.send("getLoc");
         loc.set(ret);
@@ -90,10 +92,10 @@ public abstract class SampleBase {
         }
     }
 
-    protected abstract void processEvent(Event e) throws Exception;
-    protected abstract void move() throws Exception;
+    protected abstract void processEvent(Event e);
+    protected abstract void move();
 
-    protected void goToDestination(Vector v) throws Exception {
+    protected void goToDestination(Vector v) {
         double power = 0.0;
         double steering = 0.0;
 
@@ -111,7 +113,7 @@ public abstract class SampleBase {
         socket.send("drive "+power+" "+steering);
     }
 
-    protected void goToDestinationWithJewel(Vector v) throws Exception {
+    protected void goToDestinationWithJewel(Vector v) {
         double power = 0.0;
         double steering = 0.0;
 
@@ -120,10 +122,28 @@ public abstract class SampleBase {
         tmpV.normalize();
 
         if (tmpV.dot(front)<0.0)
-            steering = 1.0;
+            steering = 3.0;
         else
-            steering = -1.0 * tmpV.dot(left);
-        power = 1.0 * tmpV.dot(front);
+            steering = -3.0 * tmpV.dot(left);
+        power = 0.5;//1.0 * tmpV.dot(front);
+
+        socket.send("drive "+power+" "+steering);
+    }
+
+    protected void backToDestination(Vector v) {
+        double power = 0.0;
+        double steering = 0.0;
+
+        Vector tmpV = new Vector();
+        tmpV.sub(v,loc);
+        tmpV.normalize();
+
+        if (tmpV.dot(front)>0.0)
+            steering = 3.0;
+        else
+            steering = 3.0 * tmpV.dot(left);
+        if (Math.abs(steering)<0.1)
+            power = 0.3 * tmpV.dot(front);
 
         socket.send("drive "+power+" "+steering);
     }

@@ -4,7 +4,7 @@ package samples;
  * A test program for controring a car.
  */
 public class ControlCarTest {
-    public static void main(String args[]) throws Exception {
+    public static void main(String args[]) {
         // Create a simplified socket for a car.
         //   port:10000 -> Car1
         //   port:20000 -> Car2
