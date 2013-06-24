@@ -81,6 +81,8 @@ public abstract class SampleBase {
         vel.scale(1.0/dt);
         ret = socket.send("searchJewels");
         jewelSet.load(ret);
+        if (jewelSet.size()==0)
+            processEvent(new ClearedEvent());
         ret = socket.send("receiveMessages");
         if (ret.length()>9) {
             ret = ret.substring(10);
@@ -146,5 +148,9 @@ public abstract class SampleBase {
             power = 0.3 * tmpV.dot(front);
 
         socket.send("drive "+power+" "+steering);
+    }
+
+    protected void stopCar() {
+        socket.send("drive 0 0");
     }
 }

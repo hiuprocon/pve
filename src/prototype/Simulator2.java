@@ -169,6 +169,10 @@ public class Simulator2 implements CollisionListener {
         if ((aa == goal1 || aa == goal2) && bb instanceof Jewel) {
             gui.appendText("goal!");
             w.del(bb);
+            synchronized(jewels) {
+                jewels.remove((Jewel)bb);
+            }
+System.out.println("GAHA:"+jewels.size());
         }
         if (aa instanceof Jewel && (bb == goal1 || bb == goal2)) {
             gui.appendText("goal!");
@@ -177,12 +181,14 @@ public class Simulator2 implements CollisionListener {
 
     }
     String searchJewels() {
-        String s = ""+jewels.size();
-        for (Jewel j:jewels) {
-            Vector3d v = j.getLoc();
-            s = s +" "+j.getUserData().toString()+" "+v.x+" "+v.y+" "+v.z;
+        synchronized(jewels) {
+            String s = ""+jewels.size();
+            for (Jewel j:jewels) {
+                Vector3d v = j.getLoc();
+                s = s +" "+j.getUserData().toString()+" "+v.x+" "+v.y+" "+v.z;
+            }
+            return s;
         }
-        return s;
     }
 
     public static void main(String args[]) throws Exception {

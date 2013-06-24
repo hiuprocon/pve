@@ -10,6 +10,7 @@ public class JewelSet {
     }
 
     public void load(String info) {
+        jewels.clear();
         String[] ss = info.split("\\s");
         int n = Integer.parseInt(ss[0]);
         for (int i=0;i<n;i++) {
@@ -20,6 +21,10 @@ public class JewelSet {
             Vector jv = new Vector(x,y,z);
             jewels.put(ss[ii],jv);
         }
+    }
+
+    public int size() {
+        return jewels.size();
     }
 
     public Vector get(String id) {

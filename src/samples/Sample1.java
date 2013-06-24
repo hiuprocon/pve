@@ -10,6 +10,7 @@ enum S1Mode {
     GO_TO_GOAL,
     BACK_TO_ELEVATOR_TOP,
     WAIT_UNTIL_BOTTOM,
+    GO_TO_VIA_POINT2,
     END
 }
 
@@ -17,37 +18,32 @@ class DetermineTargetJewelEvent extends Event {}
 class HoldingJewelEvent extends Event {}
 class NotHoldingJewelEvent extends Event {}
 class DetermineViaPointEvent extends Event {}
-class ArrivalViaPointEvent extends Event {}
+class ArrivalViaPoint1Event extends Event {}
 class ArrivalElevatorBottomEvent extends Event {}
 class ArrivalElevatorTopEvent extends Event {}
 class ArrivalGoalEvent extends Event {}
+class ArrivalViaPoint2Event extends Event {}
 
 /*
  * Sample1
  */
 public class Sample1 extends SampleBase {
-    static final Vector[] viaPoints1 = {
-        new Vector( 30,0, 0),
-        new Vector( 25,0,-5),
-        new Vector( 25,0, 5)
-    };
-    static final Vector[] viaPoints2 = {
-        new Vector(-30,0, 0),
-        new Vector(-25,0, 5),
-        new Vector(-25,0,-5),
-    };
+    static final Vector viaPointA = new Vector( 30,0, 0);
+    static final Vector viaPointB = new Vector(-30,0, 0);
 
     S1Mode mode;
     String targetJewel;
     Vector targetJewelLoc;
-    Vector targetViaPoint;
+    Vector targetViaPoint1;
+    Vector targetViaPoint2;
     Vector targetGoal;
 
     public Sample1() {
         super(10000);
         mode = S1Mode.DETERMINE_TARGET_JEWEL;
         targetJewel = null;
-        targetViaPoint = null;
+        targetViaPoint1 = null;
+        targetViaPoint2 = null;
         targetGoal = null;
     }
 
@@ -60,13 +56,17 @@ public class Sample1 extends SampleBase {
         if (targetJewel!=null) {
             targetJewelLoc = jewelSet.get(targetJewel);
             boolean hold = true;
-            tmpV.sub(targetJewelLoc,loc);
-            if (tmpV.length()>1.5) {
+            if (targetJewelLoc==null) {
                 hold = false;
             } else {
-                tmpV.normalize();
-                if (tmpV.dot(front)<0.6)
+                tmpV.sub(targetJewelLoc,loc);
+                if (tmpV.length()>1.5) {
                     hold = false;
+                } else {
+                    tmpV.normalize();
+                    if (tmpV.dot(front)<0.6)
+                        hold = false;
+                }
             }
             if (hold==true)
                 processEvent(new HoldingJewelEvent());
@@ -75,10 +75,10 @@ public class Sample1 extends SampleBase {
         }
 
         // car has arrived at the via point?
-        if (targetViaPoint!=null) {
-            tmpV.sub(targetViaPoint,loc);
+        if (targetViaPoint1!=null) {
+            tmpV.sub(targetViaPoint1,loc);
             if (tmpV.length()<2.0)
-                processEvent(new ArrivalViaPointEvent());
+                processEvent(new ArrivalViaPoint1Event());
         }
 
         // car has arrived at the elevator bottom?
@@ -96,6 +96,13 @@ public class Sample1 extends SampleBase {
             tmpV.sub(targetGoal,loc);
             if (tmpV.length()<2.0)
                 processEvent(new ArrivalGoalEvent());
+        }
+
+        // car has arrived at the via point?
+        if (targetViaPoint2!=null) {
+            tmpV.sub(targetViaPoint2,loc);
+            if (tmpV.length()<2.0)
+                processEvent(new ArrivalViaPoint2Event());
         }
     }
 
@@ -116,7 +123,7 @@ System.out.println("Sample1:sendMessage(wait):"+s);
                  &&(e instanceof DetermineViaPointEvent)) {
             mode = S1Mode.GO_TO_VIA_POINT;
         } else if ((mode==S1Mode.GO_TO_VIA_POINT)
-                 &&(e instanceof ArrivalViaPointEvent)) {
+                 &&(e instanceof ArrivalViaPoint1Event)) {
             mode = S1Mode.GET_ON_ELEVATOR;
         } else if ((mode==S1Mode.GET_ON_ELEVATOR)
                  &&(e instanceof ArrivalElevatorBottomEvent)) {
@@ -134,8 +141,14 @@ System.out.println("Sample1:sendMessage(pushSwitch):"+s);
             mode = S1Mode.WAIT_UNTIL_BOTTOM;
             s = socket.send("sendMessage wait");
 System.out.println("Sample1:sendMessage(wait):"+s);
+        } else if ((mode==S1Mode.BACK_TO_ELEVATOR_TOP)
+                 &&(e instanceof ClearedEvent)) {
+            mode = S1Mode.END;
         } else if ((mode==S1Mode.WAIT_UNTIL_BOTTOM)
                  &&(e instanceof ArrivalElevatorBottomEvent)) {
+            mode = S1Mode.GO_TO_VIA_POINT2;
+        } else if ((mode==S1Mode.GO_TO_VIA_POINT2)
+                 &&(e instanceof ArrivalViaPoint2Event)) {
             mode = S1Mode.DETERMINE_TARGET_JEWEL;
         } else if ((true)&&(e instanceof MessageEvent)) {
             String message = ((MessageEvent)e).message;
@@ -147,17 +160,18 @@ System.out.println("Sample1:sendMessage(wait):"+s);
 
     @Override
     protected void move() {
-System.out.println("Sample1:mode="+mode);
+//System.out.println("Sample1:mode="+mode);
         switch(mode) {
         case DETERMINE_TARGET_JEWEL: determineTargetJewel(); break;
         case GO_TO_TARGET_JEWEL: goToTargetJewel(); break;
         case DETERMINE_WITCH_VIA_POINT: determineWitchViaPoint(); break;
-        case GO_TO_VIA_POINT: goToViaPoint(); break;
+        case GO_TO_VIA_POINT: goToViaPoint1(); break;
         case GET_ON_ELEVATOR: getOnElevator(); break;
         case WAIT_UNTIL_TOP: waitUntilTop(); break;
         case GO_TO_GOAL: goToGoal(); break;
         case BACK_TO_ELEVATOR_TOP: backToElevatorTop(); break;
         case WAIT_UNTIL_BOTTOM: waitUntilBottom(); break;
+        case GO_TO_VIA_POINT2: goToViaPoint2(); break;
         case END: end(); break;
         default: System.out.println("Sample1: Unknown mode?"+mode);
         }
@@ -170,50 +184,37 @@ System.out.println("Sample1:mode="+mode);
     }
 
     void goToTargetJewel() {
-        goToDestination(targetJewelLoc);
+        if (targetJewelLoc!=null)
+            goToDestination(targetJewelLoc);
     }
 
     void determineWitchViaPoint() {
-        Vector tmpV = new Vector();
-        double min = Double.MAX_VALUE;
-        for (Vector v : viaPoints1) {
-            tmpV.sub(v,loc);
-            double l = tmpV.length();
-            if (l<min) {
-                min = l;
-                targetViaPoint = v;
-                targetGoal = goal1;
-            }
-        }
-        for (Vector v : viaPoints2) {
-            tmpV.sub(v,loc);
-            double l = tmpV.length();
-            if (l<min) {
-                min = l;
-                targetViaPoint = v;
-                targetGoal = goal2;
-            }
+        if (loc.x>0.0) {
+            targetViaPoint1 = viaPointA;
+            targetGoal = goal1;
+            targetViaPoint2 = viaPointB;
+        } else {
+            targetViaPoint1 = viaPointB;
+            targetGoal = goal2;
+            targetViaPoint2 = viaPointA;
         }
         processEvent(new DetermineViaPointEvent());
     }
 
-    void goToViaPoint() {
-        goToDestinationWithJewel(targetViaPoint);
-        //goToDestination(targetViaPoint);
+    void goToViaPoint1() {
+        goToDestinationWithJewel(targetViaPoint1);
     }
 
     void getOnElevator() {
         goToDestinationWithJewel(elevatorBottom);
-        //goToDestination(elevatoButtomr);
     }
 
     void waitUntilTop() {
-        socket.send("drive 0 0");
+        stopCar();
     }
 
     void goToGoal() {
         goToDestinationWithJewel(targetGoal);
-        //goToDestination(targetGoal);
     }
 
     void backToElevatorTop() {
@@ -221,11 +222,15 @@ System.out.println("Sample1:mode="+mode);
     }
 
     void waitUntilBottom() {
-        socket.send("drive 0 0");
+        stopCar();
+    }
+
+    void goToViaPoint2() {
+        goToDestination(targetViaPoint2);
     }
 
     void end() {
-        socket.send("drive 0 0");
+        stopCar();
     }
 
     public static void main(String args[]) {

@@ -24,7 +24,7 @@ public class Simulator2GUI extends JFrame implements ActionListener {
     Vector3d up = new Vector3d(0.0, 1.0, 0.0);
 
     public Simulator2GUI(Simulator2 simulator) {
-        super("Simulator");
+        super("Simulator2");
         this.simulator = simulator;
         HBox box1 = new HBox();
         VBox box3 = new VBox();
@@ -74,6 +74,13 @@ public class Simulator2GUI extends JFrame implements ActionListener {
         setVisible(true);
 
         canvas.setBackground(new A3Background(0.1f, 0.3f, 0.5f));
+
+        //for Java1.7.0_40ea bug of Mac
+        if (System.getProperty("os.name").equals("Mac OS X")) {
+            try{Thread.sleep(1000);}catch(Exception e){;}
+            setBounds(500,0,1010,710);
+            setBounds(500,0,1000,700);
+        }
     }
 
     public void setCar1(CarInterface c) {
