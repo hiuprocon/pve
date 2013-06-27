@@ -22,13 +22,26 @@ public class Simulator2 implements CollisionListener {
     CarInterface car2;
     ArrayList<Jewel> jewels = new ArrayList<Jewel>();
     Simulator2GUI gui;
+    int waitTime = 33;
 
-    public Simulator2() throws Exception {
+    public Simulator2() {
         w = new PVEWorld(PVEWorld.A3CANVAS,PVEWorld.MANUAL_STEP);
         //w = new PVEWorld(PVEWorld.A3CANVAS,PVEWorld.AUTO_STEP);
         gui = new Simulator2GUI(this);
         w.addCollisionListener(this);
-        w.resume();
+        initWorld();
+    }
+    void initWorld() {
+        if (car1!=null) {
+            car1.dispose();
+            car2.dispose();
+            try{Thread.sleep(1000);}catch(Exception e) {;}
+        }
+
+        //w.pause();
+        w.clear();
+        noOfActivated = 3; //simulator + cars
+        noOfWaiting = 0;
 
         ground = new BoxObj(Type.STATIC, 0, new Vector3d(250, 1, 250),
                 "x-res:///res/prototype/Ground2.wrl");
@@ -118,25 +131,26 @@ public class Simulator2 implements CollisionListener {
             w.add(j);
             jewels.add(j);
         }
-
-        //A3CanvasInterface mainCanvas = w.getMainCanvas();
-        int waitTime = 33;
+        w.resume();
         w.stepForward();
+    }
+
+    public void start() {
+        //A3CanvasInterface mainCanvas = w.getMainCanvas();
+        waitTime = 33;
         while (true) {
             stepForward();
             //mainCanvas.waitForUpdate(waitTime * 2);
             //Thread.sleep(waitTime/2);// 微妙
-            Thread.sleep(waitTime);
+            try {Thread.sleep(waitTime);}catch(Exception e) {;}
         }
     }
     Object waitingRoom = new Object();
     int noOfActivated = 3; //simulator + cars
     volatile int noOfWaiting = 0;
     //ArrayList<Object> waitings = new ArrayList<Object>();
-    void deactivateC1() { noOfActivated--; }
-    void activateC1() {   noOfActivated++; }
-    void deactivateC2() { noOfActivated--; }
-    void activateC2() {   noOfActivated++; }
+    void deactivateOneCar() { noOfActivated--; }
+    void activateTwoCars() {   noOfActivated++; }
     void stepForward() {
         synchronized (waitingRoom) {
             noOfWaiting++;
@@ -191,7 +205,8 @@ System.out.println("GAHA:"+jewels.size());
         }
     }
 
-    public static void main(String args[]) throws Exception {
-        new Simulator2();
+    public static void main(String args[]) {
+        Simulator2 s2 = new Simulator2();
+        s2.start();
     }
 }

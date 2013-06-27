@@ -7,6 +7,11 @@ import com.github.hiuprocon.pve.core.PVEMsgListener;
 public class Server implements Runnable {
     int port;
     PVEMsgListener ml;
+    boolean dispose = false;
+    ServerSocket serverSocket = null;
+    Socket socket = null;
+    BufferedReader br = null;
+    PrintWriter pw = null;
 
     public Server(int port, PVEMsgListener ml) {
         this.port = port;
@@ -15,17 +20,18 @@ public class Server implements Runnable {
     }
 
     public void run() {
-        while (true) {
-            ServerSocket serverSocket = null;
-            Socket socket = null;
+        while (dispose==false) {
+            serverSocket = null;
+            socket = null;
             InputStreamReader isr = null;
-            BufferedReader br = null;
+            br = null;
             OutputStreamWriter osw = null;
             BufferedWriter bw = null;
-            PrintWriter pw = null;
+            pw = null;
             try {
                 serverSocket = new ServerSocket(port);
                 socket = serverSocket.accept();
+System.out.println("GAHA:");
                 isr = new InputStreamReader(socket.getInputStream(), "UTF8");
                 br = new BufferedReader(isr);
                 osw = new OutputStreamWriter(socket.getOutputStream(), "UTF8");
@@ -41,14 +47,26 @@ public class Server implements Runnable {
                 e.printStackTrace();
             } finally {
                 try {
-                    br.close();
-                    pw.close();
-                    socket.close();
-                    serverSocket.close();
+                    if (br!=null) br.close();
+                    if (pw!=null) pw.close();
+                    if (socket!=null) socket.close();
+                    if (serverSocket!=null) serverSocket.close();
                 } catch (Exception ee) {
                     ee.printStackTrace();
                 }
             }
+        }
+    }
+
+    public void dispose() {
+        dispose = true;
+        try {
+            if (br!=null) br.close();
+            if (pw!=null) pw.close();
+            if (socket!=null) socket.close();
+            if (serverSocket!=null) serverSocket.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
         }
     }
 }

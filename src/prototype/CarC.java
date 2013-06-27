@@ -12,6 +12,7 @@ import com.github.hiuprocon.pve.ui.Server;
 
 public class CarC extends PVEObject implements PVEMsgListener, CarInterface {
     Simulator simulator;
+    Server server;
     PVEPart chassis;
     double speed;
     double handle;
@@ -19,7 +20,7 @@ public class CarC extends PVEObject implements PVEMsgListener, CarInterface {
     public CarC(Simulator simulator,int port) {
         this.simulator = simulator;
         init();
-        new Server(port,this);
+        server = new Server(port,this);
     }
 
     @Override
@@ -99,6 +100,11 @@ public class CarC extends PVEObject implements PVEMsgListener, CarInterface {
         else if (line.equals("stepForward"))
             return msgStepForward(line);
         return "ERROR";
+    }
+
+    @Override
+    public void dispose() {
+        server.dispose();
     }
 
     String msgDrive(String line) {

@@ -10,13 +10,14 @@ import jp.sourceforge.acerola3d.a3.Util;
 
 public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
     Simulator simulator;
+    Server server;
     double speed;
     double handle;
 
     public CarA(Simulator simulator, int port) {
         super(simulator.w, "x-res:///res/prototype/carA/carA.a3", shassisShape());
         this.simulator = simulator;
-        new Server(port, this);
+        server = new Server(port, this);
     }
 
     static CollisionShape shassisShape() {
@@ -70,6 +71,11 @@ public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
         else if (line.equals("stepForward"))
             return msgStepForward(line);
         return "ERROR";
+    }
+
+    @Override
+    public void dispose() {
+        server.dispose();
     }
 
     String msgDrive(String line) {

@@ -13,6 +13,7 @@ import jp.sourceforge.acerola3d.a3.Action3D;
 
 public class CarD extends PVEObject implements PVEMsgListener, CarInterface {
     Simulator2 simulator;
+    Server server;
     PVEPart chassis;
     double speed;
     double handle;
@@ -22,7 +23,7 @@ public class CarD extends PVEObject implements PVEMsgListener, CarInterface {
     public CarD(Simulator2 simulator,int port) {
         this.simulator = simulator;
         init();
-        new Server(port,this);
+        server = new Server(port,this);
         if (port==10000) {
             ((Action3D)chassis.getA3Object()).change("red");
         } else if (port==20000) {
@@ -109,6 +110,11 @@ public class CarD extends PVEObject implements PVEMsgListener, CarInterface {
         else if (line.equals("receiveMessages"))
             return msgReceiveMessages(line);
         return "ERROR";
+    }
+
+    @Override
+    public void dispose() {
+        server.dispose();
     }
 
     String msgDrive(String line) {
