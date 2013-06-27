@@ -109,6 +109,8 @@ public class CarD extends PVEObject implements PVEMsgListener, CarInterface {
             return msgSendMessage(line);
         else if (line.equals("receiveMessages"))
             return msgReceiveMessages(line);
+        else if (line.equals("setWaitTime"))
+            return msgSetWaitTime(line);
         return "ERROR";
     }
 
@@ -164,5 +166,10 @@ public class CarD extends PVEObject implements PVEMsgListener, CarInterface {
             messages.clear();
         }
         return "messages:"+msgs;
+    }
+    String msgSetWaitTime(String line) {
+        String t = line.split("\\s")[1];
+        simulator.setWaitTime(Integer.parseInt(t));
+        return "OK";
     }
 }

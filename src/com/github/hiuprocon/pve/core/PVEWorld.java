@@ -368,4 +368,18 @@ public class PVEWorld implements Runnable {
     public DefaultVehicleRaycaster createDefaultVehicleRaycaster() {
         return new DefaultVehicleRaycaster(dynamicsWorld);
     }
+    public void polygonize() {
+        for (PVEObject o : objects) {
+            for (PVEPart p : o.parts) {
+                p.getA3Object().polygonize();
+            }
+        }
+    }
+    public void unpolygonize() {
+        for (PVEObject o : objects) {
+            for (PVEPart p : o.parts) {
+                p.getA3Object().unpolygonize();
+            }
+        }
+    }
 }

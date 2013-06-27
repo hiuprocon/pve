@@ -142,6 +142,7 @@ public class Simulator2 implements CollisionListener {
             stepForward();
             //mainCanvas.waitForUpdate(waitTime * 2);
             //Thread.sleep(waitTime/2);// 微妙
+            gui.updateTime(w.getTime());
             try {Thread.sleep(waitTime);}catch(Exception e) {;}
         }
     }
@@ -181,18 +182,25 @@ public class Simulator2 implements CollisionListener {
         if ((aa instanceof CarInterface) && (bb == switch1 || bb == switch2))
             elevator.setUp();
         if ((aa == goal1 || aa == goal2) && bb instanceof Jewel) {
-            gui.appendText("goal!");
-            w.del(bb);
-            synchronized(jewels) {
-                jewels.remove((Jewel)bb);
-            }
-System.out.println("GAHA:"+jewels.size());
+            goal((Jewel)bb);
         }
         if (aa instanceof Jewel && (bb == goal1 || bb == goal2)) {
-            gui.appendText("goal!");
-            w.del(aa);
+            goal((Jewel)aa);
         }
 
+    }
+    void goal(Jewel j) {
+        gui.appendText("goal!");
+        w.del(j);
+        synchronized(jewels) {
+            jewels.remove(j);
+        }
+        if (jewels.size()==0) {
+            w.pause();
+            try{Thread.sleep(1000);}catch(Exception e){;}
+            gui.updateTime(w.getTime());
+            gui.appendText(String.format("clear!!!!!  time=%9.2f",w.getTime()));
+        }
     }
     String searchJewels() {
         synchronized(jewels) {
@@ -203,6 +211,9 @@ System.out.println("GAHA:"+jewels.size());
             }
             return s;
         }
+    }
+    void setWaitTime(int t) {
+        waitTime=t;
     }
 
     public static void main(String args[]) {

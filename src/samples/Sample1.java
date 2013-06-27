@@ -3,7 +3,7 @@ package samples;
 enum S1Mode {
     DETERMINE_TARGET_JEWEL,
     GO_TO_TARGET_JEWEL,
-    DETERMINE_WITCH_VIA_POINT,
+    DETERMINE_WHITCH_VIA_POINT,
     GO_TO_VIA_POINT,
     GET_ON_ELEVATOR,
     WAIT_UNTIL_TOP,
@@ -116,10 +116,10 @@ public class Sample1 extends SampleBase {
             mode = S1Mode.GO_TO_TARGET_JEWEL;
         } else if ((mode==S1Mode.GO_TO_TARGET_JEWEL)
                  &&(e instanceof HoldingJewelEvent)) {
-            mode = S1Mode.DETERMINE_WITCH_VIA_POINT;
+            mode = S1Mode.DETERMINE_WHITCH_VIA_POINT;
             s = socket.send("sendMessage wait");
 System.out.println("Sample1:sendMessage(wait):"+s);
-        } else if ((mode==S1Mode.DETERMINE_WITCH_VIA_POINT)
+        } else if ((mode==S1Mode.DETERMINE_WHITCH_VIA_POINT)
                  &&(e instanceof DetermineViaPointEvent)) {
             mode = S1Mode.GO_TO_VIA_POINT;
         } else if ((mode==S1Mode.GO_TO_VIA_POINT)
@@ -164,7 +164,7 @@ System.out.println("Sample1:sendMessage(wait):"+s);
         switch(mode) {
         case DETERMINE_TARGET_JEWEL: determineTargetJewel(); break;
         case GO_TO_TARGET_JEWEL: goToTargetJewel(); break;
-        case DETERMINE_WITCH_VIA_POINT: determineWitchViaPoint(); break;
+        case DETERMINE_WHITCH_VIA_POINT: determineWitchViaPoint(); break;
         case GO_TO_VIA_POINT: goToViaPoint1(); break;
         case GET_ON_ELEVATOR: getOnElevator(); break;
         case WAIT_UNTIL_TOP: waitUntilTop(); break;
