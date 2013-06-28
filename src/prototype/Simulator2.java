@@ -2,6 +2,7 @@ package prototype;
 
 import java.util.ArrayList;
 import javax.vecmath.Vector3d;
+import jp.sourceforge.acerola3d.a3.A3Background;
 import jp.sourceforge.acerola3d.a3.A3CanvasInterface;
 import jp.sourceforge.acerola3d.a3.Action3D;
 import com.github.hiuprocon.pve.core.*;
@@ -150,6 +151,7 @@ public class Simulator2 implements CollisionListener {
         light.change("dl1.0");
         light.setLoc(0,10,0);
         mainCanvas.add(light);
+        mainCanvas.setBackground(new A3Background(0.1f, 0.3f, 0.5f));
     }
 
     public void start() {

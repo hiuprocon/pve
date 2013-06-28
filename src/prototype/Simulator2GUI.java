@@ -109,8 +109,6 @@ public class Simulator2GUI extends JFrame implements ActionListener, ChangeListe
         setBounds(500,0,1000,700);
         setVisible(true);
 
-        canvas.setBackground(new A3Background(0.1f, 0.3f, 0.5f));
-
         //for Java1.7.0_40ea bug of Mac
         if (System.getProperty("os.name").equals("Mac OS X")) {
             try{Thread.sleep(1000);}catch(Exception e){;}
