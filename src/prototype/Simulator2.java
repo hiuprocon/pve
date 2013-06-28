@@ -2,7 +2,8 @@ package prototype;
 
 import java.util.ArrayList;
 import javax.vecmath.Vector3d;
-//import jp.sourceforge.acerola3d.a3.A3CanvasInterface;
+import jp.sourceforge.acerola3d.a3.A3CanvasInterface;
+import jp.sourceforge.acerola3d.a3.Action3D;
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 
@@ -40,6 +41,10 @@ public class Simulator2 implements CollisionListener {
 
         //w.pause();
         w.clear();
+        synchronized(waitingRoom) {
+            waitingRoom.notifyAll();
+        }
+        try{Thread.sleep(1000);}catch(Exception e) {;}
         noOfActivated = 3; //simulator + cars
         noOfWaiting = 0;
 
@@ -133,6 +138,18 @@ public class Simulator2 implements CollisionListener {
         }
         w.resume();
         w.stepForward();
+
+        A3CanvasInterface mainCanvas = w.getMainCanvas();
+        mainCanvas.setHeadLightEnable(false);
+        Action3D light = null;
+        try {
+            light = new Action3D("x-res:///res/DirectionalLightSet.a3");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        light.change("dl1.0");
+        light.setLoc(0,10,0);
+        mainCanvas.add(light);
     }
 
     public void start() {

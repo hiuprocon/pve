@@ -1,6 +1,5 @@
 package com.github.hiuprocon.pve.core;
 
-import com.github.hiuprocon.pve.core.*;
 import com.bulletphysics.collision.shapes.*;
 import javax.vecmath.*;
 import jp.sourceforge.acerola3d.a3.*;

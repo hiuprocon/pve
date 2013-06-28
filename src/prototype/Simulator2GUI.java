@@ -49,6 +49,7 @@ public class Simulator2GUI extends JFrame implements ActionListener, ChangeListe
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         defaultView();
         canvas.setSize(800, 550);
+        canvas.setCanvasWidthInPWorld(2.0);
 
         VBox box2 = new VBox();
 

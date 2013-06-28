@@ -26,7 +26,7 @@ public class Test implements CollisionListener {
         // KeyboardHovercraft c = new KeyboardHovercraft();
         c.setLocRev(0, 1, 0, 0, 0, 0);
         w.add(c);
-        //gui.setCar(c);
+        gui.setCar(c);
         w.stepForward();
         while (true) {
             try{Thread.sleep(3300);}catch(Exception e){;}

@@ -14,13 +14,15 @@ public class TestGUI extends JFrame {
         super("Test");
         canvas = (A3Canvas) c;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        canvas.setCameraLocImmediately(0, 5, 20);
+        canvas.setCameraLocImmediately(new Vector3d(0, 5, 20));
         canvas.setCameraLookAtPointImmediately(0, 0, 0);
+        /*
         Vector3d lookAt = new Vector3d(0, 0, 6);
         Vector3d camera = new Vector3d(0, 3, -6);
         Vector3d up = new Vector3d(0, 1, 0);
-        //canvas.setNavigationMode(A3CanvasInterface.NaviMode.CHASE, lookAt,
-        //        camera, up, 1.0);
+        canvas.setNavigationMode(A3CanvasInterface.NaviMode.CHASE, lookAt,
+                camera, up, 1.0);
+        */
         canvas.setNavigationMode(A3CanvasInterface.NaviMode.SIMPLE,Math.sqrt(25+400));
         canvas.setSize(500, 300);
         add(canvas);

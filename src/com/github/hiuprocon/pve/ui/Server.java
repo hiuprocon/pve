@@ -31,7 +31,6 @@ public class Server implements Runnable {
             try {
                 serverSocket = new ServerSocket(port);
                 socket = serverSocket.accept();
-System.out.println("GAHA:");
                 isr = new InputStreamReader(socket.getInputStream(), "UTF8");
                 br = new BufferedReader(isr);
                 osw = new OutputStreamWriter(socket.getOutputStream(), "UTF8");
@@ -43,6 +42,8 @@ System.out.println("GAHA:");
                     pw.println(res);
                     pw.flush();
                 }
+            } catch (SocketException e) {
+                System.out.println(e.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
