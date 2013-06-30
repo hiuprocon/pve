@@ -143,14 +143,28 @@ public class Simulator2 implements CollisionListener {
         A3CanvasInterface mainCanvas = w.getMainCanvas();
         mainCanvas.setHeadLightEnable(false);
         Action3D light = null;
+        Action3D grid1 = null;
+        Action3D grid2 = null;
+        Action3D grid3 = null;
         try {
             light = new Action3D("x-res:///res/DirectionalLightSet.a3");
+            grid1 = new Action3D("x-res:///res/prototype/PCGrid.a3");
+            grid2 = new Action3D("x-res:///res/prototype/PCGrid.a3");
+            grid3 = new Action3D("x-res:///res/prototype/PCGrid.a3");
         } catch (Exception e) {
             e.printStackTrace();
         }
         light.change("dl1.0");
         light.setLoc(0,10,0);
         mainCanvas.add(light);
+        grid1.setRev(-90,0,0);
+        grid1.setLoc(0,-2,0);
+        mainCanvas.add(grid1);
+        grid2.setLoc(0,0,-150);
+        mainCanvas.add(grid2);
+        grid3.setRev(0,90,0);
+        grid3.setLoc(-150,0,0);
+        mainCanvas.add(grid3);
         mainCanvas.setBackground(new A3Background(0.1f, 0.3f, 0.5f));
     }
 
