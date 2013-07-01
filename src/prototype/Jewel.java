@@ -10,8 +10,9 @@ public class Jewel extends PVEObject {
         init();
     }
 
-    //@Override
-    protected PVEPart[] createParts_BAK() {
+    /*
+    @Override
+    protected PVEPart[] createParts() {
         jewel = new Box(Type.DYNAMIC, 10.0, new Vector3d(0.5, 0.5, 0.5),
                   "x-res:///res/prototype/Jewel.wrl");
         // jewel.setInitLocRot(0,0,0, 0,0,0);
@@ -19,13 +20,25 @@ public class Jewel extends PVEObject {
         jewel.setDamping(0.0,0.0);
         return new PVEPart[] { jewel };
     }
+    */
 
-    //@Override
+    /*
+    @Override
     protected PVEPart[] createParts() {
         jewel = new Sphere(Type.DYNAMIC, 10.0, 0.5,
                   "x-res:///res/Sphere.wrl");
         // jewel.setInitLocRot(0,0,0, 0,0,0);
         //jewel.setFriction(1);
+        jewel.setDamping(0.9,0.0);
+        return new PVEPart[] { jewel };
+    }
+    */
+
+    @Override
+    protected PVEPart[] createParts() {
+        jewel = new FreeShapeB(Type.DYNAMIC,"x-res:///res/prototype/Jewel.wrl");
+        // jewel.setInitLocRot(0,0,0, 0,0,0);
+        //jewel.setFriction(3.0);
         jewel.setDamping(0.9,0.0);
         return new PVEPart[] { jewel };
     }

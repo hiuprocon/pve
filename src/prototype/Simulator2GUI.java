@@ -13,6 +13,9 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import javax.swing.text.Caret;
+import javax.swing.text.Document;
+import javax.swing.text.Position;
 
 public class Simulator2GUI extends JFrame implements ActionListener, ChangeListener {
     private static final long serialVersionUID = 1L;
@@ -40,20 +43,29 @@ public class Simulator2GUI extends JFrame implements ActionListener, ChangeListe
         super("Simulator2");
         this.simulator = simulator;
         HBox box1 = new HBox();
-        VBox box3 = new VBox();
-        textArea = new JTextArea();
+        textArea = new JTextArea(24,80);
         textArea.setEditable(false);
         JScrollPane sp = new JScrollPane(textArea);
+        sp.setMinimumSize(new Dimension(1,1));
         sp.setPreferredSize(new Dimension(800,150));
+        sp.setMaximumSize(new Dimension(10000,10000));
         canvas = (A3Canvas) simulator.w.getMainCanvas();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         defaultView();
-        canvas.setSize(800, 550);
+        canvas.setMinimumSize(new Dimension(1, 1));
+        canvas.setPreferredSize(new Dimension(800, 550));
+        canvas.setMaximumSize(new Dimension(10000,10000));
         canvas.setCanvasWidthInPWorld(2.0);
 
         VBox box2 = new VBox();
+        box2.setMinimumSize(new Dimension(1, 1));
+        box2.setPreferredSize(new Dimension(300, 700));
+        box2.setMaximumSize(new Dimension(10000,10000));
 
         VBox controlBox = new VBox();
+        controlBox.setMinimumSize(new Dimension(1, 1));
+        controlBox.setPreferredSize(new Dimension(300, 550));
+        controlBox.setMaximumSize(new Dimension(10000,10000));
         box2.myAdd(controlBox, 1);
         oneCarCB = new JCheckBox("only one car");
         oneCarCB.addActionListener(this);
@@ -92,21 +104,26 @@ public class Simulator2GUI extends JFrame implements ActionListener, ChangeListe
         snapshotB.addActionListener(this);
         controlBox.myAdd(snapshotB, 1);
 
-        sc1 = A3SubCanvas.createA3SubCanvas(200, 150);
+        sc1 = A3SubCanvas.createA3SubCanvas(300, 150);
+        sc1.setMinimumSize(new Dimension(1, 1));
+        sc1.setPreferredSize(new Dimension(300, 150));
+        sc1.setMaximumSize(new Dimension(10000,10000));
         canvas.addA3SubCanvas(sc1);
-        box2.myAdd(sc1,1);
+        box2.myAdd(sc1,2);
 
         sc2 = A3SubCanvas.createA3SubCanvas(200, 150);
+        sc2.setMinimumSize(new Dimension(1, 1));
+        sc2.setPreferredSize(new Dimension(300, 150));
+        sc2.setMaximumSize(new Dimension(10000,10000));
         canvas.addA3SubCanvas(sc2);
-        box2.myAdd(sc2, 1);
+        box2.myAdd(sc2, 2);
 
-        box3.myAdd(sp,1);
-        box3.myAdd(canvas,1);
+        JSplitPane sp3 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,sp,canvas);
         box1.myAdd(box2, 1);
-        box1.myAdd(box3, 1);
+        box1.myAdd(sp3, 3);
         add(box1);
         //pack();
-        setBounds(500,0,1000,700);
+        setBounds(500,0,1000,850);
         setVisible(true);
 
         //for Java1.7.0_40ea bug of Mac
@@ -158,6 +175,10 @@ public class Simulator2GUI extends JFrame implements ActionListener, ChangeListe
 
     public void appendText(String s) {
         textArea.append(s+"\n");
+        Document d = textArea.getDocument();
+        Position p = d.getEndPosition();
+        Caret c = textArea.getCaret();
+        c.setDot(p.getOffset());
     }
 
     public void updateTime(double t) {

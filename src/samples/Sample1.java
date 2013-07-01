@@ -60,7 +60,7 @@ public class Sample1 extends SampleBase {
                 hold = false;
             } else {
                 tmpV.sub(targetJewelLoc,loc);
-                if (tmpV.length()>1.5) {
+                if (tmpV.length()>2.0) {
                     hold = false;
                 } else {
                     tmpV.normalize();

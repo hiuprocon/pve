@@ -236,7 +236,7 @@ public class Simulator2 implements CollisionListener {
 
     }
     void goal(Jewel j) {
-        gui.appendText("goal!");
+        gui.appendText("goal! "+j.getUserData());
         w.del(j);
         synchronized(jewels) {
             jewels.remove(j);
