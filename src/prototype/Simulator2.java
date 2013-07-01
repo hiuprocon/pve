@@ -34,6 +34,13 @@ public class Simulator2 implements CollisionListener {
         initWorld();
     }
     void initWorld() {
+        noOfActivated = 3; //simulator + cars
+        noOfWaiting = 0;
+        synchronized(waitingRoom) {
+            waitingRoom.notifyAll();
+        }
+        try{Thread.sleep(1000);}catch(Exception e) {;}
+
         if (car1!=null) {
             car1.dispose();
             car2.dispose();
@@ -42,12 +49,6 @@ public class Simulator2 implements CollisionListener {
 
         //w.pause();
         w.clear();
-        synchronized(waitingRoom) {
-            waitingRoom.notifyAll();
-        }
-        try{Thread.sleep(1000);}catch(Exception e) {;}
-        noOfActivated = 3; //simulator + cars
-        noOfWaiting = 0;
 
         ground = new BoxObj(Type.STATIC, 0, new Vector3d(250, 1, 250),
                 "x-res:///res/prototype/Ground2.wrl");
@@ -183,8 +184,20 @@ public class Simulator2 implements CollisionListener {
     int noOfActivated = 3; //simulator + cars
     volatile int noOfWaiting = 0;
     //ArrayList<Object> waitings = new ArrayList<Object>();
-    void deactivateOneCar() { noOfActivated--; }
-    void activateTwoCars() {   noOfActivated++; }
+    void deactivateOneCar() {
+        noOfActivated=2;
+        noOfWaiting = 0;
+        synchronized(waitingRoom) {
+            waitingRoom.notifyAll();
+        }
+    }
+    void activateTwoCars() {
+        noOfActivated=3;
+        noOfWaiting = 0;
+        synchronized(waitingRoom) {
+            waitingRoom.notifyAll();
+        }
+    }
     void stepForward() {
         synchronized (waitingRoom) {
             noOfWaiting++;

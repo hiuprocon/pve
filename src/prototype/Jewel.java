@@ -15,12 +15,12 @@ public class Jewel extends PVEObject {
         jewel = new Box(Type.DYNAMIC, 10.0, new Vector3d(0.5, 0.5, 0.5),
                   "x-res:///res/prototype/Jewel.wrl");
         // jewel.setInitLocRot(0,0,0, 0,0,0);
-        jewel.setFriction(1);
-        jewel.setDamping(0.9,0.9);
+        jewel.setFriction(0.5);
+        jewel.setDamping(0.0,0.0);
         return new PVEPart[] { jewel };
     }
 
-    @Override
+    //@Override
     protected PVEPart[] createParts() {
         jewel = new Sphere(Type.DYNAMIC, 10.0, 0.5,
                   "x-res:///res/Sphere.wrl");

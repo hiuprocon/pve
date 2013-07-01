@@ -44,8 +44,8 @@ public class Server implements Runnable {
                 }
             } catch (SocketException e) {
                 System.out.println(e.getMessage());
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
             } finally {
                 try {
                     if (br!=null) br.close();
