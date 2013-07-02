@@ -5,6 +5,7 @@ import javax.vecmath.Vector3d;
 import jp.sourceforge.acerola3d.a3.A3Background;
 import jp.sourceforge.acerola3d.a3.A3CanvasInterface;
 import jp.sourceforge.acerola3d.a3.Action3D;
+import jp.sourceforge.acerola3d.a3.VRML;
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 
@@ -147,11 +148,15 @@ public class Simulator2 implements CollisionListener {
         Action3D grid1 = null;
         Action3D grid2 = null;
         Action3D grid3 = null;
+        VRML jewelField1 = null;
+        VRML jewelField2 = null;
         try {
             light = new Action3D("x-res:///res/DirectionalLightSet.a3");
             grid1 = new Action3D("x-res:///res/prototype/PCGrid.a3");
             grid2 = new Action3D("x-res:///res/prototype/PCGrid.a3");
             grid3 = new Action3D("x-res:///res/prototype/PCGrid.a3");
+            jewelField1 = new VRML("x-res:///res/prototype/JewelField.wrl");
+            jewelField2 = new VRML("x-res:///res/prototype/JewelField.wrl");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -166,6 +171,12 @@ public class Simulator2 implements CollisionListener {
         grid3.setRev(0,90,0);
         grid3.setLoc(-150,0,0);
         mainCanvas.add(grid3);
+        jewelField1.setScaleX(60);jewelField1.setScaleY(0.1);jewelField1.setScaleZ(80);
+        jewelField1.setLoc(50,0,0);
+        mainCanvas.add(jewelField1);
+        jewelField2.setScaleX(60);jewelField2.setScaleY(0.1);jewelField2.setScaleZ(80);
+        jewelField2.setLoc(-50,0,0);
+        mainCanvas.add(jewelField2);
         mainCanvas.setBackground(new A3Background(0.1f, 0.3f, 0.5f));
     }
 
