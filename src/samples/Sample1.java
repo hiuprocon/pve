@@ -123,13 +123,19 @@ System.out.println("Sample1:sendMessage(wait):"+s);
                  &&(e instanceof DetermineViaPointEvent)) {
             mode = S1Mode.GO_TO_VIA_POINT;
         } else if ((mode==S1Mode.GO_TO_VIA_POINT)
-                 &&(e instanceof ArrivalViaPoint1Event)) {
-            mode = S1Mode.GET_ON_ELEVATOR;
+                &&(e instanceof ArrivalViaPoint1Event)) {
+           mode = S1Mode.GET_ON_ELEVATOR;
+        } else if ((mode==S1Mode.GO_TO_VIA_POINT)
+                &&(e instanceof NotHoldingJewelEvent)) {
+           mode = S1Mode.DETERMINE_TARGET_JEWEL;
         } else if ((mode==S1Mode.GET_ON_ELEVATOR)
-                 &&(e instanceof ArrivalElevatorBottomEvent)) {
-            mode = S1Mode.WAIT_UNTIL_TOP;
-            s = socket.send("sendMessage pushSwitch");
+                &&(e instanceof ArrivalElevatorBottomEvent)) {
+           mode = S1Mode.WAIT_UNTIL_TOP;
+           s = socket.send("sendMessage pushSwitch");
 System.out.println("Sample1:sendMessage(pushSwitch):"+s);
+        } else if ((mode==S1Mode.GET_ON_ELEVATOR)
+                &&(e instanceof NotHoldingJewelEvent)) {
+           mode = S1Mode.DETERMINE_TARGET_JEWEL;
         } else if ((mode==S1Mode.WAIT_UNTIL_TOP)
                  &&(e instanceof ArrivalElevatorTopEvent)) {
             mode = S1Mode.GO_TO_GOAL;

@@ -123,10 +123,10 @@ public class CarD extends PVEObject implements PVEMsgListener, CarInterface {
         String s[] = line.split("\\s");
         double speed = Double.parseDouble(s[1]);
         double handle = Double.parseDouble(s[2]);
-        speed = speed>1.0?1.0:speed;
-        speed = speed<-1.0?-1.0:speed;
-        handle = handle>3.0?3.0:handle;
-        handle = handle<-3.0?-3.0:handle;
+        //speed = speed>1.0?1.0:speed;
+        //speed = speed<-1.0?-1.0:speed;
+        //handle = handle>3.0?3.0:handle;
+        //handle = handle<-3.0?-3.0:handle;
         speed = 20*speed;
         handle = -0.5*handle;
         drive(speed, handle);

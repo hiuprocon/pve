@@ -1,7 +1,7 @@
 package prototype;
 
 import com.github.hiuprocon.pve.core.*;
-import javax.vecmath.*;
+//import javax.vecmath.*;
 
 public class Jewel extends PVEObject {
     PVEPart jewel;

@@ -43,30 +43,24 @@ public class Simulator2GUI extends JFrame implements ActionListener, ChangeListe
         super("Simulator2");
         this.simulator = simulator;
         HBox box1 = new HBox();
-        textArea = new JTextArea(24,80);
+        VBox box3 = new VBox();
+        textArea = new JTextArea(20,40);
         textArea.setEditable(false);
         JScrollPane sp = new JScrollPane(textArea);
-        sp.setMinimumSize(new Dimension(1,1));
-        sp.setPreferredSize(new Dimension(800,150));
-        sp.setMaximumSize(new Dimension(10000,10000));
+        sp.setMinimumSize(new Dimension(600,130));
+        sp.setPreferredSize(new Dimension(600,130));
+        box3.myAdd(sp, 0);
         canvas = (A3Canvas) simulator.w.getMainCanvas();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         defaultView();
-        canvas.setMinimumSize(new Dimension(1, 1));
-        canvas.setPreferredSize(new Dimension(800, 550));
-        canvas.setMaximumSize(new Dimension(10000,10000));
+        canvas.setPreferredSize(new Dimension(700, 650));
         canvas.setCanvasWidthInPWorld(2.0);
+        box3.myAdd(canvas, 1);
 
         VBox box2 = new VBox();
-        box2.setMinimumSize(new Dimension(1, 1));
-        box2.setPreferredSize(new Dimension(300, 700));
-        box2.setMaximumSize(new Dimension(10000,10000));
 
         VBox controlBox = new VBox();
-        controlBox.setMinimumSize(new Dimension(1, 1));
-        controlBox.setPreferredSize(new Dimension(300, 550));
-        controlBox.setMaximumSize(new Dimension(10000,10000));
-        box2.myAdd(controlBox, 1);
+        box2.myAdd(controlBox, 0);
         oneCarCB = new JCheckBox("only one car");
         oneCarCB.addActionListener(this);
         controlBox.myAdd(oneCarCB,1);
@@ -74,7 +68,7 @@ public class Simulator2GUI extends JFrame implements ActionListener, ChangeListe
         resetWorldB.addActionListener(this);
         controlBox.myAdd(resetWorldB, 1);
         HBox sliderBox = new HBox();
-        sliderBox.myAdd(new JLabel("wait time"),0);
+        sliderBox.myAdd(new JLabel("wait time"),1);
         waitTimeS = new JSlider(0,33,33);
         waitTimeS.addChangeListener(this);
         sliderBox.myAdd(waitTimeS,1);
@@ -104,33 +98,26 @@ public class Simulator2GUI extends JFrame implements ActionListener, ChangeListe
         snapshotB.addActionListener(this);
         controlBox.myAdd(snapshotB, 1);
 
-        sc1 = A3SubCanvas.createA3SubCanvas(300, 150);
-        sc1.setMinimumSize(new Dimension(1, 1));
-        sc1.setPreferredSize(new Dimension(300, 150));
-        sc1.setMaximumSize(new Dimension(10000,10000));
+        sc1 = A3SubCanvas.createA3SubCanvas(300, 300);
         canvas.addA3SubCanvas(sc1);
-        box2.myAdd(sc1,2);
+        box2.myAdd(sc1,1);
 
-        sc2 = A3SubCanvas.createA3SubCanvas(200, 150);
-        sc2.setMinimumSize(new Dimension(1, 1));
-        sc2.setPreferredSize(new Dimension(300, 150));
-        sc2.setMaximumSize(new Dimension(10000,10000));
+        sc2 = A3SubCanvas.createA3SubCanvas(300, 300);
         canvas.addA3SubCanvas(sc2);
-        box2.myAdd(sc2, 2);
+        box2.myAdd(sc2, 1);
 
-        JSplitPane sp3 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,sp,canvas);
-        box1.myAdd(box2, 1);
-        box1.myAdd(sp3, 3);
+        box1.myAdd(box2, 0);
+        box1.myAdd(box3, 1);
         add(box1);
         //pack();
-        setBounds(500,0,1000,850);
+        setBounds(500,0,1000,800);
         setVisible(true);
 
         //for Java1.7.0_40ea bug of Mac
         if (System.getProperty("os.name").equals("Mac OS X")) {
             try{Thread.sleep(1000);}catch(Exception e){;}
-            setBounds(500,0,1010,710);
-            setBounds(500,0,1000,700);
+            setBounds(500,0,1010,810);
+            setBounds(500,0,1000,800);
         }
     }
 
