@@ -2,6 +2,9 @@ package samples;
 
 import static java.lang.Math.*;
 
+/*
+ * Euclidean vector.
+ */
 public class Vector {
     public double x;
     public double y;
@@ -131,6 +134,10 @@ public class Vector {
         z = v1.x*v2.y - v1.y*v2.x;
     }
 
+    /*
+     * Returns a rotated vector of the given vec around the origin
+     * by the Euler angles(z-x-y) given rot. (Unit=degrees)
+     */
     public static Vector rotate(Vector rot,Vector vec) {
         double[] q = euler2quat(rot.x,rot.y,rot.z);
         double[] cq = new double[]{-q[0],-q[1],-q[2],q[3]};
@@ -155,6 +162,11 @@ public class Vector {
         ret[3]= a[3]*b[3] - a[0]*b[0] - a[1]*b[1] - a[2]*b[2];
         return ret;
     }
+
+    /*
+     * Returns a rotated vector of the given vec around the Y axis
+     * by the given ry. (Unit=degrees)
+     */
     public static Vector simpleRotateY(double ry,Vector vec) {
         ry *= Math.PI/180;
         double x = vec.x*cos(ry) + vec.z*sin(ry);

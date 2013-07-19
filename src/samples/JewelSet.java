@@ -2,13 +2,22 @@ package samples;
 
 import java.util.HashMap;
 
+/*
+ * JewelSet manages ids and coodinates of jewels.
+ */
 public class JewelSet {
     HashMap<String,Vector> jewels;
 
+    /*
+     * Constructs empty JewelSet.
+     */
     public JewelSet() {
         jewels = new HashMap<String,Vector>();
     }
 
+    /*
+     * Loads coodinates of jewels from the server response.
+     */
     public void load(String info) {
         jewels.clear();
         String[] ss = info.split("\\s");
@@ -23,14 +32,23 @@ public class JewelSet {
         }
     }
 
+    /*
+     * Returns the number of jewels.
+     */
     public int size() {
         return jewels.size();
     }
 
+    /*
+     * Returns the coodinate of the jewel indicated by given id.
+     */
     public Vector get(String id) {
         return jewels.get(id);
     }
 
+    /*
+     * Returns the id of the jewel which is nearest to given coodinate.
+     */
     public String getNearest(Vector v) {
         double min = Double.MAX_VALUE;
         String retId = null;

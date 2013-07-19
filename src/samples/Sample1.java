@@ -1,5 +1,9 @@
 package samples;
 
+/*
+ * This enum represents mods of the car (Sample1).
+ * These modes correspond to states of FSM (Finite State Machine).
+ */
 enum S1Mode {
     DETERMINE_TARGET_JEWEL,
     GO_TO_TARGET_JEWEL,
@@ -14,6 +18,11 @@ enum S1Mode {
     END
 }
 
+/*
+ * The following classes represent various events.
+ * These events are created in stateCheck() method
+ * and passed to processEvent() method.
+ */
 class DetermineTargetJewelEvent extends Event {}
 class HoldingJewelEvent extends Event {}
 class NotHoldingJewelEvent extends Event {}
@@ -25,19 +34,30 @@ class ArrivalGoalEvent extends Event {}
 class ArrivalViaPoint2Event extends Event {}
 
 /*
- * Sample1
+ * Sample1 is a program which controls the red car in the
+ * simulation environment. This car carries all jewels.
+ * Basic functions are implemented in the SampleBase class
+ * which is extended by this Sample1 class.
  */
 public class Sample1 extends SampleBase {
+    //For convenience, this car goes by way of via points.
     static final Vector viaPointA = new Vector( 30,0, 0);
     static final Vector viaPointB = new Vector(-30,0, 0);
 
+    // The mode of this car.
     S1Mode mode;
+    // The following variables are targets.
     String targetJewel;
     Vector targetJewelLoc;
     Vector targetViaPoint1;
     Vector targetViaPoint2;
     Vector targetGoal;
 
+    /*
+     * The constructor of Sample1. super(10000) means
+     * that the red car is controled through port 10000
+     * (computer networking).
+     */
     public Sample1() {
         super(10000);
         mode = S1Mode.DETERMINE_TARGET_JEWEL;
@@ -47,6 +67,12 @@ public class Sample1 extends SampleBase {
         targetGoal = null;
     }
 
+    /*
+     * Check the situations of this car and create some
+     * events then call processEvent() method. To process
+     * general events, this method call super.stateCheck()
+     * at first.
+     */
     @Override
     protected void stateCheck() {
         super.stateCheck();
@@ -106,10 +132,14 @@ public class Sample1 extends SampleBase {
         }
     }
 
-    // This method implements a Finite Automaton
+    /*
+     * Decide the next mode in consideration of the previous
+     * mode and the given event. The process is based on FSM
+     * (finite state machine). This method implements a strategy
+     * of this car.
+     */
     @Override
     protected void processEvent(Event e) {
-//System.out.println(e.getClass().getName());
         String s;
         if ((mode==S1Mode.DETERMINE_TARGET_JEWEL)
           &&(e instanceof DetermineTargetJewelEvent)) {
@@ -164,6 +194,9 @@ System.out.println("Sample1:sendMessage(wait):"+s);
         }
     }
 
+    /*
+     * Control the car in accordance with the mode of the car.
+     */
     @Override
     protected void move() {
 //System.out.println("Sample1:mode="+mode);
@@ -182,6 +215,8 @@ System.out.println("Sample1:sendMessage(wait):"+s);
         default: System.out.println("Sample1: Unknown mode?"+mode);
         }
     }
+
+    // The following methods implement processes for each mode.
 
     void determineTargetJewel() {
         targetJewel = jewelSet.getNearest(loc);
@@ -239,6 +274,9 @@ System.out.println("Sample1:sendMessage(wait):"+s);
         stopCar();
     }
 
+    /*
+     * The start point of Sample1.
+     */
     public static void main(String args[]) {
         Sample1 s1 = new Sample1();
         s1.start();

@@ -1,7 +1,22 @@
 package samples;
 
 /*
- * SampleBase
+ *   SampleBase is a super class of Sample1 and Sample2.
+ * Sample1 and Sample2 have common functions. This SampleBase class
+ * implements these common functions. At the first part of
+ * this source file, location data of static objects,
+ * general informations of the car are defined. At the end of 
+ * this source file, methods are defined which control the
+ * car in various situations.
+ *   The point of this sample program is that the selection of
+ * a car mode is based on "Finite State Machine (so called FSM)".
+ * In an infinite loop, two methods are called repeatedly.
+ * The methods are stateCheck() method and move() method.
+ * In stateCheck() method, some events are created according to
+ * the situation of the car. Then these events are passed to
+ * processEvent() method. This triggers mode changes of
+ * the car. move() method controls the car in accordance with
+ * the mode of the car.
  */
 public abstract class SampleBase {
     // Simulation step time
@@ -40,6 +55,9 @@ public abstract class SampleBase {
     // Manager of jewels
     protected JewelSet jewelSet;
 
+    /*
+     * The constructor of SampleBase.
+     */
     protected SampleBase(int port) {
         currentTime = 0.0;
         counter = 0;
@@ -53,6 +71,9 @@ public abstract class SampleBase {
         jewelSet = new JewelSet();
     }
 
+    /*
+     * Main loop of this program.
+     */
     protected void start() {
         while (true) {
             stateCheck();
@@ -63,7 +84,11 @@ public abstract class SampleBase {
         }
     }
 
-    // Check current status
+    /*
+     * Check current situations. In subclasses of SampleBase,
+     * this method could be overrided to check another situations
+     * and/or create some events then call processEvent() method.
+     */
     protected void stateCheck() {
         oldLoc.set(loc);
         String ret = socket.send("getLoc");
@@ -91,9 +116,28 @@ public abstract class SampleBase {
         }
     }
 
+    /*
+     * Decide the next mode in consideration of the previous
+     * mode and the given event. The process is based on FSM
+     * (finite state machine). In subclasses of this SampleBase,
+     * this method should be implemented suitably to achieve
+     * the purpose of each subclasses. And the mode is defined at
+     * each subclasses.
+     */
     protected abstract void processEvent(Event e);
+
+    /*
+     * This method should be implemented to control
+     * the car in accordance with the mode of the car.
+     * As a typical implementation, this method calls
+     * appropriate methods using switch-case statement
+     * with the mode of the car.
+     */
     protected abstract void move();
 
+    /*
+     * Drive this car to the given location (v).
+     */
     protected void goToDestination(Vector v) {
         double power = 0.0;
         double steering = 0.0;
@@ -112,6 +156,9 @@ public abstract class SampleBase {
         socket.send("drive "+power+" "+steering);
     }
 
+    /*
+     * Drive this car to the given location (v) with jewels.
+     */
     protected void goToDestinationWithJewel(Vector v) {
         double power = 0.0;
         double steering = 0.0;
@@ -129,6 +176,9 @@ public abstract class SampleBase {
         socket.send("drive "+power+" "+steering);
     }
 
+    /*
+     * Back this car to the given location (v).
+     */
     protected void backToDestination(Vector v) {
         double power = 0.0;
         double steering = 0.0;
@@ -147,6 +197,9 @@ public abstract class SampleBase {
         socket.send("drive "+power+" "+steering);
     }
 
+    /*
+     * Stop this car!
+     */
     protected void stopCar() {
         socket.send("drive 0 0");
     }
