@@ -34,6 +34,7 @@ public class Simulator2GUI extends JFrame implements ActionListener, ChangeListe
     JCheckBox parallelCB;
     JCheckBox polygonizeCB;
     JButton snapshotB;
+    JTextField seedTF;
     JTextArea textArea;
     Vector3d lookAt = new Vector3d(0.0, 0.0, 6.0);
     Vector3d camera = new Vector3d(0.0, 3.0, -6.0);
@@ -94,6 +95,11 @@ public class Simulator2GUI extends JFrame implements ActionListener, ChangeListe
         polygonizeCB = new JCheckBox("polygonize");
         polygonizeCB.addActionListener(this);
         controlBox.myAdd(polygonizeCB, 1);
+        HBox seedBox = new HBox();
+        seedBox.myAdd(new JLabel("seed of random number"), 0);
+        seedTF = new JTextField("");
+        seedBox.myAdd(seedTF, 1);
+        controlBox.myAdd(seedBox, 1);
         snapshotB = new JButton("snapshot");
         snapshotB.addActionListener(this);
         controlBox.myAdd(snapshotB, 1);
@@ -170,6 +176,12 @@ public class Simulator2GUI extends JFrame implements ActionListener, ChangeListe
 
     public void updateTime(double t) {
         timeL.setText(String.format("time: %9.2f",t));
+    }
+    public String getSeed() {
+        return seedTF.getText();
+    }
+    public void setSeed(long l) {
+        seedTF.setText(""+l);
     }
     @Override
     public void actionPerformed(ActionEvent ae) {

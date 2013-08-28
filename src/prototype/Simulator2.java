@@ -1,6 +1,7 @@
 package prototype;
 
 import java.util.ArrayList;
+import java.util.Random;
 import javax.vecmath.Vector3d;
 import jp.sourceforge.acerola3d.a3.A3Background;
 import jp.sourceforge.acerola3d.a3.A3CanvasInterface;
@@ -26,6 +27,7 @@ public class Simulator2 implements CollisionListener {
     ArrayList<Jewel> jewels = new ArrayList<Jewel>();
     Simulator2GUI gui;
     int waitTime = 33;
+    Random random;
 
     public Simulator2() {
         w = new PVEWorld(PVEWorld.A3CANVAS,PVEWorld.MANUAL_STEP);
@@ -37,6 +39,8 @@ public class Simulator2 implements CollisionListener {
     void initWorld() {
         noOfActivated = 3; //simulator + cars
         noOfWaiting = 0;
+
+        w.resume();
         synchronized(waitingRoom) {
             waitingRoom.notifyAll();
         }
@@ -48,7 +52,7 @@ public class Simulator2 implements CollisionListener {
             try{Thread.sleep(1000);}catch(Exception e) {;}
         }
 
-        //w.pause();
+        w.pause();
         w.clear();
 
         ground = new BoxObj(Type.STATIC, 0, new Vector3d(250, 1, 250),
@@ -121,11 +125,24 @@ public class Simulator2 implements CollisionListener {
         ((CarD)car1).setAnotherCar((CarD)car2);
         ((CarD)car2).setAnotherCar((CarD)car1);
 
+        String seedS = gui.getSeed();
+        if (seedS==null||seedS.equals("")) {
+            random = new Random();
+        } else {
+            long seed = 0;
+            try {
+                seed = Long.parseLong(seedS);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                gui.setSeed(0);
+            }
+            random = new Random(seed);
+        }
         for (int i = 0; i < 10; i++) {
             Jewel j = new Jewel();
             j.setUserData("jA1." + i);
-            double x = 60 * Math.random() - 30 - 50;
-            double z = 80 * Math.random() - 40;
+            double x = 60 * random.nextDouble() - 30 - 50;
+            double z = 80 * random.nextDouble() - 40;
             j.setLocRev(x, 2, z, 0, 0, 0);
             w.add(j);
             jewels.add(j);
@@ -133,8 +150,8 @@ public class Simulator2 implements CollisionListener {
         for (int i = 0; i < 10; i++) {
             Jewel j = new Jewel();
             j.setUserData("jA2." + i);
-            double x = 60 * Math.random() - 30 + 50;
-            double z = 80 * Math.random() - 40;
+            double x = 60 * random.nextDouble() - 30 + 50;
+            double z = 80 * random.nextDouble() - 40;
             j.setLocRev(x, 2, z, 0, 0, 0);
             w.add(j);
             jewels.add(j);
@@ -185,6 +202,8 @@ public class Simulator2 implements CollisionListener {
         waitTime = 33;
         while (true) {
             stepForward();
+            if (w.getTime()>=5000.0)
+                timeUp();
             //mainCanvas.waitForUpdate(waitTime * 2);
             //Thread.sleep(waitTime/2);// 微妙
             gui.updateTime(w.getTime());
@@ -234,9 +253,20 @@ public class Simulator2 implements CollisionListener {
             return;
         // System.out.println("collided "+(String)(aa.getUserData())+":"+
         // ((String)bb.getUserData()));
-        if ((aa == switch1 || aa == switch2) && (bb instanceof CarInterface))
+        ArrayList<Jewel> alTmp = new ArrayList<Jewel>();
+        synchronized (jewels) {
+            alTmp.addAll(jewels);
+        }
+        int jewelsCount=0;
+        for (Jewel j:alTmp) {
+            Vector3d jLoc = j.getLoc();
+            if (jLoc.x<5.0 && jLoc.x>-5.0)
+                if (jLoc.z<5.0 && jLoc.z>-5.0)
+                    jewelsCount++;
+        }
+        if ((aa == switch1 || aa == switch2) && (bb instanceof CarInterface) && (jewelsCount<=5))
             elevator.setUp();
-        if ((aa instanceof CarInterface) && (bb == switch1 || bb == switch2))
+        if ((aa instanceof CarInterface) && (bb == switch1 || bb == switch2) && (jewelsCount<=5))
             elevator.setUp();
         if ((aa == goal1 || aa == goal2) && bb instanceof Jewel) {
             goal((Jewel)bb);
@@ -258,6 +288,12 @@ public class Simulator2 implements CollisionListener {
             gui.updateTime(w.getTime());
             gui.appendText(String.format("clear!!!!!  time=%9.2f",w.getTime()));
         }
+    }
+    void timeUp() {
+        w.pause();
+        try{Thread.sleep(1000);}catch(Exception e){;}
+        gui.updateTime(5000.0);
+        gui.appendText(String.format("time up!!!!!  time=%9.2f",5000.0));
     }
     String searchJewels() {
         synchronized(jewels) {
