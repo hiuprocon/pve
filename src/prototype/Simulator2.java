@@ -308,6 +308,12 @@ public class Simulator2 implements CollisionListener {
     void setWaitTime(int t) {
         waitTime=t;
     }
+    void pause() {
+        w.pause();
+    }
+    void resume() {
+        w.resume();
+    }
 
     public static void main(String args[]) {
         Simulator2 s2 = new Simulator2();

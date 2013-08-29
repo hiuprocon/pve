@@ -25,6 +25,7 @@ public class Simulator2GUI extends JFrame implements ActionListener, ChangeListe
     A3SubCanvas sc2;
     JCheckBox oneCarCB;
     JButton resetWorldB;
+    JCheckBox pauseCB;
     JSlider waitTimeS;
     JLabel timeL;
     JButton defaultViewB;
@@ -65,15 +66,19 @@ public class Simulator2GUI extends JFrame implements ActionListener, ChangeListe
         oneCarCB = new JCheckBox("only one car");
         oneCarCB.addActionListener(this);
         controlBox.myAdd(oneCarCB,1);
-        resetWorldB = new JButton("Rese World");
+        resetWorldB = new JButton("Reset World");
         resetWorldB.addActionListener(this);
         controlBox.myAdd(resetWorldB, 1);
-        HBox sliderBox = new HBox();
-        sliderBox.myAdd(new JLabel("wait time"),1);
-        waitTimeS = new JSlider(0,33,33);
+        HBox timeBox = new HBox();
+        timeBox.myAdd(new JLabel("pause"),0);
+        pauseCB = new JCheckBox();
+        pauseCB.addActionListener(this);
+        timeBox.myAdd(pauseCB,0);
+        timeBox.myAdd(new JLabel("wait time"),0);
+        waitTimeS = new JSlider(0,100,51);
         waitTimeS.addChangeListener(this);
-        sliderBox.myAdd(waitTimeS,1);
-        controlBox.myAdd(sliderBox,1);
+        timeBox.myAdd(waitTimeS,1);
+        controlBox.myAdd(timeBox,1);
         timeL = new JLabel("");
         updateTime(0);
         controlBox.myAdd(timeL,1);
@@ -194,9 +199,14 @@ public class Simulator2GUI extends JFrame implements ActionListener, ChangeListe
         } else if (source==resetWorldB) {
             simulator.initWorld();
             oneCarCB.setSelected(false);
-            waitTimeS.setValue(30);
+            waitTimeS.setValue(51);
             updateTime(0);
             textArea.setText("");
+        } else if (source==pauseCB) {
+            if (pauseCB.isSelected())
+                simulator.pause();
+            else
+                simulator.resume();
         } else if (source==defaultViewB) {
             defaultView();
         } else if (source==topViewB) {
@@ -232,6 +242,10 @@ public class Simulator2GUI extends JFrame implements ActionListener, ChangeListe
 
     @Override
     public void stateChanged(ChangeEvent ce) {
-        simulator.setWaitTime(waitTimeS.getValue());
+        int wt = waitTimeS.getValue();
+        double x = Math.pow(1001.0,1.0/100.0);
+        int i = (int)Math.pow(x,wt)-1;
+        System.out.println("wait time="+i+"ms");
+        simulator.setWaitTime(i);
     }
 }
