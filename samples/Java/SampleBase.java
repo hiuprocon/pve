@@ -1,5 +1,3 @@
-package samples;
-
 /*
  *   SampleBase is a super class of Sample1 and Sample2.
  * Sample1 and Sample2 have common functions. This SampleBase class

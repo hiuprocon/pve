@@ -1,5 +1,3 @@
-package samples;
-
 import java.io.*;
 import java.net.*;
 

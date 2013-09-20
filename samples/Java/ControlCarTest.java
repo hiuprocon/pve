@@ -1,5 +1,3 @@
-package samples;
-
 /**
  * A test program for controring a car.
  */

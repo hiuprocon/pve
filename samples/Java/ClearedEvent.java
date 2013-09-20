@@ -1,5 +1,3 @@
-package samples;
-
 /*
  * This event is used for informing that all jewels are
  * collected successfully.

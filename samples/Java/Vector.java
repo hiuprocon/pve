@@ -1,5 +1,3 @@
-package samples;
-
 import static java.lang.Math.*;
 
 /*

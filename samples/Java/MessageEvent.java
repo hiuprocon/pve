@@ -1,5 +1,3 @@
-package samples;
-
 /*
  * This event is used for informing that one car
  * sent a message to another car. And this event

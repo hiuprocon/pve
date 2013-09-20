@@ -1,5 +1,3 @@
-package samples;
-
 import java.util.HashMap;
 
 /*

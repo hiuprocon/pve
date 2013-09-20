@@ -1,5 +1,3 @@
-package samples;
-
 /*
  * This enum represents mods of the car (Sample2).
  * These modes correspond to states of FSM (Finite State Machine).
