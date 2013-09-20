@@ -9,7 +9,7 @@
 #define MESSAGE_EVENT 2
 
 struct jewel {
-  char *id;
+  char id[10];
   vec3d loc;
 };
 
@@ -54,12 +54,15 @@ extern int jewels_count;
 /* Jewel Set */
 extern struct jewel jewels[20];
 
-void init_car(int port);
-int make_events_basic(struct event *events);
+void get_jewel_loc(char *id,vec3d *ret);
+void get_nearest_jewel(vec3d *loc,char *id,vec3d *ret);
 
-void go_to_destination(vec3d *v);
-void go_to_destination_with_jewels(vec3d *v);
-void back_to_destination(vec3d *v);
+void init_car(int port);
+void make_events_basic();
+
+void go_to_destination(const vec3d *v);
+void go_to_destination_with_jewels(const vec3d *v);
+void back_to_destination(const vec3d *v);
 void stop_car();
 
 #endif

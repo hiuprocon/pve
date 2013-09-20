@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "sample_base.h"
 #include "abstract.h"
+#include "vec3d.h"
 
 /* Mode CONST */
 #define DETERMINE_TARGET_JEWEL 101
@@ -24,20 +25,24 @@ vec3d targetViaPoint1;
 vec3d targetViaPoint2;
 vec3d targetGoal;
 
-int make_events(struct event *events) {
-  int event_count;
-  event_count = make_events_basic(events);
-  return event_count;
+void make_events() {
+  make_events_basic();
+  // TODO
 }
 
-void process_event(struct event *events) {
+void process_event(struct event *e) {
 }
 
 void move() {
+  char *id;
+  vec3d jLoc;
+  get_nearest_jewel(&loc,id,&jLoc);
+  printf("GAHA: ");
+  printlnVec3d(&jLoc);
 }
 
 int main(void) {
-  printf("GAHA1!\n");
+  printf("start red car!\n");
   init_car(10000);
   start();
 }

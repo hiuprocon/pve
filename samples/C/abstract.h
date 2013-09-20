@@ -4,8 +4,8 @@
 
 #include "sample_base.h"
 
-int make_events(struct event *events);
-void process_event(struct event *events);
+void make_events();
+void process_event(struct event *e);
 void move();
 
 #endif

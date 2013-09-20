@@ -11,7 +11,7 @@ int isWhiteSpace(char c) {
     return 0;
 }
 
-void split(char *str,double *ret) {
+void split(const char *str,double *ret) {
   int i,c,ci;
   char xyz[3][256];
 
@@ -42,13 +42,13 @@ void setXYZToVec3d(double x,double y,double z,vec3d *ret) {
   ret->z = z;
 }
 
-void setArrayToVec3d(double xyz[],vec3d *ret) {
+void setArrayToVec3d(const double xyz[],vec3d *ret) {
   ret->x = xyz[0];
   ret->y = xyz[1];
   ret->z = xyz[2];
 }
 
-void setStrToVec3d(char *str,vec3d *ret) {
+void setStrToVec3d(const char *str,vec3d *ret) {
   double xyz[3];
   split(str,xyz);
   ret->x = xyz[0];
@@ -56,45 +56,45 @@ void setStrToVec3d(char *str,vec3d *ret) {
   ret->z = xyz[2];
 }
 
-void setVec3dToVec3d(vec3d *v,vec3d *ret) {
+void setVec3dToVec3d(const vec3d *v,vec3d *ret) {
   ret->x = v->x;
   ret->y = v->y;
   ret->z = v->z;
 }
 
-void add(vec3d *u,vec3d *v,vec3d *ret) {
+void add(const vec3d *u,const vec3d *v,vec3d *ret) {
   ret->x = u->x + v->x;
   ret->y = u->y + v->y;
   ret->z = u->z + v->z;
 }
 
-void sub(vec3d *u,vec3d *v,vec3d *ret) {
+void sub(const vec3d *u,const vec3d *v,vec3d *ret) {
   ret->x = u->x - v->x;
   ret->y = u->y - v->y;
   ret->z = u->z - v->z;
 }
 
-void scale(vec3d *v,double s,vec3d *ret) {
+void scale(const vec3d *v,double s,vec3d *ret) {
   ret->x = s*v->x;
   ret->y = s*v->y;
   ret->z = s*v->z;
 }
 
-double dot(vec3d *u,vec3d *v) {
+double dot(const vec3d *u,const vec3d *v) {
   return u->x*v->x + u->y*v->y + u->z*v->z;
 }
 
-void cross(vec3d *u,vec3d *v,vec3d *ret) {
+void cross(const vec3d *u,const vec3d *v,vec3d *ret) {
   ret->x = u->y*v->z - u->z*v->y;
   ret->y = u->z*v->x - u->x*v->z;
   ret->z = u->z*v->y - u->y*v->x;
 }
 
-double length(vec3d *v) {
+double length(const vec3d *v) {
   return sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
 }
 
-double lengthSquared(vec3d *v) {
+double lengthSquared(const vec3d *v) {
   return v->x*v->x + v->y*v->y + v->z*v->z;
 }
 
@@ -128,7 +128,7 @@ void euler2quat(double x,double y,double z,double *ret) {
  * Rotate this vector around the origin              
  * by the Euler angles(z-x-y) given rot. (Unit=degrees)                     
  */
-void rotate(vec3d *v, vec3d *rot) {
+void rotate(vec3d *v, const vec3d *rot) {
   double q[4],cq[4],vv[4],ret1[4],ret2[4];
   euler2quat(rot->x,rot->y,rot->z,q);
   cq[0]=-q[0]; cq[1]=-q[1]; cq[2]=-q[2]; cq[3]=q[3];
@@ -155,7 +155,7 @@ void simpleRotateY(vec3d *v,double ry) {
   v->z = zz;
 }
 
-int epsilonEquals(vec3d *u, vec3d *v,double eps) {
+int epsilonEquals(const vec3d *u, const vec3d *v,double eps) {
   double dx = u->x - v->x;
   double dy = u->y - v->y;
   double dz = u->z - v->z;
@@ -167,10 +167,10 @@ int epsilonEquals(vec3d *u, vec3d *v,double eps) {
 }
 
 
-void printVec3d(vec3d *v) {
+void printVec3d(const vec3d *v) {
   printf("(%f,%f,%f)",v->x,v->y,v->z);
 }
 
-void printlnVec3d(vec3d *v) {
+void printlnVec3d(const vec3d *v) {
   printf("(%f,%f,%f)\n",v->x,v->y,v->z);
 }

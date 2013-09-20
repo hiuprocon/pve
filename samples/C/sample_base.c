@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
 #include "my_socket.h"
 #include "sample_base.h"
 #include "abstract.h"
@@ -51,10 +55,57 @@ void init_car(int port) {
 }
 
 void makeJewelSet(char *data) {
-  //TODO
-  jewels[0].id = "jA1.0";
-  setXYZToVec3d(1,2,3,&(jewels[0].loc));
-  jewels_count=1;
+  char *numStr, *idStr, *xStr, *yStr, *zStr;
+  int i, num;
+  double x, y, z;
+  numStr = strtok(data," ");
+  num = atoi(numStr);
+  jewels_count = 0;
+  for (i=0;i<num;i++) {
+    idStr = strtok(NULL," ");
+    xStr = strtok(NULL," ");
+    yStr = strtok(NULL," ");
+    zStr = strtok(NULL," ");
+    x = atof(xStr);
+    y = atof(yStr);
+    z = atof(zStr);
+    strcpy(jewels[jewels_count].id,idStr);
+    setXYZToVec3d(x,y,z,&(jewels[jewels_count].loc));
+    jewels_count++;
+  }
+}
+
+void get_jewel_loc(char *id,vec3d *ret) {
+  int i;
+  for (i=0;i<jewels_count;i++) {
+    if (strcmp(id,jewels[i].id)) {
+      ret->x = jewels[i].loc.x;
+      ret->y = jewels[i].loc.y;
+      ret->z = jewels[i].loc.z;
+      return;
+    }
+  }
+}
+
+void get_nearest_jewel(vec3d *loc,char *id,vec3d *ret) {
+  int i, idx;
+  double len, min;
+  vec3d vTmp;
+
+  idx = 0;
+  min = 1000000.0;
+  for (i=0;i<jewels_count;i++) {
+    sub(loc,&(jewels[i].loc),&vTmp);
+    len = length(&vTmp);
+    if (min>len) {
+      idx = i;
+      min = len;
+    }
+  }
+  ret->x = jewels[idx].loc.x;
+  ret->y = jewels[idx].loc.y;
+  ret->z = jewels[idx].loc.z;
+  id = jewels[idx].id;
 }
 
 void state_check() {
@@ -76,31 +127,30 @@ void state_check() {
   makeJewelSet(msg);
 }
 
-int make_events_basic(struct event *events) {
-  char *msg;
-  int events_count = 0;
+void make_events_basic() {
+  char *msg, *tok;
+  struct event e;
+
   msg = my_send("receiveMessages");
-  // TODO
+  tok = strtok(msg,",");
+  tok = strtok(NULL,",");
+  while (tok!=NULL) {
+    e.id = MESSAGE_EVENT;
+    e.message = tok;
+    process_event(&e);
+    tok = strtok(NULL,",");
+  }
 
   if (jewels_count==0) {
-    events[events_count].id = CLEAR_EVENT;
-    events_count++;
+    e.id = CLEAR_EVENT;
+    process_event(&e);
   }
-  events[events_count].id = MESSAGE_EVENT;
-  events[events_count].message = "test";
-  events_count++;
-  return events_count;
 }
 
 void start() {
-  int i, event_count;
-  struct event events[100];
   while (1) {
     state_check();
-    event_count = make_events(events);
-    for (i=0;i<event_count;i++) {
-      process_event(&events[i]);
-    }
+    make_events();
     move();
     my_send("stepForward");
     currentTime += dt;
@@ -112,14 +162,62 @@ void start() {
 /* void process_event(struct event *events); */
 /* void move(); */
 
-void go_to_destination(vec3d *v) {
+void go_to_destination(const vec3d *v) {
+  double power = 0.0;
+  double steering = 0.0;
+  vec3d tmpV;
+  char msg[100];
+
+  sub(v,&loc,&tmpV);
+  normalize(&tmpV);
+  if (dot(&tmpV,&front)<0.0)
+    steering = 3.0;
+  else
+    steering = -3.0 * dot(&tmpV,&left);
+  if (fabs(steering)<0.1)
+    power = 1.0 * dot(&tmpV,&front);
+
+  sprintf(msg,"drive %f %f",power,steering);
+  my_send(msg);
 }
 
-void go_to_destination_with_jewels(vec3d *v) {
+void go_to_destination_with_jewels(const vec3d *v) {
+  double power = 0.0;
+  double steering = 0.0;
+  vec3d tmpV;
+  char msg[100];
+
+  sub(v,&loc,&tmpV);
+  normalize(&tmpV);
+  if (dot(&tmpV,&front)<0.0)
+    steering = 3.0;
+  else
+    steering = -3.0 * dot(&tmpV,&left);
+  power = 0.5;//1.0 * dot(&tmpV,&front);
+
+  sprintf(msg,"drive %f %f",power,steering);
+  my_send(msg);
 }
 
-void back_to_destination(vec3d *v) {
+void back_to_destination(const vec3d *v) {
+  double power = 0.0;
+  double steering = 0.0;
+  vec3d tmpV;
+  char msg[100];
+
+  sub(v,&loc,&tmpV);
+  normalize(&tmpV);
+  if (dot(&tmpV,&front)>0.0)
+    steering = 3.0;
+  else
+    steering = 3.0 * dot(&tmpV,&left);
+  if (fabs(steering)<0.1)
+    power = 0.3 * dot(&tmpV,&front);
+
+  sprintf(msg,"drive %f %f",power,steering);
+  my_send(msg);
 }
 
 void stop_car() {
+  my_send("drive 0 0");
 }
