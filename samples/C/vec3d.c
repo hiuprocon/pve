@@ -36,71 +36,73 @@ void split(char *str,double *ret) {
   ret[2] = atof(xyz[2]);
 }
 
-vec3d makeVec3dFromXYZ(double x,double y,double z) {
-  vec3d v = {x,y,z};
-  return v;
+void setXYZToVec3d(double x,double y,double z,vec3d *ret) {
+  ret->x = x;
+  ret->y = y;
+  ret->z = z;
 }
 
-vec3d makeVec3dFromArray(double xyz[]) {
-  vec3d v = {xyz[0],xyz[1],xyz[2]};
-  return v;
+void setArrayToVec3d(double xyz[],vec3d *ret) {
+  ret->x = xyz[0];
+  ret->y = xyz[1];
+  ret->z = xyz[2];
 }
 
-vec3d makeVec3dFromStr(char *str) {
+void setStrToVec3d(char *str,vec3d *ret) {
   double xyz[3];
   split(str,xyz);
-  vec3d v = {xyz[0],xyz[1],xyz[2]};
-  return v;
+  ret->x = xyz[0];
+  ret->y = xyz[1];
+  ret->z = xyz[2];
 }
 
-vec3d add(vec3d u,vec3d v) {
-  vec3d w;
-  w.x = u.x + v.x;
-  w.y = u.y + v.y;
-  w.z = u.z + v.z;
-  return w;
+void setVec3dToVec3d(vec3d *v,vec3d *ret) {
+  ret->x = v->x;
+  ret->y = v->y;
+  ret->z = v->z;
 }
 
-vec3d sub(vec3d u,vec3d v) {
-  vec3d w;
-  w.x = u.x - v.x;
-  w.y = u.y - v.y;
-  w.z = u.z - v.z;
-  return w;
+void add(vec3d *u,vec3d *v,vec3d *ret) {
+  ret->x = u->x + v->x;
+  ret->y = u->y + v->y;
+  ret->z = u->z + v->z;
 }
 
-vec3d scale(vec3d v,double s) {
-  vec3d u;
-  u.x = s*v.x;
-  u.y = s*v.y;
-  u.z = s*v.z;
-  return u;
+void sub(vec3d *u,vec3d *v,vec3d *ret) {
+  ret->x = u->x - v->x;
+  ret->y = u->y - v->y;
+  ret->z = u->z - v->z;
 }
 
-double dot(vec3d u,vec3d v) {
-  return u.x*v.x + u.y*v.y + u.z*v.z;
+void scale(vec3d *v,double s,vec3d *ret) {
+  ret->x = s*v->x;
+  ret->y = s*v->y;
+  ret->z = s*v->z;
 }
 
-vec3d cross(vec3d u,vec3d v) {
-  vec3d w;
-  w.x = u.y*v.z - u.z*v.y;
-  w.y = u.z*v.x - u.x*v.z;
-  w.z = u.z*v.y - u.y*v.x;
-  return w;
+double dot(vec3d *u,vec3d *v) {
+  return u->x*v->x + u->y*v->y + u->z*v->z;
 }
 
-double length(vec3d v) {
-  return sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+void cross(vec3d *u,vec3d *v,vec3d *ret) {
+  ret->x = u->y*v->z - u->z*v->y;
+  ret->y = u->z*v->x - u->x*v->z;
+  ret->z = u->z*v->y - u->y*v->x;
 }
 
-double lengthSquared(vec3d v) {
-  return v.x*v.x + v.y*v.y + v.z*v.z;
+double length(vec3d *v) {
+  return sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
 }
 
-vec3d normalize(vec3d v) {
+double lengthSquared(vec3d *v) {
+  return v->x*v->x + v->y*v->y + v->z*v->z;
+}
+
+void normalize(vec3d *v) {
   double l = length(v);
-  vec3d u = {v.x/l, v.y/l, v.z/l};
-  return u;
+  v->x /= l;
+  v->y /= l;
+  v->z /= l;
 }
 
 void quatMul(double *a,double *b, double *ret) {
@@ -126,35 +128,37 @@ void euler2quat(double x,double y,double z,double *ret) {
  * Rotate this vector around the origin              
  * by the Euler angles(z-x-y) given rot. (Unit=degrees)                     
  */
-vec3d rotate(vec3d v, vec3d rot) {
+void rotate(vec3d *v, vec3d *rot) {
   double q[4],cq[4],vv[4],ret1[4],ret2[4];
-  euler2quat(rot.x,rot.y,rot.z,q);
+  euler2quat(rot->x,rot->y,rot->z,q);
   cq[0]=-q[0]; cq[1]=-q[1]; cq[2]=-q[2]; cq[3]=q[3];
-  vv[0]=v.x; vv[1]=v.y; vv[2]=v.z; vv[3]=0.0;
+  vv[0]=v->x; vv[1]=v->y; vv[2]=v->z; vv[3]=0.0;
   quatMul(q,vv,ret1);
   quatMul(ret1,cq,ret2);
-  vec3d ret = {ret2[0], ret2[1], ret2[2]};
-  return ret;
+  v->x = ret2[0];
+  v->y = ret2[1];
+  v->z = ret2[2];
 }
 
 /*
  * Returns a rotated vector of the given vec around the Y axis
  * by the given ry. (Unit=degrees)
  */
-vec3d simpleRotateY(vec3d v,double ry) {
+void simpleRotateY(vec3d *v,double ry) {
   double xx,yy,zz;
   ry *= M_PI/180.0;
-  xx = v.x*cos(ry) + v.z*sin(ry);
-  yy = v.y;
-  zz = -v.x*sin(ry) + v.z*cos(ry);
-  vec3d ret = {xx, yy, zz};
-  return ret;
+  xx = v->x*cos(ry) + v->z*sin(ry);
+  yy = v->y;
+  zz = -v->x*sin(ry) + v->z*cos(ry);
+  v->x = xx;
+  v->y = yy;
+  v->z = zz;
 }
 
-int epsilonEquals(vec3d u, vec3d v,double eps) {
-  double dx = u.x - v.x;
-  double dy = u.y - v.y;
-  double dz = u.z - v.z;
+int epsilonEquals(vec3d *u, vec3d *v,double eps) {
+  double dx = u->x - v->x;
+  double dy = u->y - v->y;
+  double dz = u->z - v->z;
   double diffS = dx*dx + dy*dy + dz*dz;
   if (diffS>(eps*eps))
     return 0;
@@ -163,10 +167,10 @@ int epsilonEquals(vec3d u, vec3d v,double eps) {
 }
 
 
-void printVec3d(vec3d v) {
-  printf("(%f,%f,%f)",v.x,v.y,v.z);
+void printVec3d(vec3d *v) {
+  printf("(%f,%f,%f)",v->x,v->y,v->z);
 }
 
-void printlnVec3d(vec3d v) {
-  printf("(%f,%f,%f)\n",v.x,v.y,v.z);
+void printlnVec3d(vec3d *v) {
+  printf("(%f,%f,%f)\n",v->x,v->y,v->z);
 }
