@@ -62,44 +62,44 @@ void setVec3dToVec3d(const vec3d *v,vec3d *ret) {
   ret->z = v->z;
 }
 
-void add(const vec3d *u,const vec3d *v,vec3d *ret) {
+void v3add(const vec3d *u,const vec3d *v,vec3d *ret) {
   ret->x = u->x + v->x;
   ret->y = u->y + v->y;
   ret->z = u->z + v->z;
 }
 
-void sub(const vec3d *u,const vec3d *v,vec3d *ret) {
+void v3sub(const vec3d *u,const vec3d *v,vec3d *ret) {
   ret->x = u->x - v->x;
   ret->y = u->y - v->y;
   ret->z = u->z - v->z;
 }
 
-void scale(const vec3d *v,double s,vec3d *ret) {
+void v3scale(const vec3d *v,double s,vec3d *ret) {
   ret->x = s*v->x;
   ret->y = s*v->y;
   ret->z = s*v->z;
 }
 
-double dot(const vec3d *u,const vec3d *v) {
+double v3dot(const vec3d *u,const vec3d *v) {
   return u->x*v->x + u->y*v->y + u->z*v->z;
 }
 
-void cross(const vec3d *u,const vec3d *v,vec3d *ret) {
+void v3cross(const vec3d *u,const vec3d *v,vec3d *ret) {
   ret->x = u->y*v->z - u->z*v->y;
   ret->y = u->z*v->x - u->x*v->z;
   ret->z = u->z*v->y - u->y*v->x;
 }
 
-double length(const vec3d *v) {
+double v3length(const vec3d *v) {
   return sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
 }
 
-double lengthSquared(const vec3d *v) {
+double v3lengthSquared(const vec3d *v) {
   return v->x*v->x + v->y*v->y + v->z*v->z;
 }
 
-void normalize(vec3d *v) {
-  double l = length(v);
+void v3normalize(vec3d *v) {
+  double l = v3length(v);
   v->x /= l;
   v->y /= l;
   v->z /= l;
@@ -128,7 +128,7 @@ void euler2quat(double x,double y,double z,double *ret) {
  * Rotate this vector around the origin              
  * by the Euler angles(z-x-y) given rot. (Unit=degrees)                     
  */
-void rotate(vec3d *v, const vec3d *rot) {
+void v3rotate(vec3d *v, const vec3d *rot) {
   double q[4],cq[4],vv[4],ret1[4],ret2[4];
   euler2quat(rot->x,rot->y,rot->z,q);
   cq[0]=-q[0]; cq[1]=-q[1]; cq[2]=-q[2]; cq[3]=q[3];
@@ -144,7 +144,7 @@ void rotate(vec3d *v, const vec3d *rot) {
  * Returns a rotated vector of the given vec around the Y axis
  * by the given ry. (Unit=degrees)
  */
-void simpleRotateY(vec3d *v,double ry) {
+void v3simpleRotateY(vec3d *v,double ry) {
   double xx,yy,zz;
   ry *= M_PI/180.0;
   xx = v->x*cos(ry) + v->z*sin(ry);
@@ -155,7 +155,7 @@ void simpleRotateY(vec3d *v,double ry) {
   v->z = zz;
 }
 
-int epsilonEquals(const vec3d *u, const vec3d *v,double eps) {
+int v3epsilonEquals(const vec3d *u, const vec3d *v,double eps) {
   double dx = u->x - v->x;
   double dy = u->y - v->y;
   double dz = u->z - v->z;

@@ -24,15 +24,15 @@ void make_events() {
   make_events_basic();
 
   // car has arrived at the waiting point?
-  sub(&waitingPoint,&loc,&tmpV);
-  if (length(&tmpV)<1.0) {
+  v3sub(&waitingPoint,&loc,&tmpV);
+  if (v3length(&tmpV)<1.0) {
     e.id = ARRIVAL_WAITING_POINT_EVENT;
     process_event(&e);
   }
 
   // car has arrived at the switch?
-  sub(&switch2,&loc,&tmpV);
-  if (length(&tmpV)<1.0) {
+  v3sub(&switch2,&loc,&tmpV);
+  if (v3length(&tmpV)<1.0) {
     e.id = ARRIVAL_SWITCH_EVENT;
     process_event(&e);
   }

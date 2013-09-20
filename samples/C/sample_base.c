@@ -75,28 +75,32 @@ void makeJewelSet(char *data) {
   }
 }
 
-void get_jewel_loc(char *id,vec3d *ret) {
+int get_jewel_loc(char *id,vec3d *ret) {
   int i;
   for (i=0;i<jewels_count;i++) {
     if (strcmp(id,jewels[i].id)) {
       ret->x = jewels[i].loc.x;
       ret->y = jewels[i].loc.y;
       ret->z = jewels[i].loc.z;
-      return;
+      return NO_ERROR;
     }
   }
+  return ERROR;
 }
 
-void get_nearest_jewel(vec3d *loc,char *id,vec3d *ret) {
+int get_nearest_jewel(vec3d *loc,char *id,vec3d *ret) {
   int i, idx;
   double len, min;
   vec3d vTmp;
 
+  if (jewels_count==0)
+    return ERROR;
+
   idx = 0;
   min = 1000000.0;
   for (i=0;i<jewels_count;i++) {
-    sub(loc,&(jewels[i].loc),&vTmp);
-    len = length(&vTmp);
+    v3sub(loc,&(jewels[i].loc),&vTmp);
+    len = v3length(&vTmp);
     if (min>len) {
       idx = i;
       min = len;
@@ -106,6 +110,7 @@ void get_nearest_jewel(vec3d *loc,char *id,vec3d *ret) {
   ret->y = jewels[idx].loc.y;
   ret->z = jewels[idx].loc.z;
   id = jewels[idx].id;
+  return NO_ERROR;
 }
 
 void state_check() {
@@ -116,13 +121,13 @@ void state_check() {
   msg = my_send("getRev");
   setStrToVec3d(msg,&rot);
   setXYZToVec3d(0,0,1,&front);
-  rotate(&front,&rot);
-  //simpleRotateY(&front,rot.y);
+  v3rotate(&front,&rot);
+  //v3simpleRotateY(&front,rot.y);
   setXYZToVec3d(1,0,0,&left);
-  rotate(&left,&rot);
-  //simpleRotateY(&left,rot.y);
-  sub(&loc,&oldLoc,&vel);
-  scale(&vel,1.0/dt,&vel);
+  v3rotate(&left,&rot);
+  //v3simpleRotateY(&left,rot.y);
+  v3sub(&loc,&oldLoc,&vel);
+  v3scale(&vel,1.0/dt,&vel);
   msg = my_send("searchJewels");
   makeJewelSet(msg);
 }
@@ -168,14 +173,14 @@ void go_to_destination(const vec3d *v) {
   vec3d tmpV;
   char msg[100];
 
-  sub(v,&loc,&tmpV);
-  normalize(&tmpV);
-  if (dot(&tmpV,&front)<0.0)
+  v3sub(v,&loc,&tmpV);
+  v3normalize(&tmpV);
+  if (v3dot(&tmpV,&front)<0.0)
     steering = 3.0;
   else
-    steering = -3.0 * dot(&tmpV,&left);
+    steering = -3.0 * v3dot(&tmpV,&left);
   if (fabs(steering)<0.1)
-    power = 1.0 * dot(&tmpV,&front);
+    power = 1.0 * v3dot(&tmpV,&front);
 
   sprintf(msg,"drive %f %f",power,steering);
   my_send(msg);
@@ -187,13 +192,13 @@ void go_to_destination_with_jewels(const vec3d *v) {
   vec3d tmpV;
   char msg[100];
 
-  sub(v,&loc,&tmpV);
-  normalize(&tmpV);
-  if (dot(&tmpV,&front)<0.0)
+  v3sub(v,&loc,&tmpV);
+  v3normalize(&tmpV);
+  if (v3dot(&tmpV,&front)<0.0)
     steering = 3.0;
   else
-    steering = -3.0 * dot(&tmpV,&left);
-  power = 0.5;//1.0 * dot(&tmpV,&front);
+    steering = -3.0 * v3dot(&tmpV,&left);
+  power = 0.5;//1.0 * v3dot(&tmpV,&front);
 
   sprintf(msg,"drive %f %f",power,steering);
   my_send(msg);
@@ -205,14 +210,14 @@ void back_to_destination(const vec3d *v) {
   vec3d tmpV;
   char msg[100];
 
-  sub(v,&loc,&tmpV);
-  normalize(&tmpV);
-  if (dot(&tmpV,&front)>0.0)
+  v3sub(v,&loc,&tmpV);
+  v3normalize(&tmpV);
+  if (v3dot(&tmpV,&front)>0.0)
     steering = 3.0;
   else
-    steering = 3.0 * dot(&tmpV,&left);
+    steering = 3.0 * v3dot(&tmpV,&left);
   if (fabs(steering)<0.1)
-    power = 0.3 * dot(&tmpV,&front);
+    power = 0.3 * v3dot(&tmpV,&front);
 
   sprintf(msg,"drive %f %f",power,steering);
   my_send(msg);

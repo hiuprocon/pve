@@ -54,8 +54,11 @@ extern int jewels_count;
 /* Jewel Set */
 extern struct jewel jewels[20];
 
-void get_jewel_loc(char *id,vec3d *ret);
-void get_nearest_jewel(vec3d *loc,char *id,vec3d *ret);
+#define NO_ERROR 0
+#define ERROR 1
+
+int get_jewel_loc(char *id,vec3d *ret);
+int get_nearest_jewel(vec3d *loc,char *id,vec3d *ret);
 
 void init_car(int port);
 void make_events_basic();
