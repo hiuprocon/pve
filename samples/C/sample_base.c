@@ -78,7 +78,7 @@ void makeJewelSet(char *data) {
 int get_jewel_loc(char *id,vec3d *ret) {
   int i;
   for (i=0;i<jewels_count;i++) {
-    if (strcmp(id,jewels[i].id)) {
+    if (strcmp(id,jewels[i].id)==0) {
       ret->x = jewels[i].loc.x;
       ret->y = jewels[i].loc.y;
       ret->z = jewels[i].loc.z;
@@ -88,10 +88,10 @@ int get_jewel_loc(char *id,vec3d *ret) {
   return ERROR;
 }
 
-int get_nearest_jewel(vec3d *loc,char *id,vec3d *ret) {
+int get_nearest_jewel(vec3d *pos,char *id,vec3d *ret) {
   int i, idx;
   double len, min;
-  vec3d vTmp;
+  vec3d tmpV;
 
   if (jewels_count==0)
     return ERROR;
@@ -99,8 +99,8 @@ int get_nearest_jewel(vec3d *loc,char *id,vec3d *ret) {
   idx = 0;
   min = 1000000.0;
   for (i=0;i<jewels_count;i++) {
-    v3sub(loc,&(jewels[i].loc),&vTmp);
-    len = v3length(&vTmp);
+    v3sub(pos,&(jewels[i].loc),&tmpV);
+    len = v3length(&tmpV);
     if (min>len) {
       idx = i;
       min = len;
@@ -109,7 +109,8 @@ int get_nearest_jewel(vec3d *loc,char *id,vec3d *ret) {
   ret->x = jewels[idx].loc.x;
   ret->y = jewels[idx].loc.y;
   ret->z = jewels[idx].loc.z;
-  id = jewels[idx].id;
+  //id = jewels[idx].id;
+  strcpy(id,jewels[idx].id);
   return NO_ERROR;
 }
 
@@ -137,13 +138,14 @@ void make_events_basic() {
   struct event e;
 
   msg = my_send("receiveMessages");
-  tok = strtok(msg,",");
-  tok = strtok(NULL,",");
-  while (tok!=NULL) {
-    e.id = MESSAGE_EVENT;
-    e.message = tok;
-    process_event(&e);
-    tok = strtok(NULL,",");
+  if (strlen(msg)>9) {
+    tok = strtok(msg+10,",");
+    while (tok!=NULL) {
+      e.id = MESSAGE_EVENT;
+      e.message = tok;
+      process_event(&e);
+      tok = strtok(NULL,",");
+    }
   }
 
   if (jewels_count==0) {
@@ -163,8 +165,8 @@ void start() {
   }
 }
 
-/* int make_events(struct event *events); */
-/* void process_event(struct event *events); */
+/* int make_events(); */
+/* void process_event(struct event *e); */
 /* void move(); */
 
 void go_to_destination(const vec3d *v) {

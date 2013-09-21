@@ -58,7 +58,7 @@ extern struct jewel jewels[20];
 #define ERROR 1
 
 int get_jewel_loc(char *id,vec3d *ret);
-int get_nearest_jewel(vec3d *loc,char *id,vec3d *ret);
+int get_nearest_jewel(vec3d *pos,char *id,vec3d *ret);
 
 void init_car(int port);
 void make_events_basic();

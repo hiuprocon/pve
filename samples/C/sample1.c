@@ -36,7 +36,7 @@ const vec3d viaPointB = {-30,0,0};
 int mode = DETERMINE_TARGET_JEWEL;
 
 /* The following variables are targets. */
-char *targetJewel = NULL;
+char targetJewel[10];
 vec3d targetJewelLoc;
 vec3d targetViaPoint1;
 vec3d targetViaPoint2;
@@ -49,29 +49,27 @@ void make_events() {
   make_events_basic();
 
   // the car holds the jewel?
-  if (targetJewel!=NULL) {
-    isError = get_jewel_loc(targetJewel,&targetJewelLoc);
-    hold = 1;
-    if (isError==ERROR) {
+  isError = get_jewel_loc(targetJewel,&targetJewelLoc);
+  hold = 1;
+  if (isError==ERROR) {
+    hold = 0;
+  } else {
+    v3sub(&targetJewelLoc,&loc,&tmpV);
+    if (v3length(&tmpV)>2.0) {
       hold = 0;
     } else {
-      v3sub(&targetJewelLoc,&loc,&tmpV);
-      if (v3length(&tmpV)>2.0) {
+      v3normalize(&tmpV);
+      if (v3dot(&tmpV,&front)<0.6)
         hold = 0;
-      } else {
-        v3normalize(&tmpV);
-        if (v3dot(&tmpV,&front)<0.6)
-          hold = 0;
-      }
     }
-    if (hold==1) {
-      e.id = HOLDING_JEWEL_EVENT;
-      process_event(&e);
-    } else {
-      e.id = NOT_HOLDING_JEWEL_EVENT;
-      process_event(&e);
-    }
-  } 
+  }
+  if (hold==1) {
+    e.id = HOLDING_JEWEL_EVENT;
+    process_event(&e);
+  } else {
+    e.id = NOT_HOLDING_JEWEL_EVENT;
+    process_event(&e);
+  }
 
   // car has arrived at the via point?
   v3sub(&targetViaPoint1,&loc,&tmpV);
@@ -171,37 +169,58 @@ void determineTargetJewel() {
 }
 
 void goToTargetJewel() {
+  go_to_destination(&targetJewelLoc);
 }
 
 void determineWitchViaPoint() {
+  struct event e;
+  if (loc.x>0.0) {
+    setVec3dToVec3d(&viaPointA,&targetViaPoint1);
+    setVec3dToVec3d(&goal1,&targetGoal);
+    setVec3dToVec3d(&viaPointB,&targetViaPoint2);
+  } else {
+    setVec3dToVec3d(&viaPointB,&targetViaPoint1);
+    setVec3dToVec3d(&goal2,&targetGoal);
+    setVec3dToVec3d(&viaPointA,&targetViaPoint2);
+  }
+  e.id = DETERMINE_VIA_POINT_EVENT;
+  process_event(&e);
 }
 
 void goToViaPoint1() {
+  go_to_destination_with_jewels(&targetViaPoint1);
 }
 
 void getOnElevator() {
+  go_to_destination_with_jewels(&elevatorBottom);
 }
 
 void waitUntilTop() {
+  stop_car();
 }
 
 void goToGoal() {
+  go_to_destination_with_jewels(&targetGoal);
 }
 
 void backToElevatorTop() {
+  back_to_destination(&elevatorTop);
 }
 
 void waitUntilBottom() {
+  stop_car();
 }
 
 void goToViaPoint2() {
+  go_to_destination(&targetViaPoint2);
 }
 
 void end() {
+  stop_car();
 }
 
 void move() {
-printf("GAHA: mode=%d\n",mode);
+//printf("GAHA: mode=%d\n",mode);
   switch(mode) {
   case DETERMINE_TARGET_JEWEL: determineTargetJewel(); break;
   case GO_TO_TARGET_JEWEL: goToTargetJewel(); break;

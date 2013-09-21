@@ -45,13 +45,13 @@ void process_event(struct event *e) {
     mode = WAIT_UNTIL_MESSAGE;
   } else if (mode==WAIT_UNTIL_MESSAGE && e->id==MESSAGE_EVENT) {
 printf("sample2:receiveMessage: %s\n",e->message);
-    if (strcmp(e->message,"wait")) {
+    if (strcmp(e->message,"wait")==0) {
       mode = GO_TO_WAITING_POINT;
-    } else if (strcmp(e->message,"pushSwitch")) {
+    } else if (strcmp(e->message,"pushSwitch")==0) {
       mode = GO_TO_SWITCH;
     }
   } else {
-    printf("Unprocessed event: id=%d\n",e->id);
+    //printf("Unprocessed event: id=%d\n",e->id);
   }
 }
 
@@ -68,6 +68,7 @@ void go_to_switch() {
 }
 
 void move() {
+//printf("mode=%d\n",mode);
   switch(mode) {
   case GO_TO_WAITING_POINT: go_to_waiting_point(); break;
   case WAIT_UNTIL_MESSAGE:  wait_until_message(); break;
