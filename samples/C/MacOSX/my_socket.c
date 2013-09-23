@@ -1,14 +1,21 @@
-/* “ú–{Œê“ü‚ê‚ÄSJIS‚ÉŒÅ’è */
 #include <stdio.h>
-#include <winsock2.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/param.h>
+#include <sys/uio.h>
+#include <unistd.h>
 #include "my_socket.h"
 
 /* size of buffer */
 #define BUF_LEN 256
 #define MSG_BUF_LEN 2048
 
-/* A sock for my_socket */
-SOCKET sock;
+/* A file descriptor for my_socket */
+int s;
 /* A buffer for a recieved message */
 char *recieve_buf;
 
@@ -16,35 +23,43 @@ char *recieve_buf;
 /* Initialize my_socket. */
 int init_my_socket(int port)
 {
-    WSADATA wsaData;
+    /* A structure for a socket */
     struct sockaddr_in server;
 
-    WSAStartup(MAKEWORD(2,0), &wsaData);
-    sock = socket(AF_INET, SOCK_STREAM, 0);
+    /* 0 clear the structure */
+    bzero(&server, sizeof(server));
 
     server.sin_family = AF_INET;
+    /* IP address */
+    server.sin_addr.s_addr = inet_addr("127.0.0.1");
+    /* port number */
     server.sin_port = htons(port);
-    server.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
-
-    connect(sock, (struct sockaddr *)&server, sizeof(server));
+    /* create a socket */
+    if ( ( s = socket(AF_INET, SOCK_STREAM, 0) ) < 0 ){
+        fprintf(stderr, "failed to create a socket.\n");
+        return 1;
+    }
+    /* connect to a server */
+    if ( connect(s, (struct sockaddr *)&server, sizeof(server)) == -1 ){
+        fprintf(stderr, "failed to connect.\n");
+        return 1;
+    }
 
     recieve_buf = (char*)malloc(sizeof(char)*MSG_BUF_LEN);
-
-    return 0;
 }
 
 /* Send a one-line message, and receive a one-line message. */
 char *my_send(char msg[]) {
     int pos = 0;
+    char msg2[256];
 
-    send(sock, msg, strlen(msg), 0);
-    send(sock, "\n", 1, 0);
+    sprintf(msg2,"%s\n",msg);
+    write(s, msg2, strlen(msg2));
 
     while (1){
         char buf[BUF_LEN];
         int read_size,i;
-        memset(buf,0,BUF_LEN);
-        read_size = recv(sock, buf, BUF_LEN, 0);
+        read_size = read(s, buf, BUF_LEN);
         if ( read_size > 0 ){
             for (i=0;i<read_size;i++) {
                 if (buf[i]!='\n') {
@@ -67,7 +82,7 @@ OUT1:
 
 /* Close the my_socket. */
 void my_close() {
-    WSACleanup();
+    close(s);
     free(recieve_buf);
 }
 
