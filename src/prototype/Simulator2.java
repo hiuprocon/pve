@@ -54,6 +54,10 @@ public class Simulator2 implements CollisionListener {
 
         w.pause();
         w.clear();
+        jewels.clear();
+
+//jp.sourceforge.acerola3d.A23.clearZipCache();
+VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
 
         ground = new BoxObj(Type.STATIC, 0, new Vector3d(250, 1, 250),
                 "x-res:///res/prototype/Ground2.wrl");
@@ -195,6 +199,8 @@ public class Simulator2 implements CollisionListener {
         jewelField2.setLoc(-50,0,0);
         mainCanvas.add(jewelField2);
         mainCanvas.setBackground(new A3Background(0.1f, 0.3f, 0.5f));
+
+        gui.defaultView();
     }
 
     public void start() {

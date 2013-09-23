@@ -202,6 +202,10 @@ public class Simulator2GUI extends JFrame implements ActionListener, ChangeListe
             waitTimeS.setValue(51);
             updateTime(0);
             textArea.setText("");
+            parallelCB.setSelected(false);
+            polygonizeCB.setSelected(false);
+            canvas.setProjectionMode(ProjectionMode.PERSPECTIVE);
+            simulator.w.unpolygonize();
         } else if (source==pauseCB) {
             if (pauseCB.isSelected())
                 simulator.pause();
