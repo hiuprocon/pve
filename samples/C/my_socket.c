@@ -36,9 +36,10 @@ int init_my_socket(int port)
 /* Send a one-line message, and receive a one-line message. */
 char *my_send(char msg[]) {
     int pos = 0;
+    char msg2[256];
 
-    send(sock, msg, strlen(msg), 0);
-    send(sock, "\n", 1, 0);
+    sprintf(msg2,"%s\n",msg);
+    send(sock, msg2, strlen(msg2), 0);
 
     while (1){
         char buf[BUF_LEN];
