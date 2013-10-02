@@ -7,4 +7,5 @@ public interface CarInterface {
     void setUserData(Object o);
     void setLocRev(double x,double y,double z,double rx,double ry,double rz);
     void dispose();
+    void swapMessageBuffer();
 }

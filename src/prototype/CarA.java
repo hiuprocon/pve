@@ -101,4 +101,8 @@ public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
         simulator.stepForward();
         return "OK";
     }
+
+    public void swapMessageBuffer() {
+        // Dummy!
+    }
 }

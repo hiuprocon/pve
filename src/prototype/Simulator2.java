@@ -239,6 +239,8 @@ VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
             noOfWaiting++;
             if (noOfWaiting==noOfActivated) {
                 w.stepForward();
+                car1.swapMessageBuffer();
+                car2.swapMessageBuffer();
                 noOfWaiting = 0;
                 waitingRoom.notifyAll();
             } else {

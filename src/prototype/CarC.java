@@ -131,4 +131,8 @@ public class CarC extends PVEObject implements PVEMsgListener, CarInterface {
         simulator.stepForward();
         return "OK";
     }
+
+    public void swapMessageBuffer() {
+        // Dummy!
+    }
 }

@@ -19,6 +19,7 @@ public class CarD extends PVEObject implements PVEMsgListener, CarInterface {
     double handle;
     CarD anotherCar;
     ArrayList<String> messages = new ArrayList<String>();
+    ArrayList<String> mailbox = new ArrayList<String>();
 
     public CarD(Simulator2 simulator,int port) {
         this.simulator = simulator;
@@ -147,6 +148,14 @@ public class CarD extends PVEObject implements PVEMsgListener, CarInterface {
         simulator.stepForward();
         return "OK";
     }
+    public void swapMessageBuffer() {
+        synchronized (messages) {
+            synchronized (mailbox) {
+                mailbox.addAll(messages);
+                messages.clear();
+            }
+        }
+    }
     String msgSendMessage(String line) {
         synchronized(anotherCar.messages){
             String msg = line.substring(11);
@@ -157,9 +166,9 @@ public class CarD extends PVEObject implements PVEMsgListener, CarInterface {
     }
     String msgReceiveMessages(String line) {
         String msgs = "";
-        synchronized (messages) {
+        synchronized (mailbox) {
             boolean first=true;
-            for (String s : messages) {
+            for (String s : mailbox) {
                 if (first==true) {
                     msgs = msgs+" "+s;
                     first = false;
@@ -167,7 +176,7 @@ public class CarD extends PVEObject implements PVEMsgListener, CarInterface {
                     msgs = msgs+","+s;
                 }
             }
-            messages.clear();
+            mailbox.clear();
         }
         return "messages:"+msgs;
     }
