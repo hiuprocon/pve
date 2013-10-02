@@ -37,6 +37,12 @@ public class Simulator2 implements CollisionListener {
         initWorld();
     }
     void initWorld() {
+        if (car1!=null) {
+            car1.dispose();
+            car2.dispose();
+            try{Thread.sleep(1000);}catch(Exception e) {;}
+        }
+
         noOfActivated = 3; //simulator + cars
         noOfWaiting = 0;
 
@@ -45,12 +51,6 @@ public class Simulator2 implements CollisionListener {
             waitingRoom.notifyAll();
         }
         try{Thread.sleep(1000);}catch(Exception e) {;}
-
-        if (car1!=null) {
-            car1.dispose();
-            car2.dispose();
-            try{Thread.sleep(1000);}catch(Exception e) {;}
-        }
 
         w.pause();
         w.clear();
