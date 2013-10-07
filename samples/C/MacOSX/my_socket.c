@@ -62,15 +62,15 @@ char *my_send(char msg[]) {
         read_size = read(s, buf, BUF_LEN);
         if ( read_size > 0 ){
             for (i=0;i<read_size;i++) {
-                if (buf[i]!='\n') {
-                    recieve_buf[pos+i] = buf[i];
-                } else {
-                    //recieve_buf[pos+i] = buf[i];
-                    pos += i;
+                if (buf[i]=='\n') {
                     goto OUT1;
+                } else if (buf[i]=='\r') {
+                    // do nothing
+                } else {
+                    recieve_buf[pos] = buf[i];
+                    pos++;
                 }
             }
-            pos += i;
         } else {
             break;
         }
