@@ -17,7 +17,7 @@ void split(const char *str,double *ret) {
   char xyz[3][256];
 
   c=0;ci=0;
-  for (i=0;i<strlen(str);i++) {
+  for (i=0;i<=strlen(str);i++) {
     xyz[c][ci] = str[i];
     if (isWhiteSpace(str[i])||str[i]=='\0') {
       xyz[c][ci] = '\0';
