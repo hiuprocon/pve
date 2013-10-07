@@ -184,7 +184,7 @@ void go_to_destination(const vec3d *v) {
   if (fabs(steering)<0.1)
     power = 1.0 * v3dot(&tmpV,&front);
 
-  sprintf(msg,"drive %f %f",power,steering);
+  sprintf(msg,"drive %.16f %.16f",power,steering);
   my_send(msg);
 }
 
@@ -202,7 +202,7 @@ void go_to_destination_with_jewels(const vec3d *v) {
     steering = -3.0 * v3dot(&tmpV,&left);
   power = 0.5;//1.0 * v3dot(&tmpV,&front);
 
-  sprintf(msg,"drive %f %f",power,steering);
+  sprintf(msg,"drive %.16f %.16f",power,steering);
   my_send(msg);
 }
 
@@ -221,7 +221,7 @@ void back_to_destination(const vec3d *v) {
   if (fabs(steering)<0.1)
     power = 0.3 * v3dot(&tmpV,&front);
 
-  sprintf(msg,"drive %f %f",power,steering);
+  sprintf(msg,"drive %.16f %.16f",power,steering);
   my_send(msg);
 }
 
