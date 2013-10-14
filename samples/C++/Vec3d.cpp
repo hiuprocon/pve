@@ -31,7 +31,7 @@ void split(string str,double *ret) {
   char xyz[3][256];
 
   c=0;ci=0;
-  for (i=0;i<str.size();i++) {
+  for (i=0;i<=str.size();i++) {
     xyz[c][ci] = str.at(i);
     if (isWhiteSpace(str.at(i))||str.at(i)=='\0') {
       xyz[c][ci] = '\0';
