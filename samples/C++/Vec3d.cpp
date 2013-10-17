@@ -1,55 +1,10 @@
 #include <iostream>
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include "Vec3d.h"
-//#include <vector>
 #include <string>
-#include <stdlib.h>
+#include <sstream>
 using namespace std;
-
-int isWhiteSpace(char c) {
-  if (c==' ' || c=='\t' || c=='\n' || c=='\r')
-    return 1;
-  else
-    return 0;
-}
-
-/*
-vector<string> split(const string &str, char delim){
-  vector<string> res;
-  size_t current = 0, found;
-  while((found = str.find_first_of(delim, current)) != string::npos){
-    res.push_back(string(str, current, found - current));
-    current = found + 1;
-  }
-  res.push_back(string(str, current, str.size() - current));
-  return res;
-}
-*/
-
-void split(string str,double *ret) {
-  int i,c,ci;
-  char xyz[3][256];
-
-  c=0;ci=0;
-  for (i=0;i<=str.size();i++) {
-    xyz[c][ci] = str.at(i);
-    if (isWhiteSpace(str.at(i))||str.at(i)=='\0') {
-      xyz[c][ci] = '\0';
-      if (c==2) { break; }
-      c++;
-      ci=0;
-      while (isWhiteSpace(str.at(i+1))&&i<str.size()) {
-        i++;
-      }
-    } else {
-      ci++;
-    }
-  }
-
-  ret[0] = atof(xyz[0]);
-  ret[1] = atof(xyz[1]);
-  ret[2] = atof(xyz[2]);
-}
 
 Vec3d::Vec3d() {
   x = y = z = 0.0;
@@ -68,11 +23,8 @@ Vec3d::Vec3d(double xyz[]) {
 }
 
 Vec3d::Vec3d(string str) {
-  double xyz[3];
-  split(str,xyz);
-  this->x = xyz[0];
-  this->y = xyz[1];
-  this->z = xyz[2];
+  istringstream is(str);
+  is >> this->x >> this->y >> this->z;
 }
 
 Vec3d& Vec3d::operator=(const Vec3d& v) {
@@ -116,6 +68,17 @@ Vec3d Vec3d::operator+() {
 
 Vec3d Vec3d::operator-() {
   return Vec3d(-x,-y,-z);
+}
+
+void Vec3d::set(string str) {
+  istringstream is(str);
+  is >> this->x >> this->y >> this->z;
+}
+
+void Vec3d::set(double x, double y, double z) {
+  this->x = x;
+  this->y = y;
+  this->z = z;
 }
 
 double Vec3d::length() {

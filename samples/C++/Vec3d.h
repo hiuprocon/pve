@@ -21,6 +21,8 @@ public:
     Vec3d operator+();
     Vec3d operator-();
 
+    void set(string str);
+    void set(double x, double y, double z);
     double length();
     double lengthSquared();
     Vec3d& normalize();
