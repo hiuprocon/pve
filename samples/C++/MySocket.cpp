@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <winsock2.h>
 #include "MySocket.h"
 using namespace std;
@@ -9,6 +10,13 @@ using namespace std;
 
 SOCKET sock;
 
+/*
+ * MySocket is a simplyfied socket for one-line text messaging.
+ */
+
+/*
+ * A constructor of MySocket requires port number.
+ */
 MySocket::MySocket(int port) {
     /* A structure for a socket */
     WSADATA wsaData;
@@ -26,16 +34,21 @@ MySocket::MySocket(int port) {
     receive_buf = (char*)malloc(sizeof(char)*MSG_BUF_LEN);
 }
 
+/*
+ * Close this MySocket.
+ */
 MySocket::~MySocket() {
     WSACleanup();
     free(receive_buf);
 }
 
-char *MySocket::send(const char msg[]) {
+/*
+ * Send a one-line message, and receive a one-line message.
+ */
+string MySocket::send(const string msg) {
     int pos = 0;
 
-    string msg2(msg);
-    msg2 += "\n";
+    string msg2 = msg + "\n";
     ::send(sock, msg2.c_str(), msg2.size(), 0);
 
     while (1){
@@ -60,6 +73,6 @@ char *MySocket::send(const char msg[]) {
     }
 OUT1:
     receive_buf[pos] = '\0';
-    return receive_buf;
+    return string(receive_buf);
 }
 

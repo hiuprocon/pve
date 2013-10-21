@@ -3,6 +3,10 @@
 #include "Vec3d.h"
 using namespace std;
 
+/*
+ * This enum represents mods of the car (Sample1).
+ * These modes correspond to states of FSM (Finite State Machine).
+ */
 enum S1Mode {
     DETERMINE_TARGET_JEWEL = 0,
     GO_TO_TARGET_JEWEL = 1,
@@ -17,6 +21,11 @@ enum S1Mode {
     END = 10,
 };
 
+/*
+ * The following classes represent various events.
+ * These events are created in stateCheck() method
+ * and passed to processEvent() method.
+ */
 class DetermineTargetJewelEvent : public Event {};
 class HoldingJewelEvent : public Event {};
 class NotHoldingJewelEvent : public Event {};
@@ -27,14 +36,20 @@ class ArrivalElevatorTopEvent : public Event {};
 class ArrivalGoalEvent : public Event {};
 class ArrivalViaPoint2Event : public Event {};
 
-
+//For convenience, this car goes by way of via points.
 static const Vec3d viaPointA( 30,0, 0);
 static const Vec3d viaPointB(-30,0, 0);
 
+/*
+ * Sample1 is a program which controls the red car in the
+ * simulation environment. This car carries all jewels.
+ * Basic functions are implemented in the SampleBase class
+ * which is extended by this Sample1 class.
+ */
 class Sample1 : public SampleBase {
 public:
     Sample1(int port);
-   ~Sample1();
+    ~Sample1();
     void stateCheck();
     void processEvent(Event *e);
     void move();
@@ -50,7 +65,9 @@ public:
     void goToViaPoint2();
     void end();
 private:
+    // The mode of this car.
     S1Mode mode;
+    // The following variables are targets.
     string targetJewel;
     Vec3d targetJewelLoc;
     Vec3d targetViaPoint1;
@@ -58,6 +75,11 @@ private:
     Vec3d targetGoal;
 };
 
+/*
+ * The constructor of Sample1. super(10000) means
+ * that the red car is controled through port 10000
+ * (computer networking).
+ */
 Sample1::Sample1(int port) : SampleBase(port) {
     mode = DETERMINE_TARGET_JEWEL;
     targetJewel = "none";
@@ -66,78 +88,87 @@ Sample1::Sample1(int port) : SampleBase(port) {
     targetGoal.x = 1000000.0;
 }
 
+/*
+ * The destructor of Sample1.
+ */
 Sample1::~Sample1() {
 }
 
+/*
+ * Check the situations of this car and create some
+ * events then call processEvent() method. To process
+ * general events, this method call super.stateCheck()
+ * at first.
+ */
 void Sample1::stateCheck() {
     SampleBase::stateCheck();
     Vec3d tmpV;
 
     // the car holds the jewel?
     if (targetJewel!="none") {
-      Vec3d *retV = jewelSet.get(targetJewel);
-      if (retV!=0)
-          targetJewelLoc = *(retV);
-      bool hold = true;
-      if (retV==0) {
-        hold = false;
-      } else {
+        targetJewelLoc = jewelSet.get(targetJewel);
+        bool hold = true;
         tmpV = targetJewelLoc - loc;
         if (tmpV.length()>2.0) {
-          hold = false;
-        } else {
-          tmpV.normalize();
-          if (tmpV * front < 0.6)
             hold = false;
+        } else {
+            tmpV.normalize();
+            if (tmpV * front < 0.6)
+                hold = false;
         }
-      }
-      if (hold==true)
-        processEvent(new HoldingJewelEvent());
-      else
-        processEvent(new NotHoldingJewelEvent());
+        if (hold==true)
+            processEvent(new HoldingJewelEvent());
+        else
+            processEvent(new NotHoldingJewelEvent());
     }
 
     // car has arrived at the via point?
     if (targetViaPoint1.x < 10000.0) {
-      tmpV = targetViaPoint1 - loc;
-      if (tmpV.length()<2.0)
-        processEvent(new ArrivalViaPoint1Event());
+        tmpV = targetViaPoint1 - loc;
+        if (tmpV.length()<2.0)
+            processEvent(new ArrivalViaPoint1Event());
     }
 
     // car has arrived at the elevator bottom?
     tmpV = elevatorBottom - loc;
     if (tmpV.length()<1.0)
-      processEvent(new ArrivalElevatorBottomEvent());
+        processEvent(new ArrivalElevatorBottomEvent());
 
     // car has arrived at the elevator top?
     tmpV = elevatorTop - loc;
     if (tmpV.length()<1.0)
-      processEvent(new ArrivalElevatorTopEvent());
+        processEvent(new ArrivalElevatorTopEvent());
 
     // car has arrived at the goal?
     if (targetGoal.x < 10000.0) {
-      tmpV = targetGoal - loc;
-      if (tmpV.length()<2.0)
-        processEvent(new ArrivalGoalEvent());
+        tmpV = targetGoal - loc;
+        if (tmpV.length()<2.0)
+            processEvent(new ArrivalGoalEvent());
     }
 
     // car has arrived at the via point?
     if (targetViaPoint2.x < 10000.0) {
-      tmpV = targetViaPoint2 - loc;
-      if (tmpV.length()<2.0)
-        processEvent(new ArrivalViaPoint2Event());
+        tmpV = targetViaPoint2 - loc;
+        if (tmpV.length()<2.0)
+            processEvent(new ArrivalViaPoint2Event());
     }
 }
 
+/*
+ * Decide the next mode in consideration of the previous
+ * mode and the given event. The process is based on FSM
+ * (finite state machine). This method implements a strategy
+ * of this car.
+ */
 void Sample1::processEvent(Event *e) {
-    char *s;
+    string s;
     if ((mode==DETERMINE_TARGET_JEWEL)
       &&(dynamic_cast<DetermineTargetJewelEvent*>(e))) {
         mode = GO_TO_TARGET_JEWEL;
     } else if ((mode==GO_TO_TARGET_JEWEL)
       &&(dynamic_cast<HoldingJewelEvent*>(e))) {
         mode = DETERMINE_WHITCH_VIA_POINT;
-        s = socket->send((char*)"sendMessage wait");
+        s = socket->send("sendMessage wait");
 cout << "Sample1:sendMessage(wait):" << s << endl;
     } else if ((mode==DETERMINE_WHITCH_VIA_POINT)
       &&(dynamic_cast<DetermineViaPointEvent*>(e))) {
@@ -151,7 +182,7 @@ cout << "Sample1:sendMessage(wait):" << s << endl;
     } else if ((mode==GET_ON_ELEVATOR)
       &&(dynamic_cast<ArrivalElevatorBottomEvent*>(e))) {
         mode = WAIT_UNTIL_TOP;
-        s = socket->send((char*)"sendMessage pushSwitch");
+        s = socket->send("sendMessage pushSwitch");
 cout << "Sample1:sendMessage(pushSwitch):" << s << endl;
     } else if ((mode==GET_ON_ELEVATOR)
       &&(dynamic_cast<NotHoldingJewelEvent*>(e))) {
@@ -165,7 +196,7 @@ cout << "Sample1:sendMessage(pushSwitch):" << s << endl;
     } else if ((mode==BACK_TO_ELEVATOR_TOP)
       &&(dynamic_cast<ArrivalElevatorTopEvent*>(e))) {
         mode = WAIT_UNTIL_BOTTOM;
-        s = socket->send((char*)"sendMessage wait");
+        s = socket->send("sendMessage wait");
 cout << "Sample1:sendMessage(wait):" << s << endl;
     } else if ((mode==BACK_TO_ELEVATOR_TOP)
       &&(dynamic_cast<ClearedEvent*>(e))) {
@@ -182,8 +213,13 @@ cout << "Sample1:sendMessage(wait):" << s << endl;
     } else {
       //cout << "Unprocessed event." << endl;
     }
+
+    delete e;
 }
 
+/*
+ * Control the car in accordance with the mode of the car.
+ */
 void Sample1::move() {
 //cout << "Sample1:mode=" << mode << endl;
   switch(mode) {
@@ -202,9 +238,10 @@ void Sample1::move() {
   }
 }
 
+// The following methods implement processes for each mode.
+
 void Sample1::determineTargetJewel() {
     targetJewel = jewelSet.getNearest(loc);
-    //if (targetJewel!=null)...
     processEvent(new DetermineTargetJewelEvent());
 }
 
@@ -258,6 +295,9 @@ void Sample1::end() {
     stopCar();
 }
 
+/*
+ * The start point of Sample1.
+ */
 int main() {
   Sample1 s1(10000);
   s1.start();

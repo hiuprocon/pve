@@ -6,6 +6,9 @@
 #include <string>
 using namespace std;
 
+/*
+ * Euclidean vector.
+ */
 class Vec3d {
 public:
     Vec3d();

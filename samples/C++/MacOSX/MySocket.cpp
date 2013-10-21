@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <string.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -8,8 +9,8 @@
 #include <sys/param.h>
 #include <sys/uio.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 #include "MySocket.h"
-#include <arpa/inet.h> //なんで？？？
 using namespace std;
 
 /* size of buffer */
@@ -18,6 +19,13 @@ using namespace std;
 
 int s;
 
+/*
+ * MySocket is a simplyfied socket for one-line text messaging.
+ */
+
+/*
+ * A constructor of MySocket requires port number.
+ */
 MySocket::MySocket(int port) {
     /* A structure for a socket */
     struct sockaddr_in server;
@@ -28,7 +36,6 @@ MySocket::MySocket(int port) {
     server.sin_family = AF_INET;
     /* IP address */
     server.sin_addr.s_addr = inet_addr("127.0.0.1");
-    //server.sin_addr.s_addr = inet_addr("10.13.114.1");
     /* port number */
     server.sin_port = htons(port);
     /* create a socket */
@@ -43,16 +50,21 @@ MySocket::MySocket(int port) {
     receive_buf = (char*)malloc(sizeof(char)*MSG_BUF_LEN);
 }
 
+/*
+ * Close this MySocket.
+ */
 MySocket::~MySocket() {
     close(s);
     free(receive_buf);
 }
 
-char *MySocket::send(const char msg[]) {
+/*
+ * Send a one-line message, and receive a one-line message.
+ */
+string MySocket::send(const string msg) {
     int pos = 0;
 
-    string msg2(msg);
-    msg2 += "\n";
+    string msg2 = msg + "\n";
     write(s, msg2.c_str(), msg2.size());
 
     while (1){
@@ -77,6 +89,6 @@ char *MySocket::send(const char msg[]) {
     }
 OUT1:
     receive_buf[pos] = '\0';
-    return receive_buf;
+    return string(receive_buf);
 }
 
