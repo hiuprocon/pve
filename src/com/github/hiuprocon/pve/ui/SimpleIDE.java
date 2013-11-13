@@ -194,9 +194,9 @@ public class SimpleIDE extends JDialog implements ActionListener {
 
     void prepareJars() {
         String vecmathPath = workDir + File.separator + "vecmath.jar";
-        String a3carsimPath = workDir + File.separator + "a3carsim-api.jar";
+        String pveapiPath = workDir + File.separator + "pve-api.jar";
         File vpF = new File(vecmathPath);
-        File apF = new File(a3carsimPath);
+        File apF = new File(pveapiPath);
         if (!vpF.exists()) {
             outputTA.append(i18n("ide.downloadInfo1"));
             boolean b = dl(
@@ -210,8 +210,8 @@ public class SimpleIDE extends JDialog implements ActionListener {
         if (!apF.exists()) {
             outputTA.append(i18n("ide.downloadInfo2"));
             boolean b = dl(
-                    "http://kenji0717.github.com/A3CarSim/jws/A3CarSim/a3carsim-api.jar",
-                    a3carsimPath);
+                    "http://hiu.ks1.org/~ksaito/pve-api.jar",
+                    pveapiPath);
             if (b)
                 outputTA.append(i18n("ide.success") + "\n");
             else
@@ -252,7 +252,7 @@ public class SimpleIDE extends JDialog implements ActionListener {
         classPath = classPath + File.pathSeparator + workDir + File.separator
                 + "vecmath.jar";
         classPath = classPath + File.pathSeparator + workDir + File.separator
-                + "a3carsim-api.jar" + File.pathSeparator;
+                + "pve-api.jar" + File.pathSeparator;
         System.out.println("CLASSPATH:" + classPath);
         int result = compiler.run(System.in, jtaos, jtaos, "-cp", classPath,
                 "-d", workDir, filePath);
@@ -272,7 +272,7 @@ public class SimpleIDE extends JDialog implements ActionListener {
         classPath = classPath + File.pathSeparator + workDir + File.separator
                 + "vecmath.jar";
         classPath = classPath + File.pathSeparator + workDir + File.separator
-                + "a3carsim-api.jar" + File.pathSeparator;
+                + "pve-api.jar" + File.pathSeparator;
         System.out.println("CLASSPATH:" + classPath);
         boolean result = compilerMain.compile(new String[] { "-1.6", "-cp",
                 classPath, filePath });
@@ -314,7 +314,7 @@ public class SimpleIDE extends JDialog implements ActionListener {
         } else if (f.isFile()) {
             if (f.getName().equals("vecmath.jar"))
                 return;
-            if (f.getName().equals("a3carsim-api.jar"))
+            if (f.getName().equals("pve-api.jar"))
                 return;
             if (f.getName().endsWith(".jar"))
                 return;
