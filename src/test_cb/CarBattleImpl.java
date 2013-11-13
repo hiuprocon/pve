@@ -117,6 +117,9 @@ class CarBattleImpl implements Runnable, CollisionListener, CarSim {
             e.printStackTrace();
         }
 
+jp.sourceforge.acerola3d.a3.VRML.clearCash("x-rzip:x-res:///res/BattleField01.zip!/base.wrl");
+
+
         car1.car.init("x-res:///res/stk_tux.a3", world, this);
         world.add(car1.car.car);
         car1.car.car.setLocRot(new Vector3d(0, 1.0, -10), new Vector3d());
