@@ -16,7 +16,7 @@ public class Bullet extends PVEObject {
         this.a3url = a3url;
         init();
         PVEPart p = this.getMainPart();
-        p.setGravity(new Vector3d());
+        p.setGravity(new Vector3d());//なぜか効果なしpostSimulationで？
         p.setInitLocRot(loc, new Vector3d());
         setVel(vel);
         A3Object a = getMainA3();
@@ -38,5 +38,14 @@ public class Bullet extends PVEObject {
     @Override
     protected PVEPart getMainPart() {
         return sphere;
+    }
+
+    boolean initGravity = false;
+    @Override
+    protected void postSimulation() {
+        if (initGravity==false) {
+            setGravity(new Vector3d());//ここでやるしかない？？？
+            initGravity = true;
+        }
     }
 }

@@ -262,6 +262,10 @@ jp.sourceforge.acerola3d.a3.VRML.clearCash("x-rzip:x-res:///res/BattleField01.zi
                 }
                 o.exec();
             }
+
+            if(car1.getLoc().y<-10) car1.car.setEnergy(-100);
+            if(car2.getLoc().y<-10) car2.car.setEnergy(-100);
+
             gui.updateCar1Info(car1.car);
             gui.updateCar2Info(car2.car);
 

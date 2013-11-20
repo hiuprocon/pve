@@ -115,7 +115,7 @@ public class CarBase implements ActiveObject {
         d.scale(1.5);// 計算上0.85より少し上なら良いはずだけど???
         l.add(d);
         Bullet b = new Bullet(l, v);
-        b.setGravity(new Vector3d());
+        //b.setGravity(new Vector3d());
         world.add(b);
         // carSim.addActiveObject(b);
     }
@@ -143,6 +143,13 @@ public class CarBase implements ActiveObject {
      */
     public int getEnergy() {
         return energy;
+    }
+
+    /**
+     * この車の現在のエネルギー値を設定します。
+     */
+    public void setEnergy(int e) {
+        energy = e;
     }
 
     public void hit() {
