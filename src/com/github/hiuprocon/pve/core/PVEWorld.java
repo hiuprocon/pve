@@ -3,6 +3,7 @@ package com.github.hiuprocon.pve.core;
 import com.bulletphysics.collision.broadphase.*;
 import com.bulletphysics.collision.dispatch.*;
 //import com.bulletphysics.collision.dispatch.CollisionWorld.RayResultCallback;
+import com.bulletphysics.collision.dispatch.CollisionWorld.ClosestRayResultCallback;
 import com.bulletphysics.collision.narrowphase.PersistentManifold;
 import com.bulletphysics.dynamics.*;
 import com.bulletphysics.dynamics.constraintsolver.ConstraintSolver;
@@ -323,6 +324,21 @@ public class PVEWorld implements Runnable {
          * Vector3f(0,0.5f,5), rayRC);
          * System.out.println("gaha:"+rayRC.hasHit());
          */
+         //光線テストgaha
+        for (PVEObject o : objects) {
+            for (PVEPart p : o.parts) {
+                if (p instanceof Radar) {
+                    processRadar((Radar)p);
+                } else if (p instanceof Compound) {
+                    for (PVEPart pp : ((Compound)p).parts) {
+                        if (pp instanceof Radar) {
+                            processRadar((Radar)pp);
+                        }
+                    }
+                }
+            }
+            o.postSimulation();
+        }
 
         synchronized (tasks) {
             for (Runnable r : tasks) {
@@ -330,6 +346,27 @@ public class PVEWorld implements Runnable {
             }
         }
     }
+
+    void processRadar(Radar r) {
+        Vector3f fromV = new Vector3f();
+        Vector3f toV = new Vector3f();
+        ClosestRayResultCallback rayRC = null;
+        RigidBody rb = null;
+
+        r.getFromAndTo(fromV,toV);
+        rayRC = new ClosestRayResultCallback(fromV,toV);
+        dynamicsWorld.rayTest(fromV,toV,rayRC);
+        if (rayRC.hasHit()) {
+            rb = RigidBody.upcast(rayRC.collisionObject);
+            if (rb!=null) {
+                fromV.sub(rayRC.hitPointWorld);
+                r.distance = fromV.length();
+            }
+        } else {
+            r.distance = Double.MAX_VALUE;
+        }
+    }
+
     public void addCollisionListener(CollisionListener cl) {
         synchronized (collisionListeners) {
             collisionListeners.add(cl);

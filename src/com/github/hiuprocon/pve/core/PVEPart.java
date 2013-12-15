@@ -17,6 +17,7 @@ public abstract class PVEPart {
     static final int KINEMATIC_TEMP_FLAGS = KINEMATIC_OBJECT;
 
     PVEObject obj;
+    Compound compound;
     final Type type;
     protected String a3url;
     protected A3Object a3;
@@ -219,15 +220,27 @@ public abstract class PVEPart {
     }
 
     public Vector3d getLoc() {
-        Transform t = new Transform();
-        motionState.getWorldTransform(t);
-        return new Vector3d(t.origin);
+        if (compound==null) {
+            Transform t = new Transform();
+            motionState.getWorldTransform(t);
+            return new Vector3d(t.origin);
+        } else {
+            Vector3d v = compound.getLoc();
+            v.add(Util.trans(Util.euler2quat(compound.getRot()),innerLoc));
+            return v;
+        }
     }
 
     public Quat4d getQuat() {
-        Transform t = new Transform();
-        motionState.getWorldTransform(t);
-        return Util.matrix2quat(t.basis);
+        if (compound==null) {
+            Transform t = new Transform();
+            motionState.getWorldTransform(t);
+            return Util.matrix2quat(t.basis);
+        } else {
+            Quat4d q = Util.euler2quat(compound.getRot());
+            q.mul(Util.euler2quat(innerRot));
+            return q;
+        }
     }
 
     public Vector3d getRot() {
