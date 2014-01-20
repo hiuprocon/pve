@@ -8,7 +8,7 @@ import com.github.hiuprocon.pve.obj.*;
 
 /**
  * このクラスを拡張してレースorバトルするための車を作成します。 これを拡張して作成する車クラスは必ず引数無しの
- * コンストラクタを持つ必要があります。レースでは関係ありませんが、 この車は初期値100のエネルギーを持ち、被弾すると5づつエネルギーが
+ * コンストラクタを持つ必要があります。レースでは関係ありませんが、 この車は初期値100のエネルギーを持ち、被弾すると3づつエネルギーが
  * 減少します。また弾丸を発射した時も1づつエネルギーを消費します。
  */
 public class CarBase implements ActiveObject {
@@ -30,6 +30,7 @@ public class CarBase implements ActiveObject {
         this.world = world;
         carSim = cs;
         car = new SimpleCarObj(world, a3url);
+        car.setUserData(this);
     }
 
     /**
@@ -153,7 +154,7 @@ public class CarBase implements ActiveObject {
     }
 
     public void hit() {
-        energy = energy - 5;
+        energy = energy - 3;
         System.out.println("車:" + carID + ":いて!!!");
     }
 
@@ -187,5 +188,20 @@ public class CarBase implements ActiveObject {
      */
     public Vector3d getVel() {
         return new Vector3d(vel);
+    }
+
+    /**
+     * この車に任意のデータを持たせます．(主に逆引き用)
+     */
+    public void setUserData(Object userData) {
+        this.userData = userData;
+    }
+
+    /**
+     * この車にsetUserDataでセットしたデータを取り出します．
+     * (主に逆引き用)
+     */
+    public Object getUserData() {
+        return userData;
     }
 }

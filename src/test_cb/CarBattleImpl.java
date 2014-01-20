@@ -319,7 +319,8 @@ jp.sourceforge.acerola3d.a3.VRML.clearCash("x-rzip:x-res:///res/BattleField01.zi
                 // this.delActiveObject((Bullet)other);
             } else if (other instanceof SimpleCarObj) {
                 // TODO
-                // ((SimpleCarObj)other).carBase.hit();
+                CarBase cb = (CarBase)(((SimpleCarObj)other).getUserData());
+                cb.hit();
             } else if (other instanceof Ground) {
                 ;
             } else {
