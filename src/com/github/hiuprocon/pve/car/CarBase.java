@@ -189,19 +189,4 @@ public class CarBase implements ActiveObject {
     public Vector3d getVel() {
         return new Vector3d(vel);
     }
-
-    /**
-     * この車に任意のデータを持たせます．(主に逆引き用)
-     */
-    public void setUserData(Object userData) {
-        this.userData = userData;
-    }
-
-    /**
-     * この車にsetUserDataでセットしたデータを取り出します．
-     * (主に逆引き用)
-     */
-    public Object getUserData() {
-        return userData;
-    }
 }
