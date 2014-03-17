@@ -337,7 +337,6 @@ public class PVEWorld implements Runnable {
                     }
                 }
             }
-            o.postSimulation();
         }
 
         synchronized (tasks) {
