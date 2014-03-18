@@ -36,6 +36,27 @@
         <pathelement location="dist/pve-res.jar"/>
     </path>
 
+    <target name="get-lib">
+        <get dest="lib">
+            <resourcelist>
+                <file file="lib/list.txt"/>
+            </resourcelist>
+        </get>
+    </target>
+
+    <target name="get-res">
+        <get dest="res">
+            <resourcelist>
+                <file file="res/list.txt"/>
+            </resourcelist>
+        </get>
+        <get dest="res/prototype">
+            <resourcelist>
+                <file file="res/prototype/list.txt"/>
+            </resourcelist>
+        </get>
+    </target>
+
     <target name="compile">
         <mkdir dir="build"/>
         <javac srcdir="src" destdir="build" encoding="utf-8" debug="on" source="1.6" target="1.6">
