@@ -32,8 +32,6 @@
         <fileset dir="${my.lib.path}">
             <include name="*.jar"/>
         </fileset>
-        <pathelement location="lib/ecj-3.6.2.jar"/>
-        <pathelement location="lib/tools.jar"/>
         <pathelement location="dist/pve-api.jar"/>
         <pathelement location="dist/pve-res.jar"/>
     </path>
