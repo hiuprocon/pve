@@ -37,7 +37,7 @@
     </path>
 
     <target name="get-lib">
-        <get dest="lib">
+        <get dest="lib" usetimestamp="true">
             <resourcelist>
                 <file file="lib/list.txt"/>
             </resourcelist>
@@ -45,12 +45,12 @@
     </target>
 
     <target name="get-res">
-        <get dest="res">
+        <get dest="res" usetimestamp="true">
             <resourcelist>
                 <file file="res/list.txt"/>
             </resourcelist>
         </get>
-        <get dest="res/prototype">
+        <get dest="res/prototype" usetimestamp="true">
             <resourcelist>
                 <file file="res/prototype/list.txt"/>
             </resourcelist>
