@@ -1,2 +1,3 @@
 This folder is for resource files of ProconVE.
-Now, I am thinking about how to manage these files...
+To get required resources, type "ant get-res" in the top directory
+of this repository.
