@@ -279,6 +279,10 @@ public abstract class PVEPart {
         body.applyCentralForce(new Vector3f(f));
     }
 
+    public void setLinearVelocity(Vector3d f) {
+        body.setLinearVelocity(new Vector3f(f));
+    }
+
     public void setAngularVelocity(Vector3d av) {
         body.setAngularVelocity(new Vector3f(av));
     }

@@ -18,7 +18,8 @@ public class Avatar extends SphereObj {
         Vector3d front = Util.trans(q,new Vector3d(0,0,1));
         front.scale(zengo);
         Vector3d angVel = new Vector3d(0,sayu,0);
-        mp.applyCentralForce(front);
+        //mp.applyCentralForce(front);
+        mp.setLinearVelocity(front);
         mp.setAngularVelocity(angVel);
     }
 }
