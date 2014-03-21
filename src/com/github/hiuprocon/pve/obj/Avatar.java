@@ -9,6 +9,7 @@ public class Avatar extends SphereObj {
         super(Type.DYNAMIC,1.0,1.0,a3url);
         PVEPart mp = getMainPart();
         mp.setAngularFactor(0);
+        mp.disableDeactivation(true);
     }
 
     public void setForce(double zengo, double sayu) {
