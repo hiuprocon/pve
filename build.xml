@@ -176,6 +176,14 @@
             <jvmarg value="-Djava.library.path=${my.lib.path}"/>
         </java>
     </target>
+
+    <target name="PServer3" depends="jar">
+        <java classname="prototype.Simulator3" fork="true">
+            <classpath refid="my.exec.class.path"/>
+            <jvmarg value="-Djava.library.path=${my.lib.path}"/>
+        </java>
+    </target>
+
 <!--
     <target name="Sample0" depends="jar">
         <java classname="samples.ControlCarTest" fork="true">

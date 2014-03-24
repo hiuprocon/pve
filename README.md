@@ -17,7 +17,7 @@ Then type...
 
 Type...
 
-    ant PServer2
+    ant PServer3
 
 ### Contact
 
