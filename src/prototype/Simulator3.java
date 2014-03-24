@@ -30,6 +30,9 @@ public class Simulator3 implements CollisionListener, Elevator3Holder {
     Simulator3GUI gui;
     int waitTime = 33;
     Random random;
+    Action3D bgm = null;
+    Action3D se = null;
+    A3CanvasInterface mainCanvas;
 
     public Simulator3() {
         w = new PVEWorld(PVEWorld.A3CANVAS,PVEWorld.MANUAL_STEP);
@@ -42,6 +45,7 @@ public class Simulator3 implements CollisionListener, Elevator3Holder {
         if (car1!=null) {
             car1.dispose();
             car2.dispose();
+            bgm.change("no_se");
             try{Thread.sleep(1000);}catch(Exception e) {;}
         }
 
@@ -160,7 +164,7 @@ VRML.clearCash("x-res:///res/prototype/Jewel.a3");
         w.resume();
         w.stepForward();
 
-        A3CanvasInterface mainCanvas = w.getMainCanvas();
+        mainCanvas = w.getMainCanvas();
         mainCanvas.setHeadLightEnable(false);
         Action3D light = null;
         Action3D grid1 = null;
@@ -175,6 +179,11 @@ VRML.clearCash("x-res:///res/prototype/Jewel.a3");
             grid3 = new Action3D("x-res:///res/prototype/PCGrid.a3");
             jewelField1 = new VRML("x-res:///res/prototype/JewelField.wrl");
             jewelField2 = new VRML("x-res:///res/prototype/JewelField.wrl");
+            if (bgm==null) {
+                bgm = new Action3D("x-res:///res/prototype/md_rock55.a3");
+                bgm.setSoundGain("rock55",0.1);
+                se = new Action3D("x-res:///res/prototype/SoundEffect001.a3");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -196,15 +205,25 @@ VRML.clearCash("x-res:///res/prototype/Jewel.a3");
         jewelField2.setLoc(-50,0,0);
         mainCanvas.add(jewelField2);
         mainCanvas.setBackground(new A3Background(0.1f, 0.3f, 0.5f));
+        bgmFlag = false;
+        mainCanvas.addLockedA3(bgm);
+        mainCanvas.addLockedA3(se);
+
+        bgm.change("jingle05");
 
         gui.defaultView();
     }
 
+    boolean bgmFlag=false;
     public void start() {
         //A3CanvasInterface mainCanvas = w.getMainCanvas();
         waitTime = 33;
         while (true) {
             stepForward();
+            if (bgmFlag==false) {
+                bgm.change("rock55");
+                bgmFlag=true;
+            }
             if (w.getTime()>=5000.0)
                 timeUp();
             //mainCanvas.waitForUpdate(waitTime * 2);
@@ -257,10 +276,12 @@ VRML.clearCash("x-res:///res/prototype/Jewel.a3");
     void goal(Jewel j) {
         gui.appendText("goal! "+j.getUserData());
         w.del(j);
+        se.change("power20");
         synchronized(jewels) {
             jewels.remove(j);
         }
         if (jewels.size()==0) {
+            bgm.change("jingle06");
             w.pause();
             try{Thread.sleep(1000);}catch(Exception e){;}
             gui.updateTime(w.getTime());
@@ -269,6 +290,7 @@ VRML.clearCash("x-res:///res/prototype/Jewel.a3");
     }
     void timeUp() {
         w.pause();
+        bgm.change("jingle09");
         try{Thread.sleep(1000);}catch(Exception e){;}
         gui.updateTime(5000.0);
         gui.appendText(String.format("time up!!!!!  time=%9.2f",5000.0));
