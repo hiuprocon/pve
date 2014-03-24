@@ -9,3 +9,5 @@ http://hiu.ks1.org/pve/res/prototype/WireBox.wrl
 http://hiu.ks1.org/pve/res/prototype/carB.wrl
 http://hiu.ks1.org/pve/res/prototype/carC.wrl
 http://hiu.ks1.org/pve/res/prototype/carD.a3
+http://hiu.ks1.org/pve/res/prototype/ChoroQ.a3
+http://hiu.ks1.org/pve/res/prototype/gougui.a3

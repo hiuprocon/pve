@@ -59,7 +59,8 @@ public class Simulator3 implements CollisionListener, Elevator3Holder {
         jewels.clear();
 
 //jp.sourceforge.acerola3d.A23.clearZipCache();
-VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
+//VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
+VRML.clearCash("x-res:///res/prototype/Jewel.a3");
 
         double z1 = 96.25;
         double z2 = 62.5;
@@ -139,7 +140,7 @@ VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
             random = new Random(seed);
         }
         for (int i = 0; i < 10; i++) {
-            Jewel j = new Jewel();
+            Jewel2 j = new Jewel2();
             j.setUserData("jA1." + i);
             double x = 60 * random.nextDouble() - 30 - 50;
             double z = 80 * random.nextDouble() - 40;
@@ -148,7 +149,7 @@ VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
             jewels.add(j);
         }
         for (int i = 0; i < 10; i++) {
-            Jewel j = new Jewel();
+            Jewel2 j = new Jewel2();
             j.setUserData("jA2." + i);
             double x = 60 * random.nextDouble() - 30 + 50;
             double z = 80 * random.nextDouble() - 40;

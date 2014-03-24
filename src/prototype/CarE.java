@@ -26,9 +26,9 @@ public class CarE extends PVEObject implements PVEMsgListener, CarInterface {
         init();
         server = new Server(port,this);
         if (port==10000) {
-            ((Action3D)chassis.getA3Object()).change("red");
+            ((Action3D)chassis.getA3Object()).change("red2");
         } else if (port==20000) {
-            ((Action3D)chassis.getA3Object()).change("blue");
+            ((Action3D)chassis.getA3Object()).change("blue2");
         }
     }
 
@@ -57,7 +57,8 @@ public class CarE extends PVEObject implements PVEMsgListener, CarInterface {
         b3.basis.rotY(-0.785f);
         compound.addChildShape(b3, s3);
 
-        chassis = new FreeShapeD(Type.DYNAMIC, 10.0,"x-res:///res/prototype/carD.a3",compound);
+        chassis = new FreeShapeD(Type.DYNAMIC, 10.0,"x-res:///res/prototype/ChoroQ.a3",compound);
+        //chassis = new FreeShapeD(Type.DYNAMIC, 10.0,"x-res:///res/prototype/carD.a3",compound);
         chassis.setInitLocRev(0, 0, 0, 0, 0, 0);
         chassis.disableDeactivation(true);
         chassis.setDamping(0.9, 0.0);
