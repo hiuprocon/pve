@@ -57,6 +57,7 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
         defaultView();
         canvas.setPreferredSize(new Dimension(700, 650));
         canvas.setCanvasWidthInPWorld(2.0);
+        canvas.addA3Listener(simulator);
         box3.myAdd(canvas, 1);
 
         VBox box2 = new VBox();
@@ -197,7 +198,7 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
             else
                 simulator.activateTwoCars();
         } else if (source==resetWorldB) {
-            simulator.initWorld();
+            try{simulator.initWorld();}catch(Exception e){;}
             oneCarCB.setSelected(false);
             waitTimeS.setValue(51);
             updateTime(0);

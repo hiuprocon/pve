@@ -10,8 +10,6 @@ public class Elevator3 extends PVEObject implements CollisionListener {
     Box plate;
     Box rightLeg;
     Box leftLeg;
-    PVEPart slope1;
-    PVEPart slope2;
     PVEPart switch1;
     PVEPart switch2;
     PVEPart goal1;
@@ -32,8 +30,6 @@ public class Elevator3 extends PVEObject implements CollisionListener {
         plate = new Box(Type.KINEMATIC, 0.0, new Vector3d(10, 16, 10));
         rightLeg = new Box(Type.STATIC, 0.0, new Vector3d(10, 15, 1),"x-res:///res/ClearBox.wrl");
         leftLeg = new Box(Type.STATIC, 0.0, new Vector3d(10, 15, 1),"x-res:///res/ClearBox.wrl");
-        slope1 = new Slope(Type.STATIC,0.0,10, 1, 10);
-        slope2 = new Slope(Type.STATIC,0.0,10, 1, 10);
         switch1 = new Box(Type.GHOST, 1, new Vector3d(10, 1, 10),
                 "x-res:///res/prototype/Switch.wrl");
         switch2 = new Box(Type.GHOST, 1, new Vector3d(10, 1, 10),
@@ -45,18 +41,16 @@ public class Elevator3 extends PVEObject implements CollisionListener {
         floor1 = new Box(Type.STATIC,0.0,new Vector3d(10,1,10),"x-res:///res/ClearBox.wrl");
         floor2 = new Box(Type.STATIC,0.0,new Vector3d(10,1,10),"x-res:///res/ClearBox.wrl");
         plate.disableDeactivation(true);
-        plate.setInitLocRev(0, -7, 0, 0, 0, 0);
+        plate.setInitLocRev(0, -8, 0, 0, 0, 0);
         rightLeg.setInitLocRev(0, 7.5, 5.5, 0, 0, 0);
         leftLeg.setInitLocRev(0, 7.5, -5.5, 0, 0, 0);
-        slope1.setInitLocRev(-10.0, 0.5, 0, 0, -90, 0);
-        slope2.setInitLocRev(10.0, 0.5, 0, 0, 90, 0);
         switch1.setInitLocRev(0.0, 0.5, 11, 0, 0, 0);
         switch2.setInitLocRev(0.0, 0.5, -11, 0, 0, 0);
         goal1.setInitLocRev(-10, 15.5, 0, 0, 0, 0);
         goal2.setInitLocRev( 10, 15.5, 0, 0, 0, 0);
         floor1.setInitLocRev(-10, 14.5,0,0,0,0);
         floor2.setInitLocRev( 10, 14.5,0,0,0,0);
-        return new PVEPart[] { plate, rightLeg, leftLeg, slope1, slope2, switch1, switch2, goal1, goal2, floor1, floor2 };
+        return new PVEPart[] { plate, rightLeg, leftLeg, switch1, switch2, goal1, goal2, floor1, floor2 };
     }
 
     @Override
@@ -80,7 +74,7 @@ public class Elevator3 extends PVEObject implements CollisionListener {
         up = true;
     }
 
-    double slide=-7.0;
+    double slide=-8.0;
     double speed=0.02;
     @Override
     protected void postSimulation() {
@@ -93,7 +87,7 @@ public class Elevator3 extends PVEObject implements CollisionListener {
             }
             up = false;
         } else {
-            if (slide>-7.0) {
+            if (slide>-8.0) {
                 slide = slide - speed;
                 Vector3d v = new Vector3d(initXYZ);
                 v.y = v.y + slide;

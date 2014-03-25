@@ -3,14 +3,11 @@ package prototype;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.vecmath.Vector3d;
-import jp.sourceforge.acerola3d.a3.A3Background;
-import jp.sourceforge.acerola3d.a3.A3CanvasInterface;
-import jp.sourceforge.acerola3d.a3.Action3D;
-import jp.sourceforge.acerola3d.a3.VRML;
+import jp.sourceforge.acerola3d.a3.*;
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 
-public class Simulator3 implements CollisionListener, Elevator3Holder {
+public class Simulator3 implements CollisionListener, Elevator3Holder, A3Listener {
     PVEWorld w;
     PVEObject ground1;
     PVEObject ground2;
@@ -33,15 +30,16 @@ public class Simulator3 implements CollisionListener, Elevator3Holder {
     Action3D bgm = null;
     Action3D se = null;
     A3CanvasInterface mainCanvas;
+    Action3D pauseA3;
 
-    public Simulator3() {
+    public Simulator3() throws Exception {
         w = new PVEWorld(PVEWorld.A3CANVAS,PVEWorld.MANUAL_STEP);
         //w = new PVEWorld(PVEWorld.A3CANVAS,PVEWorld.AUTO_STEP);
         gui = new Simulator3GUI(this);
         w.addCollisionListener(this);
         initWorld();
     }
-    void initWorld() {
+    void initWorld() throws Exception {
         if (car1!=null) {
             car1.dispose();
             car2.dispose();
@@ -64,7 +62,7 @@ public class Simulator3 implements CollisionListener, Elevator3Holder {
 
 //jp.sourceforge.acerola3d.A23.clearZipCache();
 //VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
-VRML.clearCash("x-res:///res/prototype/Jewel.a3");
+VRML.clearCash("x-res:///res/prototype/gougui.a3");
 
         double z1 = 96.25;
         double z2 = 62.5;
@@ -89,23 +87,23 @@ VRML.clearCash("x-res:///res/prototype/Jewel.a3");
         ground5.setLocRev(0, -0.5, z1, 0, 0, 0);
         w.add(ground5);
 
-        wall1 = new BoxObj(Type.STATIC,0,new Vector3d(1,52,250),"x-res:///res/ClearBox.wrl");
+        wall1 = new BoxObj(Type.STATIC,0,new Vector3d(1,52,250),"x-res:///res/ClearBox2.wrl");
         wall1.setLocRev(-125.5,25.5,0, 0,0,0);
         w.add(wall1);
 
-        wall2 = new BoxObj(Type.STATIC,0,new Vector3d(1,52,250),"x-res:///res/ClearBox.wrl");
+        wall2 = new BoxObj(Type.STATIC,0,new Vector3d(1,52,250),"x-res:///res/ClearBox2.wrl");
         wall2.setLocRev(125.5,25.5,0, 0,0,0);
         w.add(wall2);
 
-        wall3 = new BoxObj(Type.STATIC,0,new Vector3d(252,52,1),"x-res:///res/ClearBox.wrl");
+        wall3 = new BoxObj(Type.STATIC,0,new Vector3d(252,52,1),"x-res:///res/ClearBox2.wrl");
         wall3.setLocRev(0,25.5,-125.5, 0,0,0);
         w.add(wall3);
 
-        wall4 = new BoxObj(Type.STATIC,0,new Vector3d(252,52,1),"x-res:///res/ClearBox.wrl");
+        wall4 = new BoxObj(Type.STATIC,0,new Vector3d(252,52,1),"x-res:///res/ClearBox2.wrl");
         wall4.setLocRev(0,25.5,125.5, 0,0,0);
         w.add(wall4);
 
-        ceiling = new BoxObj(Type.STATIC,0,new Vector3d(250,1,250),"x-res:///res/ClearBox.wrl");
+        ceiling = new BoxObj(Type.STATIC,0,new Vector3d(250,1,250),"x-res:///res/ClearBox2.wrl");
         ceiling.setLocRev(0,50.5,0, 0,0,0);
         w.add(ceiling);
 
@@ -114,7 +112,7 @@ VRML.clearCash("x-res:///res/prototype/Jewel.a3");
         w.add(elevator1);
 
         elevator2 = new Elevator3(this,w);
-        elevator2.setLocRev(0, 0, 0-z2, 0, 0, 0);
+        elevator2.setLocRev(0, 0, 0-z2, 0,90, 0);
         w.add(elevator2);
 
         car1 = new CarE(this, 10000);
@@ -166,26 +164,20 @@ VRML.clearCash("x-res:///res/prototype/Jewel.a3");
 
         mainCanvas = w.getMainCanvas();
         mainCanvas.setHeadLightEnable(false);
-        Action3D light = null;
-        Action3D grid1 = null;
-        Action3D grid2 = null;
-        Action3D grid3 = null;
-        VRML jewelField1 = null;
-        VRML jewelField2 = null;
-        try {
-            light = new Action3D("x-res:///res/DirectionalLightSet.a3");
-            grid1 = new Action3D("x-res:///res/prototype/PCGrid.a3");
-            grid2 = new Action3D("x-res:///res/prototype/PCGrid.a3");
-            grid3 = new Action3D("x-res:///res/prototype/PCGrid.a3");
-            jewelField1 = new VRML("x-res:///res/prototype/JewelField.wrl");
-            jewelField2 = new VRML("x-res:///res/prototype/JewelField.wrl");
-            if (bgm==null) {
-                bgm = new Action3D("x-res:///res/prototype/md_rock55.a3");
-                bgm.setSoundGain("rock55",0.1);
-                se = new Action3D("x-res:///res/prototype/SoundEffect001.a3");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        Action3D light = new Action3D("x-res:///res/DirectionalLightSet.a3");
+        Action3D grid1 = new Action3D("x-res:///res/prototype/PCGrid.a3");
+        Action3D grid2 = new Action3D("x-res:///res/prototype/PCGrid.a3");
+        Action3D grid3 = new Action3D("x-res:///res/prototype/PCGrid.a3");
+        VRML jewelField1 = new VRML("x-res:///res/prototype/JewelField.wrl");
+        VRML jewelField2 = new VRML("x-res:///res/prototype/JewelField.wrl");
+        Action3D sb = new Action3D("x-res:///res/prototype/SkyBox02.a3");
+        if (bgm==null) {
+            bgm = new Action3D("x-res:///res/prototype/md_rock55.a3");
+            bgm.setSoundGain("rock55",0.1);
+            bgm.setSoundGain("jingle05",0.3);
+            bgm.setSoundGain("jingle06",0.3);
+            bgm.setSoundGain("jingle09",0.3);
+            se = new Action3D("x-res:///res/prototype/SoundEffect001.a3");
         }
         light.change("dl1.0");
         light.setLoc(0,10,0);
@@ -204,12 +196,21 @@ VRML.clearCash("x-res:///res/prototype/Jewel.a3");
         jewelField2.setScaleX(60);jewelField2.setScaleY(0.1);jewelField2.setScaleZ(80);
         jewelField2.setLoc(-50,0,0);
         mainCanvas.add(jewelField2);
-        mainCanvas.setBackground(new A3Background(0.1f, 0.3f, 0.5f));
+        mainCanvas.setBackground(sb);
         bgmFlag = false;
         mainCanvas.addLockedA3(bgm);
         mainCanvas.addLockedA3(se);
 
         bgm.change("jingle05");
+
+
+        pauseA3 = new Action3D("x-res:///res/prototype/box.a3");
+        pauseA3.setScale(0.5);
+        pauseA3.setLoc(-0.3,0.3,-1.0);
+        pauseA3.setLabelLoc(0.1,0.0);
+        pauseA3.setLabel("pause");
+        pauseA3.change("vertigoWhite");
+        mainCanvas.addLockedA3(pauseA3);
 
         gui.defaultView();
     }
@@ -273,6 +274,27 @@ VRML.clearCash("x-res:///res/prototype/Jewel.a3");
     public void collided(PVEPart a, PVEPart b) {
         ;
     }
+    @Override
+    public void mouseClicked(A3Event e) {
+        A3Object a3 = e.getA3Object();
+        if (a3==pauseA3) {
+            if (pauseA3.getActionName().equals("vertigoWhite")) {
+                pauseA3.change("vertigoRed");
+                pause();
+            } else {
+                pauseA3.change("vertigoWhite");
+                resume();
+            }
+        }
+    }
+    @Override
+    public void mouseReleased(A3Event e) {}
+    @Override
+    public void mousePressed(A3Event e) {}
+    @Override
+    public void mouseDragged(A3Event e) {}
+    @Override
+    public void mouseDoubleClicked(A3Event e) {}
     void goal(Jewel j) {
         gui.appendText("goal! "+j.getUserData());
         w.del(j);
@@ -315,9 +337,9 @@ VRML.clearCash("x-res:///res/prototype/Jewel.a3");
         w.resume();
     }
 
-    public static void main(String args[]) {
-        Simulator3 s2 = new Simulator3();
-        s2.start();
+    public static void main(String args[]) throws Exception {
+        Simulator3 s3 = new Simulator3();
+        s3.start();
     }
     @Override
     public ArrayList<Jewel> getJewelsCopy() {

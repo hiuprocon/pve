@@ -1,6 +1,7 @@
 http://hiu.ks1.org/pve/res/BattleField01.zip
 http://hiu.ks1.org/pve/res/Box.wrl
 http://hiu.ks1.org/pve/res/ClearBox.wrl
+http://hiu.ks1.org/pve/res/ClearBox2.wrl
 http://hiu.ks1.org/pve/res/Cone.wrl
 http://hiu.ks1.org/pve/res/Cylinder.wrl
 http://hiu.ks1.org/pve/res/DirectionalLightSet.a3
