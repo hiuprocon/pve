@@ -15,3 +15,4 @@ http://hiu.ks1.org/pve/res/prototype/SoundEffect001.a3
 http://hiu.ks1.org/pve/res/prototype/md_rock55.a3
 http://hiu.ks1.org/pve/res/prototype/SkyBox02.a3
 http://hiu.ks1.org/pve/res/prototype/box.a3
+http://hiu.ks1.org/pve/res/prototype/WCtree.a3

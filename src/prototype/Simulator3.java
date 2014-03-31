@@ -21,6 +21,8 @@ public class Simulator3 implements CollisionListener, Elevator3Holder, A3Listene
     PVEObject ceiling;
     Elevator3 elevator1;
     Elevator3 elevator2;
+    Obstacle3 obstacle1;
+    Obstacle3 obstacle2;
     CarInterface car1;
     CarInterface car2;
     ArrayList<Jewel> jewels = new ArrayList<Jewel>();
@@ -114,6 +116,12 @@ VRML.clearCash("x-res:///res/prototype/gougui.a3");
         elevator2 = new Elevator3(this,w);
         elevator2.setLocRev(0, 0, 0-z2, 0,90, 0);
         w.add(elevator2);
+
+        Obstacle3 obstacle1 = new Obstacle3(new Vector3d( 50,0,0));
+        w.add(obstacle1);
+
+        Obstacle3 obstacle2 = new Obstacle3(new Vector3d(-50,0,0));
+        w.add(obstacle2);
 
         car1 = new CarE(this, 10000);
         car1.setLocRev(-80, 0, 0, 0, 90, 0);
