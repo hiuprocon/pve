@@ -20,9 +20,9 @@ import javax.swing.text.Position;
 public class Simulator3GUI extends JFrame implements ActionListener, ChangeListener {
     private static final long serialVersionUID = 1L;
     Simulator3 simulator;
+    CarInterface c1;
+    CarInterface c2;
     A3Canvas canvas;
-    A3SubCanvas sc1;
-    A3SubCanvas sc2;
     JCheckBox oneCarCB;
     JButton resetWorldB;
     JCheckBox pauseCB;
@@ -32,6 +32,8 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
     JButton topViewB;
     JButton frontViewB;
     JButton sideViewB;
+    JButton redViewB;
+    JButton blueViewB;
     JCheckBox parallelCB;
     JCheckBox polygonizeCB;
     JButton snapshotB;
@@ -61,6 +63,7 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
         box3.myAdd(canvas, 1);
 
         VBox box2 = new VBox();
+        box2.setPreferredSize(new Dimension(500,600));
 
         VBox controlBox = new VBox();
         box2.myAdd(controlBox, 0);
@@ -95,6 +98,12 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
         sideViewB = new JButton("Side View");
         sideViewB.addActionListener(this);
         controlBox.myAdd(sideViewB, 1);
+        redViewB = new JButton("Red Car View");
+        redViewB.addActionListener(this);
+        controlBox.myAdd(redViewB, 1);
+        blueViewB = new JButton("Blue Car View");
+        blueViewB.addActionListener(this);
+        controlBox.myAdd(blueViewB, 1);
         parallelCB = new JCheckBox("parallel");
         parallelCB.addActionListener(this);
         controlBox.myAdd(parallelCB, 1);
@@ -110,15 +119,7 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
         snapshotB.addActionListener(this);
         controlBox.myAdd(snapshotB, 1);
 
-        sc1 = A3SubCanvas.createA3SubCanvas(300, 300);
-        canvas.addA3SubCanvas(sc1);
-        box2.myAdd(sc1,1);
-
-        sc2 = A3SubCanvas.createA3SubCanvas(300, 300);
-        canvas.addA3SubCanvas(sc2);
-        box2.myAdd(sc2, 1);
-
-        box1.myAdd(box2, 0);
+        box1.myAdd(box2, 1);
         box1.myAdd(box3, 1);
         add(box1);
         //pack();
@@ -160,16 +161,24 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
         canvas.setNavigationMode(A3CanvasInterface.NaviMode.SIMPLE,100.0);
     }
 
-    public void setCar1(CarInterface c) {
-        sc1.setAvatar(c.getMainA3());
-        sc1.setNavigationMode(A3CanvasInterface.NaviMode.CHASE, lookAt, camera,
+    void redView() {
+        canvas.setAvatar(c1.getMainA3());
+        canvas.setNavigationMode(A3CanvasInterface.NaviMode.CHASE, lookAt, camera,
                 up, 10.0);
     }
 
-    public void setCar2(CarInterface c) {
-        sc2.setAvatar(c.getMainA3());
-        sc2.setNavigationMode(A3CanvasInterface.NaviMode.CHASE, lookAt, camera,
+    void blueView() {
+        canvas.setAvatar(c2.getMainA3());
+        canvas.setNavigationMode(A3CanvasInterface.NaviMode.CHASE, lookAt, camera,
                 up, 10.0);
+    }
+
+    public void setCar1(CarInterface c) {
+        c1 = c;
+    }
+
+    public void setCar2(CarInterface c) {
+        c2 = c;
     }
 
     public void appendText(String s) {
@@ -220,6 +229,10 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
             frontView();
         } else if (source==sideViewB) {
             sideView();
+        } else if (source==redViewB) {
+            redView();
+        } else if (source==blueViewB) {
+            blueView();
         } else if (source==parallelCB) {
             if (parallelCB.isSelected()==true) 
                 canvas.setProjectionMode(ProjectionMode.PARALLEL);
