@@ -1,5 +1,6 @@
 package prototype;
 
+import java.util.ArrayList;
 import javax.vecmath.*;
 import jp.sourceforge.acerola3d.a3.Util;
 import com.github.hiuprocon.pve.core.*;
@@ -8,7 +9,7 @@ import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.linearmath.*;
 
 public class CarB extends PVEObject implements PVEMsgListener, CarInterface {
-    Simulator simulator;
+    SimulatorInterface simulator;
     Server server;
     // FreeShapeD chassis;
     PVEPart chassis;
@@ -16,8 +17,11 @@ public class CarB extends PVEObject implements PVEMsgListener, CarInterface {
     double handle;
     Vector3d loc = new Vector3d();
     Vector3d rev = new Vector3d();
+    CarInterface anotherCar;
+    ArrayList<String> messages = new ArrayList<String>();
+    ArrayList<String> mailbox = new ArrayList<String>();
 
-    public CarB(Simulator simulator,int port) {
+    public CarB(SimulatorInterface simulator,int port) {
         this.simulator = simulator;
         init();
         server = new Server(port, this);
@@ -143,6 +147,21 @@ public class CarB extends PVEObject implements PVEMsgListener, CarInterface {
     }
 
     public void swapMessageBuffer() {
-        // Dummy!
+        synchronized (messages) {
+            synchronized (mailbox) {
+                mailbox.addAll(messages);
+                messages.clear();
+            }
+        }
+    }
+
+    @Override
+    public void setAnotherCar(CarInterface c) {
+        anotherCar = c;  
+    }
+
+    @Override
+    public ArrayList<String> getMessages() {
+        return messages;
     }
 }

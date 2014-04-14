@@ -1,5 +1,6 @@
 package prototype;
 
+import java.util.ArrayList;
 import javax.vecmath.*;
 import jp.sourceforge.acerola3d.a3.Util;
 import com.bulletphysics.collision.shapes.BoxShape;
@@ -11,13 +12,16 @@ import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.ui.Server;
 
 public class CarC extends PVEObject implements PVEMsgListener, CarInterface {
-    Simulator simulator;
+    SimulatorInterface simulator;
     Server server;
     PVEPart chassis;
     double speed;
     double handle;
+    CarInterface anotherCar;
+    ArrayList<String> messages = new ArrayList<String>();
+    ArrayList<String> mailbox = new ArrayList<String>();
 
-    public CarC(Simulator simulator,int port) {
+    public CarC(SimulatorInterface simulator,int port) {
         this.simulator = simulator;
         init();
         server = new Server(port,this);
@@ -133,6 +137,21 @@ public class CarC extends PVEObject implements PVEMsgListener, CarInterface {
     }
 
     public void swapMessageBuffer() {
-        // Dummy!
+        synchronized (messages) {
+            synchronized (mailbox) {
+                mailbox.addAll(messages);
+                messages.clear();
+            }
+        }
+    }
+
+    @Override
+    public void setAnotherCar(CarInterface c) {
+        anotherCar = c;
+    }
+
+    @Override
+    public ArrayList<String> getMessages() {
+        return messages;
     }
 }

@@ -6,7 +6,7 @@ import javax.vecmath.Vector3d;
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 
-public class Simulator implements CollisionListener {
+public class Simulator implements SimulatorInterface, CollisionListener {
     PVEWorld w;
     PVEObject ground;
     PVEObject wall1;
@@ -206,7 +206,7 @@ public class Simulator implements CollisionListener {
     void activateC2() {   noOfActivated++; }
     void deactivateC3() { noOfActivated--; }
     void activateC3() {   noOfActivated++; }
-    void stepForward() {
+    public void stepForward() {
         synchronized (waitingRoom) {
             noOfWaiting++;
             if (noOfWaiting==noOfActivated) {
@@ -249,13 +249,20 @@ public class Simulator implements CollisionListener {
         }
 
     }
-    String searchJewels() {
+    public String searchJewels() {
         String s = ""+jewels.size();
         for (Jewel j:jewels) {
             Vector3d v = j.getLoc();
             s = s +" "+j.getUserData().toString()+" "+v.x+" "+v.y+" "+v.z;
         }
         return s;
+    }
+
+    public void setWaitTime(int t) {
+        //TODO dummy!
+    }
+    public PVEWorld getPVEWorld() {
+        return w;
     }
 
     public static void main(String args[]) throws Exception {

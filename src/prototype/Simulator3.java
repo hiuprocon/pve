@@ -7,7 +7,7 @@ import jp.sourceforge.acerola3d.a3.*;
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 
-public class Simulator3 implements CollisionListener, Elevator3Holder, A3Listener {
+public class Simulator3 implements SimulatorInterface, CollisionListener, Elevator3Holder {
     PVEWorld w;
     PVEObject ground1;
     PVEObject ground2;
@@ -32,7 +32,6 @@ public class Simulator3 implements CollisionListener, Elevator3Holder, A3Listene
     Action3D bgm = null;
     Action3D se = null;
     A3CanvasInterface mainCanvas;
-    Action3D pauseA3;
 
     public Simulator3() throws Exception {
         w = new PVEWorld(PVEWorld.A3CANVAS,PVEWorld.MANUAL_STEP);
@@ -123,18 +122,20 @@ VRML.clearCash("x-res:///res/prototype/gougui.a3");
         Obstacle3 obstacle2 = new Obstacle3(new Vector3d(-50,0,0));
         w.add(obstacle2);
 
-        car1 = new CarE(this, 10000);
+        //car1 = new CarE(this, 10000);
+        car1 = new CarA(this, 10000);
         car1.setLocRev(-80, 0, 0, 0, 90, 0);
         w.add((PVEObject)car1);
         gui.setCar1(car1);
 
-        car2 = new CarE(this, 20000);
+        //car2 = new CarE(this, 20000);
+        car2 = new CarA(this, 20000);
         car2.setLocRev(80, 0, 0, 0, -90, 0);
         w.add((PVEObject)car2);
         gui.setCar2(car2);
 
-        ((CarE)car1).setAnotherCar((CarE)car2);
-        ((CarE)car2).setAnotherCar((CarE)car1);
+        car1.setAnotherCar(car2);
+        car2.setAnotherCar(car1);
 
         String seedS = gui.getSeed();
         if (seedS==null||seedS.equals("")) {
@@ -211,15 +212,6 @@ VRML.clearCash("x-res:///res/prototype/gougui.a3");
 
         bgm.change("jingle05");
 
-
-        pauseA3 = new Action3D("x-res:///res/prototype/box.a3");
-        pauseA3.setScale(0.5);
-        pauseA3.setLoc(-0.3,0.3,-1.0);
-        pauseA3.setLabelLoc(0.1,0.0);
-        pauseA3.setLabel("pause");
-        pauseA3.change("vertigoWhite");
-        mainCanvas.addLockedA3(pauseA3);
-
         gui.defaultView();
     }
 
@@ -259,7 +251,7 @@ VRML.clearCash("x-res:///res/prototype/gougui.a3");
             waitingRoom.notifyAll();
         }
     }
-    void stepForward() {
+    public void stepForward() {
         synchronized (waitingRoom) {
             noOfWaiting++;
             if (noOfWaiting==noOfActivated) {
@@ -282,27 +274,6 @@ VRML.clearCash("x-res:///res/prototype/gougui.a3");
     public void collided(PVEPart a, PVEPart b) {
         ;
     }
-    @Override
-    public void mouseClicked(A3Event e) {
-        A3Object a3 = e.getA3Object();
-        if (a3==pauseA3) {
-            if (pauseA3.getActionName().equals("vertigoWhite")) {
-                pauseA3.change("vertigoRed");
-                pause();
-            } else {
-                pauseA3.change("vertigoWhite");
-                resume();
-            }
-        }
-    }
-    @Override
-    public void mouseReleased(A3Event e) {}
-    @Override
-    public void mousePressed(A3Event e) {}
-    @Override
-    public void mouseDragged(A3Event e) {}
-    @Override
-    public void mouseDoubleClicked(A3Event e) {}
     void goal(Jewel j) {
         gui.appendText("goal! "+j.getUserData());
         w.del(j);
@@ -325,7 +296,7 @@ VRML.clearCash("x-res:///res/prototype/gougui.a3");
         gui.updateTime(5000.0);
         gui.appendText(String.format("time up!!!!!  time=%9.2f",5000.0));
     }
-    String searchJewels() {
+    public String searchJewels() {
         synchronized(jewels) {
             String s = ""+jewels.size();
             for (Jewel j:jewels) {
@@ -335,7 +306,7 @@ VRML.clearCash("x-res:///res/prototype/gougui.a3");
             return s;
         }
     }
-    void setWaitTime(int t) {
+    public void setWaitTime(int t) {
         waitTime=t;
     }
     void pause() {
@@ -343,6 +314,9 @@ VRML.clearCash("x-res:///res/prototype/gougui.a3");
     }
     void resume() {
         w.resume();
+    }
+    public PVEWorld getPVEWorld() {
+        return w;
     }
 
     public static void main(String args[]) throws Exception {

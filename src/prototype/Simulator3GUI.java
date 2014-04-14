@@ -13,11 +13,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import javax.swing.text.Caret;
-import javax.swing.text.Document;
-import javax.swing.text.Position;
 
-public class Simulator3GUI extends JFrame implements ActionListener, ChangeListener {
+public class Simulator3GUI extends JFrame implements ActionListener, ChangeListener, A3Listener {
     private static final long serialVersionUID = 1L;
     Simulator3 simulator;
     CarInterface c1;
@@ -38,32 +35,41 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
     JCheckBox polygonizeCB;
     JButton snapshotB;
     JTextField seedTF;
-    JTextArea textArea;
     Vector3d lookAt = new Vector3d(0.0, 0.0, 6.0);
     Vector3d camera = new Vector3d(0.0, 3.0, -6.0);
     Vector3d up = new Vector3d(0.0, 1.0, 0.0);
+    JButton configB;
+    JFrame configFrame;
+    TextAreaComponent2D taComp;
+    Action3D timerI;
+    Action3D redViewI;
+    Action3D blueViewI;
+    VRML defaultViewI;
+    Action3D[] jewelsI = new Action3D[20];
 
     public Simulator3GUI(Simulator3 simulator) {
         super("Simulator3");
         this.simulator = simulator;
         HBox box1 = new HBox();
         VBox box3 = new VBox();
-        textArea = new JTextArea(20,40);
-        textArea.setEditable(false);
-        JScrollPane sp = new JScrollPane(textArea);
-        sp.setMinimumSize(new Dimension(600,130));
-        sp.setPreferredSize(new Dimension(600,130));
-        box3.myAdd(sp, 0);
+        configB = new JButton("Config");
+        configB.addActionListener(this);
+        box3.myAdd(configB, 0);
         canvas = (A3Canvas) simulator.w.getMainCanvas();
+        canvas.addA3Listener(this);
+        taComp = new TextAreaComponent2D(4);
+        canvas.add(taComp);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        initIndicator();
         defaultView();
+        
         canvas.setPreferredSize(new Dimension(700, 650));
         canvas.setCanvasWidthInPWorld(2.0);
-        canvas.addA3Listener(simulator);
         box3.myAdd(canvas, 1);
 
+        configFrame = new JFrame("Config");
         VBox box2 = new VBox();
-        box2.setPreferredSize(new Dimension(500,600));
+        //box2.setPreferredSize(new Dimension(500,600));
 
         VBox controlBox = new VBox();
         box2.myAdd(controlBox, 0);
@@ -119,7 +125,9 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
         snapshotB.addActionListener(this);
         controlBox.myAdd(snapshotB, 1);
 
-        box1.myAdd(box2, 1);
+        configFrame.add(box2);
+        configFrame.pack();
+
         box1.myAdd(box3, 1);
         add(box1);
         //pack();
@@ -133,10 +141,58 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
             setBounds(500,0,1000,800);
         }
     }
-
+    void initIndicator() {
+        try {
+            if (timerI==null) {
+                timerI = new Action3D("x-res:///res/prototype/ProgressBar01.a3");
+                timerI.setMode(Motion.Mode.PAUSE);
+                timerI.setLabelLoc(0,0);
+                timerI.setScale(0.1);
+                timerI.setLoc(0.3,0.2,-1.0);
+                redViewI = new Action3D("x-res:///res/prototype/ChoroQred.a3");
+                redViewI.setLabelLoc(0,0);
+                redViewI.setScale(0.02);
+                redViewI.setLoc(0.3,0.25,-1.0);
+                redViewI.setLabel("redView");
+                blueViewI = new Action3D("x-res:///res/prototype/ChoroQblue.a3");
+                blueViewI.setLabelLoc(0,0);
+                blueViewI.setScale(0.02);
+                blueViewI.setLoc(-0.3,0.25,-1.0);
+                blueViewI.setLabel("blueView");
+                defaultViewI = new VRML("x-res:///res/SonyZ1U.wrl");
+                defaultViewI.setLabelLoc(0,0);
+                defaultViewI.setScale(0.3);
+                defaultViewI.setRev(0,90,0);
+                defaultViewI.setLoc(0.0,0.25,-1.0);
+                defaultViewI.setLabel("defaultView");
+                canvas.addLockedA3(timerI);
+                canvas.addLockedA3(redViewI);
+                canvas.addLockedA3(blueViewI);
+                canvas.addLockedA3(defaultViewI);
+                for (int i=0;i<10;i++) {
+                    jewelsI[i] = new Action3D("x-res:///res/prototype/box.a3");
+                    jewelsI[i].setScale(0.1);
+                    jewelsI[i].setLoc(i/30.0,0.3,-1.0);
+                    canvas.addLockedA3(jewelsI[i]);
+                }
+                for (int i=10;i<20;i++) {
+                    jewelsI[i] = new Action3D("x-res:///res/prototype/box.a3");
+                    jewelsI[i].setScale(0.1);
+                    jewelsI[i].setLoc((i-10)/30.0,0.28,-1.0);
+                    canvas.addLockedA3(jewelsI[i]);
+                }
+            }
+            timerI.setLabel("time: 0.0");
+            for (int i=0;i<20;i++) {
+                jewelsI[i].change("haltWhite");
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
     void defaultView() {
-        double y = 50;
-        double z = 150;
+        double y = 100;
+        double z = 300;
         canvas.setCameraLocImmediately(0, y, z);
         canvas.setCameraLookAtPointImmediately(0, 0, 0);
         canvas.setNavigationMode(A3CanvasInterface.NaviMode.SIMPLE,
@@ -182,15 +238,13 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
     }
 
     public void appendText(String s) {
-        textArea.append(s+"\n");
-        Document d = textArea.getDocument();
-        Position p = d.getEndPosition();
-        Caret c = textArea.getCaret();
-        c.setDot(p.getOffset());
+        taComp.appendText(s);
     }
 
     public void updateTime(double t) {
         timeL.setText(String.format("time: %9.2f",t));
+        timerI.setLabel(String.format("time: %9.2f",t));
+        timerI.setPauseTime(t/5000.0);
     }
     public String getSeed() {
         return seedTF.getText();
@@ -207,11 +261,12 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
             else
                 simulator.activateTwoCars();
         } else if (source==resetWorldB) {
-            try{simulator.initWorld();}catch(Exception e){;}
+            try{simulator.initWorld();}catch(Exception e){e.printStackTrace();}
+            initIndicator();
             oneCarCB.setSelected(false);
             waitTimeS.setValue(51);
             updateTime(0);
-            textArea.setText("");
+            taComp.clear();
             parallelCB.setSelected(false);
             polygonizeCB.setSelected(false);
             canvas.setProjectionMode(ProjectionMode.PERSPECTIVE);
@@ -255,6 +310,8 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
                     e.printStackTrace();
                 }
             }
+        } else if (source==configB) {
+            configFrame.setVisible(true);
         }
     }
 
@@ -265,5 +322,36 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
         int i = (int)Math.pow(x,wt)-1;
         System.out.println("wait time="+i+"ms");
         simulator.setWaitTime(i);
+    }
+    @Override
+    public void mouseClicked(A3Event arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+    @Override
+    public void mouseDoubleClicked(A3Event arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+    @Override
+    public void mouseDragged(A3Event arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+    @Override
+    public void mousePressed(A3Event arg0) {
+        A3Object a3 = arg0.getA3Object();
+        if (a3==redViewI) {
+            redView();
+        } else if (a3==blueViewI) {
+            blueView();
+        } else if (a3==defaultViewI) {
+            defaultView();
+        }
+    }
+    @Override
+    public void mouseReleased(A3Event arg0) {
+        // TODO Auto-generated method stub
+        
     }
 }

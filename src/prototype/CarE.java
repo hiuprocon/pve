@@ -12,16 +12,16 @@ import com.github.hiuprocon.pve.ui.Server;
 import jp.sourceforge.acerola3d.a3.Action3D;
 
 public class CarE extends PVEObject implements PVEMsgListener, CarInterface {
-    Simulator3 simulator;
+    SimulatorInterface simulator;
     Server server;
     PVEPart chassis;
     double speed;
     double handle;
-    CarE anotherCar;
+    CarInterface anotherCar;
     ArrayList<String> messages = new ArrayList<String>();
     ArrayList<String> mailbox = new ArrayList<String>();
 
-    public CarE(Simulator3 simulator,int port) {
+    public CarE(SimulatorInterface simulator,int port) {
         this.simulator = simulator;
         init();
         server = new Server(port,this);
@@ -76,8 +76,11 @@ public class CarE extends PVEObject implements PVEMsgListener, CarInterface {
         return chassis;
     }
 
-    public void setAnotherCar(CarE ac) {
+    public void setAnotherCar(CarInterface ac) {
         anotherCar = ac;
+    }
+    public ArrayList<String> getMessages() {
+        return messages;
     }
 
     public void drive(double speed, double handle) {
@@ -158,10 +161,10 @@ public class CarE extends PVEObject implements PVEMsgListener, CarInterface {
         }
     }
     String msgSendMessage(String line) {
-        synchronized(anotherCar.messages){
+        synchronized(anotherCar.getMessages()){
             String msg = line.substring(11);
             msg = msg.trim();
-            anotherCar.messages.add(msg);
+            anotherCar.getMessages().add(msg);
         }
         return "OK";
     }

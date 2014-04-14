@@ -1,5 +1,6 @@
 package prototype;
 
+import java.util.ArrayList;
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 import com.github.hiuprocon.pve.ui.Server;
@@ -9,14 +10,19 @@ import javax.vecmath.*;
 import jp.sourceforge.acerola3d.a3.Util;
 
 public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
-    Simulator simulator;
+    SimulatorInterface simulator;
     Server server;
     double speed;
     double handle;
+    CarInterface anotherCar;
+    ArrayList<String> messages = new ArrayList<String>();
+    ArrayList<String> mailbox = new ArrayList<String>();
 
-    public CarA(Simulator simulator, int port) {
-        super(simulator.w, "x-res:///res/prototype/carA/carA.a3", shassisShape());
+    public CarA(SimulatorInterface simulator, int port) {
+        //super(simulator.getPVEWorld(), "x-res:///res/prototype/carA.a3", shassisShape());
+        super(simulator.getPVEWorld(), port==10000?"x-res:///res/prototype/ChoroQred.a3":"x-res:///res/prototype/ChoroQblue.a3", shassisShape());
         this.simulator = simulator;
+        //init();//スーパークラスでやってるので不要
         server = new Server(port, this);
     }
 
@@ -103,6 +109,28 @@ public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
     }
 
     public void swapMessageBuffer() {
-        // Dummy!
+        synchronized (messages) {
+            synchronized (mailbox) {
+                mailbox.addAll(messages);
+                messages.clear();
+            }
+        }
+    }
+    String msgSendMessage(String line) {
+        synchronized(anotherCar.getMessages()){
+            String msg = line.substring(11);
+            msg = msg.trim();
+            anotherCar.getMessages().add(msg);
+        }
+        return "OK";
+    }
+    @Override
+    public void setAnotherCar(CarInterface c) {
+        anotherCar = c;
+    }
+
+    @Override
+    public ArrayList<String> getMessages() {
+        return messages;
     }
 }

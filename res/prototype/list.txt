@@ -17,3 +17,6 @@ http://hiu.ks1.org/pve/res/prototype/SkyBox02.a3
 http://hiu.ks1.org/pve/res/prototype/box.a3
 http://hiu.ks1.org/pve/res/prototype/WCtree.a3
 http://hiu.ks1.org/pve/res/prototype/carA.a3
+http://hiu.ks1.org/pve/res/prototype/ChoroQred.a3
+http://hiu.ks1.org/pve/res/prototype/ChoroQblue.a3
+http://hiu.ks1.org/pve/res/prototype/ProgressBar01.a3

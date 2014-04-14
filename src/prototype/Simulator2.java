@@ -10,7 +10,7 @@ import jp.sourceforge.acerola3d.a3.VRML;
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 
-public class Simulator2 implements CollisionListener {
+public class Simulator2 implements SimulatorInterface, CollisionListener {
     PVEWorld w;
     PVEObject ground;
     Elevator elevator;
@@ -234,7 +234,7 @@ VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
             waitingRoom.notifyAll();
         }
     }
-    void stepForward() {
+    public void stepForward() {
         synchronized (waitingRoom) {
             noOfWaiting++;
             if (noOfWaiting==noOfActivated) {
@@ -303,7 +303,7 @@ VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
         gui.updateTime(5000.0);
         gui.appendText(String.format("time up!!!!!  time=%9.2f",5000.0));
     }
-    String searchJewels() {
+    public String searchJewels() {
         synchronized(jewels) {
             String s = ""+jewels.size();
             for (Jewel j:jewels) {
@@ -313,9 +313,14 @@ VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
             return s;
         }
     }
-    void setWaitTime(int t) {
+    public void setWaitTime(int t) {
         waitTime=t;
     }
+
+    public PVEWorld getPVEWorld() {
+        return w;
+    }
+
     void pause() {
         w.pause();
     }

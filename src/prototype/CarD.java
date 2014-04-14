@@ -12,16 +12,16 @@ import com.github.hiuprocon.pve.ui.Server;
 import jp.sourceforge.acerola3d.a3.Action3D;
 
 public class CarD extends PVEObject implements PVEMsgListener, CarInterface {
-    Simulator2 simulator;
+    SimulatorInterface simulator;
     Server server;
     PVEPart chassis;
     double speed;
     double handle;
-    CarD anotherCar;
+    CarInterface anotherCar;
     ArrayList<String> messages = new ArrayList<String>();
     ArrayList<String> mailbox = new ArrayList<String>();
 
-    public CarD(Simulator2 simulator,int port) {
+    public CarD(SimulatorInterface simulator,int port) {
         this.simulator = simulator;
         init();
         server = new Server(port,this);
@@ -157,10 +157,10 @@ public class CarD extends PVEObject implements PVEMsgListener, CarInterface {
         }
     }
     String msgSendMessage(String line) {
-        synchronized(anotherCar.messages){
+        synchronized(anotherCar.getMessages()){
             String msg = line.substring(11);
             msg = msg.trim();
-            anotherCar.messages.add(msg);
+            anotherCar.getMessages().add(msg);
         }
         return "OK";
     }
@@ -184,5 +184,16 @@ public class CarD extends PVEObject implements PVEMsgListener, CarInterface {
         String t = line.split("\\s")[1];
         simulator.setWaitTime(Integer.parseInt(t));
         return "OK";
+    }
+
+    @Override
+    public void setAnotherCar(CarInterface c) {
+        anotherCar = c;
+    }
+
+    @Override
+    public ArrayList<String> getMessages() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
