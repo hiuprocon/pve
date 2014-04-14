@@ -186,7 +186,7 @@
 
     <target name="version-input" unless="version">
         <echo>*****************************</echo>
-        <echo>Please specify the version(MM/DD)...</echo>
+        <echo>Please specify the version(MMDD)...</echo>
         <echo>*****************************</echo>
         <input message="input package version:" addproperty="version"/>
     </target>
