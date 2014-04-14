@@ -1,0 +1,1 @@
+This folder must contains libraries required for the Simulator.

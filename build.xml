@@ -184,6 +184,49 @@
         </java>
     </target>
 
+    <target name="version-input" unless="version">
+        <echo>*****************************</echo>
+        <echo>Please specify the version(MM/DD)...</echo>
+        <echo>*****************************</echo>
+        <input message="input package version:" addproperty="version"/>
+    </target>
+
+    <target name="Package" depends="version-input,jar">
+        <copy todir="package/Challenge2014/lib/">
+            <fileset dir="lib">
+                <include name="**"/>
+                <exclude name="README.txt"/>
+                <exclude name="list.txt"/>
+            </fileset>
+        </copy>
+        <copy todir="package/Challenge2014/samples/">
+            <fileset dir="samples">
+                <include name="**"/>
+                <exclude name="README.txt"/>
+                <exclude name="list.txt"/>
+            </fileset>
+        </copy>
+        <copy file="dist/pve-api.jar" todir="package/Challenge2014/lib/"/>
+        <copy file="dist/pve-res.jar" todir="package/Challenge2014/lib/"/>
+        <zip destfile="dist/Challenge2014-${version}.zip">
+            <zipfileset dir="package">
+                <include name="Challenge2014/**"/>
+            </zipfileset>
+        </zip>
+        <delete includeEmptyDirs="true">
+            <fileset dir="package/Challenge2014/">
+                <include name="**"/>
+                <exclude name="README.txt"/>
+                <exclude name="*.bat"/>
+                <exclude name="*.command"/>
+                <exclude name="*.sh"/>
+                <exclude name="lib/memo.txt"/>
+                <exclude name="licensing/**"/>
+                <exclude name="samples/memo.txt"/>
+            </fileset>
+        </delete>
+    </target>
+
 <!--
     <target name="Sample0" depends="jar">
         <java classname="samples.ControlCarTest" fork="true">

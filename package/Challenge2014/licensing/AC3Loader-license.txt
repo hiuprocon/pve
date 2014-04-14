@@ -1,0 +1,42 @@
+Version 1.0
+
+Copyright (c) New Dawn Software 2002 All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this 
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation 
+   and/or other materials provided with the distribution.
+
+3. The end-user documentation must include acknowledgment of the original 
+   author(s) and information for obtaining the original distribution package.
+
+   Alternately, this acknowledgment may appear in the software itself, if and 
+   wherever such third-party acknowledgments normally appear.
+
+4. The name of the author(s) must not be used to endorse or promote products 
+   derived from this software without prior written permission.
+
+5. Works derived from the software covered by this license must be free of 
+   charge, unless written permission has been obtained from the author.
+   
+6. Bug fixes must be submitted to the original author(s) for inclusion into the
+   distribution package (at the authors descretion).
+   
+7. Modified versions may not be distributed unless part of the package using the
+   modified version, unless the changes have been submitted to the original 
+   author(s) for inclusion in the main version
+
+THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, 
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHORS
+BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
