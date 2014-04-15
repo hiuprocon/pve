@@ -206,7 +206,7 @@ public class Simulator implements SimulatorInterface, CollisionListener {
     void activateC2() {   noOfActivated++; }
     void deactivateC3() { noOfActivated--; }
     void activateC3() {   noOfActivated++; }
-    public void stepForward() {
+    public String stepForward() {
         synchronized (waitingRoom) {
             noOfWaiting++;
             if (noOfWaiting==noOfActivated) {
@@ -221,6 +221,8 @@ public class Simulator implements SimulatorInterface, CollisionListener {
                 }
             }
         }
+        //TODO
+        return null;
     }
 
     @Override
@@ -267,5 +269,20 @@ public class Simulator implements SimulatorInterface, CollisionListener {
 
     public static void main(String args[]) throws Exception {
         new Simulator();
+    }
+    @Override
+    public String searchObstacles() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    @Override
+    public String getElevator1Height() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    @Override
+    public String getElevator2Height() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

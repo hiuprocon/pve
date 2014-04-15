@@ -234,7 +234,7 @@ VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
             waitingRoom.notifyAll();
         }
     }
-    public void stepForward() {
+    public String stepForward() {
         synchronized (waitingRoom) {
             noOfWaiting++;
             if (noOfWaiting==noOfActivated) {
@@ -251,6 +251,8 @@ VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
                 }
             }
         }
+        //TODO
+        return null;
     }
 
     @Override
@@ -331,5 +333,20 @@ VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
     public static void main(String args[]) {
         Simulator2 s2 = new Simulator2();
         s2.start();
+    }
+    @Override
+    public String searchObstacles() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    @Override
+    public String getElevator1Height() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    @Override
+    public String getElevator2Height() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

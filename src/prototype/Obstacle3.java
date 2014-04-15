@@ -4,9 +4,11 @@ import javax.vecmath.Vector3d;
 import com.github.hiuprocon.pve.core.*;
 
 public class Obstacle3 extends PVEObject {
+    Vector3d loc;
     Cylinder cylinder;
 
     public Obstacle3(Vector3d loc) {
+        this.loc = loc;
         init();
         setLocRev(loc, new Vector3d());
     }

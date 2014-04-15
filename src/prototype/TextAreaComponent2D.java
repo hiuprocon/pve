@@ -30,7 +30,7 @@ public class TextAreaComponent2D extends Component2D {
     @Override
     public void paint(Graphics2D g, A3CanvasInterface ci) {
         int x=30;
-        int y=100 + LINE_COUNT*30;
+        int y=600 + LINE_COUNT*30;
         g.setColor(Color.WHITE);
         for (String line : lines) {
             g.drawString(line, x, y);

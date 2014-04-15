@@ -35,6 +35,7 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
     JCheckBox polygonizeCB;
     JButton snapshotB;
     JTextField seedTF;
+    JCheckBox bgmCB;
     Vector3d lookAt = new Vector3d(0.0, 0.0, 6.0);
     Vector3d camera = new Vector3d(0.0, 3.0, -6.0);
     Vector3d up = new Vector3d(0.0, 1.0, 0.0);
@@ -124,6 +125,9 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
         snapshotB = new JButton("snapshot");
         snapshotB.addActionListener(this);
         controlBox.myAdd(snapshotB, 1);
+        bgmCB = new JCheckBox("BGM");
+        bgmCB.addActionListener(this);
+        controlBox.myAdd(bgmCB, 1);
 
         configFrame.add(box2);
         configFrame.pack();
@@ -150,14 +154,18 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
                 timerI.setScale(0.1);
                 timerI.setLoc(0.3,0.2,-1.0);
                 redViewI = new Action3D("x-res:///res/prototype/ChoroQred.a3");
+                //redViewI.change("red2");
                 redViewI.setLabelLoc(0,0);
-                redViewI.setScale(0.02);
+                redViewI.setScale(0.04);
                 redViewI.setLoc(0.3,0.25,-1.0);
+                redViewI.setRev(30,0,0);
                 redViewI.setLabel("redView");
                 blueViewI = new Action3D("x-res:///res/prototype/ChoroQblue.a3");
+                //blueViewI.change("blue2");
                 blueViewI.setLabelLoc(0,0);
-                blueViewI.setScale(0.02);
+                blueViewI.setScale(0.04);
                 blueViewI.setLoc(-0.3,0.25,-1.0);
+                blueViewI.setRev(30,0,0);
                 blueViewI.setLabel("blueView");
                 defaultViewI = new VRML("x-res:///res/SonyZ1U.wrl");
                 defaultViewI.setLabelLoc(0,0);
@@ -172,13 +180,13 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
                 for (int i=0;i<10;i++) {
                     jewelsI[i] = new Action3D("x-res:///res/prototype/box.a3");
                     jewelsI[i].setScale(0.1);
-                    jewelsI[i].setLoc(i/30.0,0.3,-1.0);
+                    jewelsI[i].setLoc(i/30.0-0.166,0.3,-1.0);
                     canvas.addLockedA3(jewelsI[i]);
                 }
                 for (int i=10;i<20;i++) {
                     jewelsI[i] = new Action3D("x-res:///res/prototype/box.a3");
                     jewelsI[i].setScale(0.1);
-                    jewelsI[i].setLoc((i-10)/30.0,0.28,-1.0);
+                    jewelsI[i].setLoc((i-10)/30.0-0.166,0.28,-1.0);
                     canvas.addLockedA3(jewelsI[i]);
                 }
             }
@@ -227,6 +235,12 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
         canvas.setAvatar(c2.getMainA3());
         canvas.setNavigationMode(A3CanvasInterface.NaviMode.CHASE, lookAt, camera,
                 up, 10.0);
+    }
+    void goal(Jewel j) {
+        String s = (String)j.getUserData();
+        int i = s.startsWith("jA1.")?0:10;
+        i += Integer.parseInt(s.substring(4));
+        this.jewelsI[i].change("vertigoRed");
     }
 
     public void setCar1(CarInterface c) {
@@ -309,6 +323,14 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+        } else if (source==bgmCB) {
+            if (bgmCB.isSelected()==true) {
+                simulator.enableBgm = true;
+                simulator.bgm.change("rock55");
+            } else {
+                simulator.enableBgm = false;
+                simulator.bgm.change("no_se");
             }
         } else if (source==configB) {
             configFrame.setVisible(true);

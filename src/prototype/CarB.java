@@ -164,4 +164,9 @@ public class CarB extends PVEObject implements PVEMsgListener, CarInterface {
     public ArrayList<String> getMessages() {
         return messages;
     }
+
+    @Override
+    public Server getServer() {
+        return server;
+    }
 }

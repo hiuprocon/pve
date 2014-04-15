@@ -189,4 +189,9 @@ public class CarE extends PVEObject implements PVEMsgListener, CarInterface {
         simulator.setWaitTime(Integer.parseInt(t));
         return "OK";
     }
+
+    @Override
+    public Server getServer() {
+        return server;
+    }
 }

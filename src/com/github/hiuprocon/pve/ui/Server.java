@@ -5,9 +5,10 @@ import java.net.*;
 import com.github.hiuprocon.pve.core.PVEMsgListener;
 
 public class Server implements Runnable {
-    int port;
+    public final int port;
     PVEMsgListener ml;
     boolean dispose = false;
+    boolean pauseRequest = false;
     ServerSocket serverSocket = null;
     Socket socket = null;
     BufferedReader br = null;
@@ -19,6 +20,15 @@ public class Server implements Runnable {
         new Thread(this,"PVEServerPort="+port).start();
     }
 
+    public void changePVEMessageListener(PVEMsgListener ml) {
+        this.ml = ml;
+    }
+    public void pause() {
+        pauseRequest = true;
+    }
+    public void resume() {
+        pauseRequest = false;
+    }
     public void run() {
         while (dispose==false) {
             serverSocket = null;
@@ -38,6 +48,9 @@ public class Server implements Runnable {
                 pw = new PrintWriter(bw, true);
                 String line;
                 while ((line = br.readLine()) != null) {
+                    while (pauseRequest==true) {
+                        try{Thread.sleep(100);}catch(Exception e){;}
+                    }
                     String res = ml.processMessage(line);
                     pw.println(res);
                     pw.flush();

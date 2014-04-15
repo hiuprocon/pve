@@ -25,6 +25,14 @@ public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
         //init();//スーパークラスでやってるので不要
         server = new Server(port, this);
     }
+    public CarA(SimulatorInterface simulator, Server server) {
+        //super(simulator.getPVEWorld(), "x-res:///res/prototype/carA.a3", shassisShape());
+        super(simulator.getPVEWorld(), server.port==10000?"x-res:///res/prototype/ChoroQred.a3":"x-res:///res/prototype/ChoroQblue.a3", shassisShape());
+        this.simulator = simulator;
+        //init();//スーパークラスでやってるので不要
+        this.server = server;
+        this.server.changePVEMessageListener(this);
+    }
 
     static CollisionShape shassisShape() {
         CompoundShape compound = new CompoundShape();
@@ -74,6 +82,12 @@ public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
             return msgGetRev(line);
         else if (line.equals("searchJewels"))
             return msgSearchJewels(line);
+        else if (line.equals("searchObstacles"))
+            return msgSearchObstacles(line);
+        else if (line.equals("getElevator1Height"))
+            return msgGetElevator1Height(line);
+        else if (line.equals("getElevator2Height"))
+            return msgGetElevator2Height(line);
         else if (line.equals("stepForward"))
             return msgStepForward(line);
         return "ERROR";
@@ -89,7 +103,7 @@ public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
         speed = Double.parseDouble(s[1]);
         handle = Double.parseDouble(s[2]);
         speed = 500*speed;
-        handle = -0.1*handle;
+        handle = -0.03*handle;
         return "OK";
     }
     String msgGetLoc(String line) {
@@ -103,9 +117,17 @@ public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
     String msgSearchJewels(String line) {
         return simulator.searchJewels();
     }
+    String msgSearchObstacles(String line) {
+        return simulator.searchObstacles();
+    }
+    String msgGetElevator1Height(String line) {
+        return simulator.getElevator1Height();
+    }
+    String msgGetElevator2Height(String line) {
+        return simulator.getElevator2Height();
+    }
     String msgStepForward(String line) {
-        simulator.stepForward();
-        return "OK";
+        return simulator.stepForward();
     }
 
     public void swapMessageBuffer() {
@@ -132,5 +154,9 @@ public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
     @Override
     public ArrayList<String> getMessages() {
         return messages;
+    }
+    @Override
+    public Server getServer() {
+        return server;
     }
 }

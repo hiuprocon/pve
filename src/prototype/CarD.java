@@ -196,4 +196,9 @@ public class CarD extends PVEObject implements PVEMsgListener, CarInterface {
         // TODO Auto-generated method stub
         return null;
     }
+
+    @Override
+    public Server getServer() {
+        return server;
+    }
 }

@@ -120,4 +120,8 @@ public class Elevator3 extends PVEObject implements CollisionListener {
             holder.processGoal((Jewel)aa);
         }
     }
+    double getHeight() {
+        Vector3d v = plate.getLoc();
+        return v.y+8.0;
+    }
 }

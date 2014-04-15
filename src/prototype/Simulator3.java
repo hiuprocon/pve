@@ -30,10 +30,22 @@ public class Simulator3 implements SimulatorInterface, CollisionListener, Elevat
     int waitTime = 33;
     Random random;
     Action3D bgm = null;
+    boolean enableBgm = false;
     Action3D se = null;
     A3CanvasInterface mainCanvas;
+    ArrayList<Long> seeds = null;
 
-    public Simulator3() throws Exception {
+    public Simulator3(String args[]) throws Exception {
+        if (args.length==10) {
+            try{
+                seeds = new ArrayList<Long>();
+                for (int i=0;i<10;i++) {
+                    seeds.add(Long.parseLong(args[i]));
+                }
+            } catch(Exception e) {
+                seeds = null;
+            }
+        }
         w = new PVEWorld(PVEWorld.A3CANVAS,PVEWorld.MANUAL_STEP);
         //w = new PVEWorld(PVEWorld.A3CANVAS,PVEWorld.AUTO_STEP);
         gui = new Simulator3GUI(this);
@@ -42,8 +54,8 @@ public class Simulator3 implements SimulatorInterface, CollisionListener, Elevat
     }
     void initWorld() throws Exception {
         if (car1!=null) {
-            car1.dispose();
-            car2.dispose();
+            //car1.dispose();
+            //car2.dispose();
             bgm.change("no_se");
             try{Thread.sleep(1000);}catch(Exception e) {;}
         }
@@ -64,6 +76,8 @@ public class Simulator3 implements SimulatorInterface, CollisionListener, Elevat
 //jp.sourceforge.acerola3d.A23.clearZipCache();
 //VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
 VRML.clearCash("x-res:///res/prototype/gougui.a3");
+Action3D.clearCash("x-res:///res/prototype/ChoroQred.a3");
+Action3D.clearCash("x-res:///res/prototype/ChoroQblue.a3");
 
         double z1 = 96.25;
         double z2 = 62.5;
@@ -116,55 +130,67 @@ VRML.clearCash("x-res:///res/prototype/gougui.a3");
         elevator2.setLocRev(0, 0, 0-z2, 0,90, 0);
         w.add(elevator2);
 
-        Obstacle3 obstacle1 = new Obstacle3(new Vector3d( 50,0,0));
-        w.add(obstacle1);
-
-        Obstacle3 obstacle2 = new Obstacle3(new Vector3d(-50,0,0));
-        w.add(obstacle2);
-
-        //car1 = new CarE(this, 10000);
-        car1 = new CarA(this, 10000);
-        car1.setLocRev(-80, 0, 0, 0, 90, 0);
+        if (car1!=null)
+            car1 = new CarA(this,car1.getServer());
+        else
+            car1 = new CarA(this, 10000);
+        car1.setLocRev(-90, 0, 0, 0, 90, 0);
         w.add((PVEObject)car1);
         gui.setCar1(car1);
 
-        //car2 = new CarE(this, 20000);
-        car2 = new CarA(this, 20000);
-        car2.setLocRev(80, 0, 0, 0, -90, 0);
+        if (car2!=null)
+            car2 = new CarA(this,car2.getServer());
+        else
+            car2 = new CarA(this, 20000);
+        car2.setLocRev(90, 0, 0, 0, -90, 0);
         w.add((PVEObject)car2);
         gui.setCar2(car2);
 
         car1.setAnotherCar(car2);
         car2.setAnotherCar(car1);
 
-        String seedS = gui.getSeed();
-        if (seedS==null||seedS.equals("")) {
-            random = new Random();
+        if (seeds!=null) {
+            long l = seeds.remove(0);
+            random = new Random(l);
+            if (seeds.size()==0)
+                seeds = null;
         } else {
-            long seed = 0;
-            try {
-                seed = Long.parseLong(seedS);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                gui.setSeed(0);
+            String seedString = gui.getSeed();
+            seedString = seedString.trim();
+            if (seedString==null||seedString.equals("")) {
+                random = new Random();
+            } else {
+                long seed = 0;
+                try {
+                    seed = Long.parseLong(seedString);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    gui.setSeed(0);
+                }
+                random = new Random(seed);
             }
-            random = new Random(seed);
         }
+
+        obstacle1 = new Obstacle3(getRandomLocL());
+        w.add(obstacle1);
+
+        obstacle2 = new Obstacle3(getRandomLocR());
+        w.add(obstacle2);
+
+        Vector3d v;
         for (int i = 0; i < 10; i++) {
             Jewel2 j = new Jewel2();
             j.setUserData("jA1." + i);
-            double x = 60 * random.nextDouble() - 30 - 50;
-            double z = 80 * random.nextDouble() - 40;
-            j.setLocRev(x, 2, z, 0, 0, 0);
+            v = getRandomLocLJ();
+            j.setLocRev(v.x, v.y, v.z, 0, 0, 0);
             w.add(j);
             jewels.add(j);
         }
         for (int i = 0; i < 10; i++) {
             Jewel2 j = new Jewel2();
             j.setUserData("jA2." + i);
-            double x = 60 * random.nextDouble() - 30 + 50;
-            double z = 80 * random.nextDouble() - 40;
-            j.setLocRev(x, 2, z, 0, 0, 0);
+            v = getRandomLocRJ();
+            j.setLocRev(v.x, v.y, v.z, 0, 0, 0);
             w.add(j);
             jewels.add(j);
         }
@@ -172,7 +198,7 @@ VRML.clearCash("x-res:///res/prototype/gougui.a3");
         w.stepForward();
 
         mainCanvas = w.getMainCanvas();
-        mainCanvas.setHeadLightEnable(false);
+        //mainCanvas.setHeadLightEnable(false);
         Action3D light = new Action3D("x-res:///res/DirectionalLightSet.a3");
         Action3D grid1 = new Action3D("x-res:///res/prototype/PCGrid.a3");
         Action3D grid2 = new Action3D("x-res:///res/prototype/PCGrid.a3");
@@ -215,6 +241,43 @@ VRML.clearCash("x-res:///res/prototype/gougui.a3");
         gui.defaultView();
     }
 
+    Vector3d getRandomLocL() {
+        double x = 60 * random.nextDouble() - 30 - 50;
+        double z = 80 * random.nextDouble() - 40;
+        return new Vector3d(x,0,z);
+    }
+    Vector3d getRandomLocR() {
+        Vector3d v = getRandomLocL();
+        v.x += 100;
+        return v;
+    }
+    Vector3d getRandomLocLJ() {
+        Vector3d ol = obstacle1.loc;
+        Vector3d l = null;
+        Vector3d tmp = new Vector3d();
+        while (true) {
+            l = getRandomLocL();
+            tmp.sub(ol,l);
+            if (tmp.length()>10.0)
+                break;
+        }
+        l.y = 2.0;
+        return l;
+    }
+    Vector3d getRandomLocRJ() {
+        Vector3d ol = obstacle2.loc;
+        Vector3d l = null;
+        Vector3d tmp = new Vector3d();
+        while (true) {
+            l = getRandomLocR();
+            tmp.sub(ol,l);
+            if (tmp.length()>10.0)
+                break;
+        }
+        l.y = 2.0;
+        return l;
+    }
+
     boolean bgmFlag=false;
     public void start() {
         //A3CanvasInterface mainCanvas = w.getMainCanvas();
@@ -222,7 +285,8 @@ VRML.clearCash("x-res:///res/prototype/gougui.a3");
         while (true) {
             stepForward();
             if (bgmFlag==false) {
-                bgm.change("rock55");
+                if (enableBgm==true)
+                    bgm.change("rock55");
                 bgmFlag=true;
             }
             if (w.getTime()>=5000.0)
@@ -251,7 +315,7 @@ VRML.clearCash("x-res:///res/prototype/gougui.a3");
             waitingRoom.notifyAll();
         }
     }
-    public void stepForward() {
+    public String stepForward() {
         synchronized (waitingRoom) {
             noOfWaiting++;
             if (noOfWaiting==noOfActivated) {
@@ -268,6 +332,8 @@ VRML.clearCash("x-res:///res/prototype/gougui.a3");
                 }
             }
         }
+        //TODO
+        return "OK";
     }
 
     @Override
@@ -276,6 +342,7 @@ VRML.clearCash("x-res:///res/prototype/gougui.a3");
     }
     void goal(Jewel j) {
         gui.appendText("goal! "+j.getUserData());
+        gui.goal(j);
         w.del(j);
         se.change("power20");
         synchronized(jewels) {
@@ -306,6 +373,14 @@ VRML.clearCash("x-res:///res/prototype/gougui.a3");
             return s;
         }
     }
+    public String searchObstacles() {
+        String s = "2";
+        Vector3d v = obstacle1.loc;
+        s = s +" o1 "+ v.x +" "+v.y+" "+v.z;
+        v = obstacle2.loc;
+        s = s +" o2 "+ v.x +" "+v.y+" "+v.z;
+        return s;
+    }
     public void setWaitTime(int t) {
         waitTime=t;
     }
@@ -320,7 +395,7 @@ VRML.clearCash("x-res:///res/prototype/gougui.a3");
     }
 
     public static void main(String args[]) throws Exception {
-        Simulator3 s3 = new Simulator3();
+        Simulator3 s3 = new Simulator3(args);
         s3.start();
     }
     @Override
@@ -334,5 +409,13 @@ VRML.clearCash("x-res:///res/prototype/gougui.a3");
     @Override
     public void processGoal(Jewel j) {
         goal(j);
+    }
+    @Override
+    public String getElevator1Height() {
+        return ""+this.elevator1.getHeight();
+    }
+    @Override
+    public String getElevator2Height() {
+        return ""+this.elevator2.getHeight();
     }
 }
