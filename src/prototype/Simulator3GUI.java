@@ -64,7 +64,7 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
         initIndicator();
         defaultView();
         
-        canvas.setPreferredSize(new Dimension(700, 650));
+        canvas.setPreferredSize(new Dimension(500, 300));
         canvas.setCanvasWidthInPWorld(2.0);
         box3.myAdd(canvas, 1);
 
@@ -135,15 +135,15 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
         box1.myAdd(box3, 1);
         add(box1);
         //pack();
-        setBounds(500,0,1000,800);
+        setBounds(500,0,800,700);
         setVisible(true);
 
         //for Java1.7.0_40ea bug of Mac
-        if (System.getProperty("os.name").equals("Mac OS X")) {
-            try{Thread.sleep(1000);}catch(Exception e){;}
-            setBounds(500,0,1010,810);
-            setBounds(500,0,1000,800);
-        }
+        //if (System.getProperty("os.name").equals("Mac OS X")) {
+        //    try{Thread.sleep(1000);}catch(Exception e){;}
+        //    setBounds(500,0,1010,810);
+        //    setBounds(500,0,1000,800);
+        //}
     }
     void initIndicator() {
         try {

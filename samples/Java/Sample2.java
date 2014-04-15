@@ -24,7 +24,7 @@ class ArrivalSwitchEvent extends Event {}
  */
 public class Sample2 extends SampleBase {
     // Location of waiting point.
-    static final Vector waitingPoint = new Vector(0,0,20);
+    static final Vector waitingPoint = new Vector(0,0,62.5-20.0);
 
     // The mode of this car
     S2Mode mode;

@@ -90,6 +90,12 @@ public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
             return msgGetElevator2Height(line);
         else if (line.equals("stepForward"))
             return msgStepForward(line);
+        else if (line.startsWith("sendMessage"))
+            return msgSendMessage(line);
+        else if (line.equals("receiveMessages"))
+            return msgReceiveMessages(line);
+        else if (line.startsWith("setWaitTime"))
+            return msgSetWaitTime(line);
         return "ERROR";
     }
 
@@ -102,8 +108,8 @@ public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
         String s[] = line.split("\\s");
         speed = Double.parseDouble(s[1]);
         handle = Double.parseDouble(s[2]);
-        speed = 500*speed;
-        handle = -0.03*handle;
+        //speed = 500*speed;
+        //handle = -0.03*handle;
         return "OK";
     }
     String msgGetLoc(String line) {
@@ -144,6 +150,27 @@ public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
             msg = msg.trim();
             anotherCar.getMessages().add(msg);
         }
+        return "OK";
+    }
+    String msgReceiveMessages(String line) {
+        String msgs = "";
+        synchronized (mailbox) {
+            boolean first=true;
+            for (String s : mailbox) {
+                if (first==true) {
+                    msgs = msgs+" "+s;
+                    first = false;
+                } else {
+                    msgs = msgs+","+s;
+                }
+            }
+            mailbox.clear();
+        }
+        return "messages:"+msgs;
+    }
+    String msgSetWaitTime(String line) {
+        String t = line.split("\\s")[1];
+        simulator.setWaitTime(Integer.parseInt(t));
         return "OK";
     }
     @Override

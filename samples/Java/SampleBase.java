@@ -20,17 +20,17 @@ public abstract class SampleBase {
     // Simulation step time
     public static final double dt = 1.0/30.0;
     // Location of the elevator bottom
-    public static final Vector elevatorBottom = new Vector(0,1.0,0);
+    public static final Vector elevatorBottom = new Vector(0,1.0,62.5);
     // Location of the elevator top
-    public static final Vector elevatorTop = new Vector(0,15.0,0);
+    public static final Vector elevatorTop = new Vector(0,15.0,62.5);
     // Location of the switch1
-    public static final Vector switch1 = new Vector(0,0.5,-11);
+    public static final Vector switch1 = new Vector(0,0.5,-11+62.5);
     // Location of the switch2
-    public static final Vector switch2 = new Vector(0,0.5,11);
+    public static final Vector switch2 = new Vector(0,0.5,11+62.5);
     // Location of the goal1
-    public static final Vector goal1 = new Vector(-10,15.5,0);
+    public static final Vector goal1 = new Vector(-10,15.5,62.5);
     // Location of the goal2
-    public static final Vector goal2 = new Vector( 10,15.5,0);
+    public static final Vector goal2 = new Vector( 10,15.5,62.5);
 
     // current simulation time
     protected double currentTime;
@@ -142,14 +142,22 @@ public abstract class SampleBase {
 
         Vector tmpV = new Vector();
         tmpV.sub(v,loc);
-        tmpV.normalize();
+        if (tmpV.dot(front)>0.0) {
+            power = 1000.0* (tmpV.length() - vel.length() + 0.1);
+        } else {
+            power = 300.0;
+        }
+        power = power >  1000.0 ?  1000.0 : power;
+        power = power < -1000.0 ? -1000.0 : power;
 
-        if (tmpV.dot(front)<0.0)
-            steering = 3.0;
-        else
-            steering = -3.0 * tmpV.dot(left);
-        if (Math.abs(steering)<0.1)
-            power = 1.0 * tmpV.dot(front);
+        tmpV.normalize();
+        if (tmpV.dot(front)>-0.5) {
+            steering = 1.0 * tmpV.dot(left) * 1.0/(vel.length()+0.001);
+        } else {
+            steering = 1.0 * 1.0/(vel.length()+0.001);
+        }
+        steering = steering >  1.5 ?  1.5 : steering;
+        steering = steering < -1.5 ? -1.5 : steering;
 
         socket.send("drive "+power+" "+steering);
     }
@@ -163,13 +171,22 @@ public abstract class SampleBase {
 
         Vector tmpV = new Vector();
         tmpV.sub(v,loc);
-        tmpV.normalize();
+        if (tmpV.dot(front)>0.0) {
+            power = 500.0* (tmpV.length() - vel.length() + 0.1);
+        } else {
+            power = 300.0;
+        }
+        power = power >  500.0 ?  500.0 : power;
+        power = power < -500.0 ? -500.0 : power;
 
-        if (tmpV.dot(front)<0.0)
-            steering = 3.0;
-        else
-            steering = -3.0 * tmpV.dot(left);
-        power = 0.5;//1.0 * tmpV.dot(front);
+        tmpV.normalize();
+        if (tmpV.dot(front)>-0.5) {
+            steering = 1.0 * tmpV.dot(left) * 1.0/(vel.length()+0.001);
+        } else {
+            steering = 1.0 * 1.0/(vel.length()+0.001);
+        }
+        steering = steering >  1.5 ?  1.5 : steering;
+        steering = steering < -1.5 ? -1.5 : steering;
 
         socket.send("drive "+power+" "+steering);
     }
@@ -183,14 +200,22 @@ public abstract class SampleBase {
 
         Vector tmpV = new Vector();
         tmpV.sub(v,loc);
-        tmpV.normalize();
+        if (tmpV.dot(front)>0.0) {
+            power = -500.0* (tmpV.length() - vel.length() + 0.1);
+        } else {
+            power = -300.0;
+        }
+        power = power >  500.0 ?  500.0 : power;
+        power = power < -500.0 ? -500.0 : power;
 
-        if (tmpV.dot(front)>0.0)
-            steering = 3.0;
-        else
-            steering = 3.0 * tmpV.dot(left);
-        if (Math.abs(steering)<0.1)
-            power = 0.3 * tmpV.dot(front);
+        tmpV.normalize();
+        if (tmpV.dot(front)<0.5) {
+            steering = 1.0 * tmpV.dot(left) * 1.0/(vel.length()+0.001);
+        } else {
+            steering = 1.0 * 1.0/(vel.length()+0.001);
+        }
+        steering = steering >  1.5 ?  1.5 : steering;
+        steering = steering < -1.5 ? -1.5 : steering;
 
         socket.send("drive "+power+" "+steering);
     }
