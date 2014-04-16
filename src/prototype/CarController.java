@@ -99,6 +99,10 @@ public class CarController extends JFrame implements KeyListener, Runnable, Acti
         }
         
     }
+
+    protected double engineF = 1.0;
+    protected double steeringF = 3.0;
+
     @Override
     public void run() {
         while (true) {
@@ -106,14 +110,14 @@ public class CarController extends JFrame implements KeyListener, Runnable, Acti
             double steering = 0.0;
 
             if (keyUp)
-                engine += 1.0;
+                engine += engineF;
             if (keyDown)
-                engine -= 1.0;
+                engine -= engineF;
 
             if (keyRight)
-                steering += 3.0;
+                steering += steeringF;
             if (keyLeft)
-                steering -= 3.0;
+                steering -= steeringF;
 
             // System.out.println(client.post("drive "+engine+" "+steering));
             client.post("drive " + engine + " " + steering);

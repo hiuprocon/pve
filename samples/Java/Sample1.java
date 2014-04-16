@@ -118,6 +118,7 @@ public class Sample1 extends SampleBase {
         // car has arrived at the goal?
         if (targetGoal!=null) {
             tmpV.sub(targetGoal,loc);
+System.out.println("GAHA:"+loc.y);
             if (tmpV.length()<2.0)
                 processEvent(new ArrivalGoalEvent());
         }

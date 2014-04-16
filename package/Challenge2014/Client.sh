@@ -8,4 +8,4 @@ chdir $basePath;
 
 $ENV{CLASSPATH}=".:$basePath/lib/*:";
 
-system("java prototype.AllClients2");
+system("java prototype.AllClients3");

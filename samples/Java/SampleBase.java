@@ -20,17 +20,17 @@ public abstract class SampleBase {
     // Simulation step time
     public static final double dt = 1.0/30.0;
     // Location of the elevator bottom
-    public static final Vector elevatorBottom = new Vector(0,1.0,62.5);
+    public static final Vector elevatorBottom = new Vector(0,0,62.5);
     // Location of the elevator top
     public static final Vector elevatorTop = new Vector(0,15.0,62.5);
     // Location of the switch1
-    public static final Vector switch1 = new Vector(0,0.5,-11+62.5);
+    public static final Vector switch1 = new Vector(0,0,-11+62.5);
     // Location of the switch2
-    public static final Vector switch2 = new Vector(0,0.5,11+62.5);
+    public static final Vector switch2 = new Vector(0,0,11+62.5);
     // Location of the goal1
-    public static final Vector goal1 = new Vector(-10,15.5,62.5);
+    public static final Vector goal1 = new Vector(-10,15.0,62.5);
     // Location of the goal2
-    public static final Vector goal2 = new Vector( 10,15.5,62.5);
+    public static final Vector goal2 = new Vector( 10,15.0,62.5);
 
     // current simulation time
     protected double currentTime;
@@ -52,6 +52,10 @@ public abstract class SampleBase {
     protected Vector vel;
     // Manager of jewels
     protected JewelSet jewelSet;
+    // Location of Obstacle1
+    protected Vector obstacle1;
+    // Location of Obstacle2
+    protected Vector obstacle2;
 
     /*
      * The constructor of SampleBase.
@@ -112,6 +116,16 @@ public abstract class SampleBase {
                 processEvent(me);
             }
         }
+        ret = socket.send("searchObstacles");
+        String[] s = ret.split("\\s");
+        double x = Double.parseDouble(s[2]);
+        double y = Double.parseDouble(s[3]);
+        double z = Double.parseDouble(s[4]);
+        obstacle1 = new Vector(x,y,z);
+        x = Double.parseDouble(s[6]);
+        y = Double.parseDouble(s[7]);
+        z = Double.parseDouble(s[8]);
+        obstacle2 = new Vector(x,y,z);
     }
 
     /*
@@ -172,12 +186,12 @@ public abstract class SampleBase {
         Vector tmpV = new Vector();
         tmpV.sub(v,loc);
         if (tmpV.dot(front)>0.0) {
-            power = 500.0* (tmpV.length() - vel.length() + 0.1);
+            power = 300.0* (tmpV.length() - vel.length() + 0.1);
         } else {
-            power = 300.0;
+            power = 200.0;
         }
-        power = power >  500.0 ?  500.0 : power;
-        power = power < -500.0 ? -500.0 : power;
+        power = power >  300.0 ?  500.0 : power;
+        power = power < -300.0 ? -500.0 : power;
 
         tmpV.normalize();
         if (tmpV.dot(front)>-0.5) {
@@ -201,12 +215,12 @@ public abstract class SampleBase {
         Vector tmpV = new Vector();
         tmpV.sub(v,loc);
         if (tmpV.dot(front)>0.0) {
-            power = -500.0* (tmpV.length() - vel.length() + 0.1);
+            power = -200.0;
         } else {
-            power = -300.0;
+            power = -300.0* (tmpV.length() - vel.length() + 0.1);
         }
-        power = power >  500.0 ?  500.0 : power;
-        power = power < -500.0 ? -500.0 : power;
+        power = power >  300.0 ?  500.0 : power;
+        power = power < -300.0 ? -500.0 : power;
 
         tmpV.normalize();
         if (tmpV.dot(front)<0.5) {

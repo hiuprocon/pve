@@ -11,5 +11,5 @@ $ENV{CLASSPATH}=".:$basePath/lib/*:";
 #$ENV{LC_ALL}="en";
 #$ENV{LANG}="en_US";
 #system("/usr/x11/bin/xterm -e bash");
-system("java prototype.AllClients2");
+system("java prototype.AllClients3");
 

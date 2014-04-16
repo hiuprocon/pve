@@ -54,8 +54,8 @@ public class Simulator3 implements SimulatorInterface, CollisionListener, Elevat
     }
     void initWorld() throws Exception {
         if (car1!=null) {
-            //car1.dispose();
-            //car2.dispose();
+            car1.dispose();
+            car2.dispose();
             bgm.change("no_se");
             try{Thread.sleep(1000);}catch(Exception e) {;}
         }
@@ -130,17 +130,17 @@ Action3D.clearCash("x-res:///res/prototype/ChoroQblue.a3");
         elevator2.setLocRev(0, 0, 0-z2, 0,90, 0);
         w.add(elevator2);
 
-        if (car1!=null)
-            car1 = new CarA(this,car1.getServer());
-        else
+        //if (car1!=null)
+        //    car1 = new CarA(this,car1.getServer());
+        //else
             car1 = new CarA(this, 10000);
         car1.setLocRev(-90, 0, 0, 0, 90, 0);
         w.add((PVEObject)car1);
         gui.setCar1(car1);
 
-        if (car2!=null)
-            car2 = new CarA(this,car2.getServer());
-        else
+        //if (car2!=null)
+        //    car2 = new CarA(this,car2.getServer());
+        //else
             car2 = new CarA(this, 20000);
         car2.setLocRev(90, 0, 0, 0, -90, 0);
         w.add((PVEObject)car2);

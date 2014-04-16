@@ -46,6 +46,7 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
     Action3D redViewI;
     Action3D blueViewI;
     VRML defaultViewI;
+    VRML resetWorldI;
     Action3D[] jewelsI = new Action3D[20];
 
     public Simulator3GUI(Simulator3 simulator) {
@@ -173,20 +174,26 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
                 defaultViewI.setRev(0,90,0);
                 defaultViewI.setLoc(0.0,0.25,-1.0);
                 defaultViewI.setLabel("defaultView");
+                resetWorldI = new VRML("x-res:///res/ClearBox.wrl");
+                resetWorldI.setLabelLoc(0,0);
+                resetWorldI.setScale(0.05);
+                resetWorldI.setLoc(-0.3,0.2,-1.0);
+                resetWorldI.setLabel("Reset World");
                 canvas.addLockedA3(timerI);
                 canvas.addLockedA3(redViewI);
                 canvas.addLockedA3(blueViewI);
                 canvas.addLockedA3(defaultViewI);
+                canvas.addLockedA3(resetWorldI);
                 for (int i=0;i<10;i++) {
                     jewelsI[i] = new Action3D("x-res:///res/prototype/box.a3");
                     jewelsI[i].setScale(0.1);
-                    jewelsI[i].setLoc(i/30.0-0.166,0.3,-1.0);
+                    jewelsI[i].setLoc(i/30.0-0.166,0.31,-1.0);
                     canvas.addLockedA3(jewelsI[i]);
                 }
                 for (int i=10;i<20;i++) {
                     jewelsI[i] = new Action3D("x-res:///res/prototype/box.a3");
                     jewelsI[i].setScale(0.1);
-                    jewelsI[i].setLoc((i-10)/30.0-0.166,0.28,-1.0);
+                    jewelsI[i].setLoc((i-10)/30.0-0.166,0.29,-1.0);
                     canvas.addLockedA3(jewelsI[i]);
                 }
             }
@@ -275,16 +282,7 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
             else
                 simulator.activateTwoCars();
         } else if (source==resetWorldB) {
-            try{simulator.initWorld();}catch(Exception e){e.printStackTrace();}
-            initIndicator();
-            oneCarCB.setSelected(false);
-            waitTimeS.setValue(51);
-            updateTime(0);
-            taComp.clear();
-            parallelCB.setSelected(false);
-            polygonizeCB.setSelected(false);
-            canvas.setProjectionMode(ProjectionMode.PERSPECTIVE);
-            simulator.w.unpolygonize();
+            resetWorld();
         } else if (source==pauseCB) {
             if (pauseCB.isSelected())
                 simulator.pause();
@@ -337,6 +335,19 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
         }
     }
 
+    void resetWorld() {
+        try{simulator.initWorld();}catch(Exception e){e.printStackTrace();}
+        initIndicator();
+        oneCarCB.setSelected(false);
+        waitTimeS.setValue(51);
+        updateTime(0);
+        taComp.clear();
+        parallelCB.setSelected(false);
+        polygonizeCB.setSelected(false);
+        canvas.setProjectionMode(ProjectionMode.PERSPECTIVE);
+        simulator.w.unpolygonize();
+    }
+
     @Override
     public void stateChanged(ChangeEvent ce) {
         int wt = waitTimeS.getValue();
@@ -369,6 +380,8 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
             blueView();
         } else if (a3==defaultViewI) {
             defaultView();
+        } else if (a3==resetWorldI) {
+            resetWorld();
         }
     }
     @Override

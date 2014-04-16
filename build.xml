@@ -184,6 +184,13 @@
         </java>
     </target>
 
+    <target name="PClient3" depends="jar">
+        <java classname="prototype.AllClients3" fork="true">
+            <classpath refid="my.exec.class.path"/>
+            <jvmarg value="-Djava.library.path=${my.lib.path}"/>
+        </java>
+    </target>
+
     <target name="version-input" unless="version">
         <echo>*****************************</echo>
         <echo>Please specify the version(MMDD)...</echo>
