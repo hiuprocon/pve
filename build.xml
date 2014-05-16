@@ -215,11 +215,31 @@
         </copy>
         <copy file="dist/pve-api.jar" todir="package/Challenge2014/lib/"/>
         <copy file="dist/pve-res.jar" todir="package/Challenge2014/lib/"/>
-        <zip destfile="dist/Challenge2014-${version}.zip">
-            <zipfileset dir="package">
+        <!-- 実行権が付いたファイルをZIPアーカイブに入れたい時は
+             tarで作って，これをZIPに変換すればいいらしい． -->
+        <tar destfile="dist/Challenge2014-${version}.tar">
+            <tarfileset dir="package" filemode="755">
+                <include name="Challenge2014/Server.command"/>
+                <include name="Challenge2014/Server.sh"/>
+                <include name="Challenge2014/Client.command"/>
+                <include name="Challenge2014/Client.sh"/>
+                <include name="Challenge2014/Terminal.command"/>
+                <include name="Challenge2014/Terminal.sh"/>
+            </tarfileset>
+            <tarfileset dir="package">
                 <include name="Challenge2014/**"/>
-            </zipfileset>
+                <exclude name="Challenge2014/Server.command"/>
+                <exclude name="Challenge2014/Server.sh"/>
+                <exclude name="Challenge2014/Client.command"/>
+                <exclude name="Challenge2014/Client.sh"/>
+                <exclude name="Challenge2014/Terminal.command"/>
+                <exclude name="Challenge2014/Terminal.sh"/>
+            </tarfileset>
+        </tar>
+        <zip destfile="dist/Challenge2014-${version}.zip">
+            <tarfileset src="dist/Challenge2014-${version}.tar"/>
         </zip>
+        <delete file="dist/Challenge2014-${version}.tar"/>
         <delete includeEmptyDirs="true">
             <fileset dir="package/Challenge2014/">
                 <include name="**"/>
