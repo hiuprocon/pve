@@ -39,8 +39,8 @@ class ArrivalViaPoint2Event extends Event {}
  */
 public class Sample1 extends SampleBase {
     //For convenience, this car goes by way of via points.
-    static final Vector viaPointA = new Vector( 60,0, 62.5);
-    static final Vector viaPointB = new Vector(-60,0, 62.5);
+    static final Vector viaPointA = new Vector( 30,0, 62.5);
+    static final Vector viaPointB = new Vector(-30,0, 62.5);
 
     // The mode of this car.
     S1Mode mode;
@@ -118,7 +118,6 @@ public class Sample1 extends SampleBase {
         // car has arrived at the goal?
         if (targetGoal!=null) {
             tmpV.sub(targetGoal,loc);
-System.out.println("GAHA:"+loc.y);
             if (tmpV.length()<2.0)
                 processEvent(new ArrivalGoalEvent());
         }

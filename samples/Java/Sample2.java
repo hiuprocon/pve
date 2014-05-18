@@ -3,11 +3,9 @@
  * These modes correspond to states of FSM (Finite State Machine).
  */
 enum S2Mode {
-    GO_TO_VIAPOINT,
     GO_TO_WAITING_POINT,
-    WAIT_ON_WAITING_POINT,
+    WAIT_UNTIL_MESSAGE,
     GO_TO_SWITCH,
-    WAIT_ON_SWITCH,
     BACK_TO_WAITING_POINT
 }
 
@@ -16,7 +14,6 @@ enum S2Mode {
  * These events are created in stateCheck() method
  * and passed to processEvent() method.
  */
-class ArrivalViaPointEvent extends Event {}
 class ArrivalWaitingPointEvent extends Event {}
 class ArrivalSwitchEvent extends Event {}
 
@@ -27,15 +24,11 @@ class ArrivalSwitchEvent extends Event {}
  * in the SampleBase class which is extended by this Sample2 class.
  */
 public class Sample2 extends SampleBase {
-    // Location of viapoint.
-    static final Vector viaPoint = new Vector(10.0,0.0,0.0);
     // Location of waiting point.
-    static final Vector waitingPoint = new Vector(0,0,62.5-40.0);
+    static final Vector waitingPoint = new Vector(0,0,30);
 
     // The mode of this car
     S2Mode mode;
-    // Location of the distination.
-    Vector destination;
 
     /*
      * The constructor of Sample2. super(20000) means
@@ -44,8 +37,7 @@ public class Sample2 extends SampleBase {
      */
     public Sample2() {
         super(20000);
-        destination = new Vector(waitingPoint);
-        mode = S2Mode.GO_TO_VIAPOINT;
+        mode = S2Mode.GO_TO_WAITING_POINT;
     }
 
     /*
@@ -55,14 +47,9 @@ public class Sample2 extends SampleBase {
      * at first.
      */
     @Override
-    protected void stateCheck() {
+    protected void stateCheck() { 
         super.stateCheck();
         Vector tmpV = new Vector();
-
-        // car has arrived at the via point?
-        tmpV.sub(viaPoint,loc);
-        if (tmpV.length()<1.0)
-            processEvent(new ArrivalViaPointEvent());
 
         // car has arrived at the waiting point?
         tmpV.sub(waitingPoint,loc);
@@ -83,28 +70,24 @@ public class Sample2 extends SampleBase {
      */
     @Override
     protected void processEvent(Event e) {
-        if ((mode==S2Mode.GO_TO_VIAPOINT)
-          &&(e instanceof ArrivalViaPointEvent)) {
-            mode = S2Mode.GO_TO_WAITING_POINT;
-        } else if ((mode==S2Mode.GO_TO_WAITING_POINT)
+        if ((mode==S2Mode.GO_TO_WAITING_POINT)
           &&(e instanceof ArrivalWaitingPointEvent)) {
-            mode = S2Mode.WAIT_ON_WAITING_POINT;
-        } else if ((mode==S2Mode.WAIT_ON_WAITING_POINT)
-          &&(e instanceof MessageEvent)) {
-            String message = ((MessageEvent)e).message;
-System.out.println("Sample2:reciveMessage: "+message);
-            mode = S2Mode.GO_TO_SWITCH;
+            mode = S2Mode.WAIT_UNTIL_MESSAGE;
         } else if ((mode==S2Mode.GO_TO_SWITCH)
           &&(e instanceof ArrivalSwitchEvent)) {
-            mode = S2Mode.WAIT_ON_SWITCH;
-        } else if ((mode==S2Mode.WAIT_ON_SWITCH)
+            mode = S2Mode.WAIT_UNTIL_MESSAGE;
+        } else if ((mode==S2Mode.WAIT_UNTIL_MESSAGE)
                  &&(e instanceof MessageEvent)) {
             String message = ((MessageEvent)e).message;
 System.out.println("Sample2:reciveMessage: "+message);
-            mode = S2Mode.BACK_TO_WAITING_POINT;
+            if (message.equals("wait")) {
+                mode = S2Mode.BACK_TO_WAITING_POINT;
+            } else if (message.equals("pushSwitch")) {
+                mode = S2Mode.GO_TO_SWITCH;
+            }
         } else if ((mode==S2Mode.BACK_TO_WAITING_POINT)
                  &&(e instanceof ArrivalWaitingPointEvent)) {
-            mode = S2Mode.WAIT_ON_WAITING_POINT;
+            mode = S2Mode.WAIT_UNTIL_MESSAGE;
         } else {
             //System.out.println("Unprocessed event: "+e.getClass().getName());
         }
@@ -116,11 +99,9 @@ System.out.println("Sample2:reciveMessage: "+message);
     @Override
     protected void move() {
         switch(mode) {
-        case GO_TO_VIAPOINT: goToViaPoint(); break;
         case GO_TO_WAITING_POINT: goToWaitingPoint(); break;
-        case WAIT_ON_WAITING_POINT: waitOnWaitingPoint(); break;
+        case WAIT_UNTIL_MESSAGE: waitUntilMessage(); break;
         case GO_TO_SWITCH: goToSwitch(); break;
-        case WAIT_ON_SWITCH: waitOnSwitch(); break;
         case BACK_TO_WAITING_POINT: backToWaitingPoint(); break;
         default: System.out.println("Sample2: Unknown mode?"+mode);
         }
@@ -128,21 +109,16 @@ System.out.println("Sample2:reciveMessage: "+message);
 
     // The following methods implement processes for each mode.
 
-    void goToViaPoint() {
-        goToDestination(viaPoint);
-    }
     void goToWaitingPoint() {
         goToDestination(waitingPoint);
     }
-    void waitOnWaitingPoint() {
+    void waitUntilMessage() {
         stopCar();
     }
     void goToSwitch() {
-        goToDestinationWithJewel(switch1);
+        goToDestination(switch1);
     }
-    void waitOnSwitch() {
-        stopCar();
-    }
+
     void backToWaitingPoint() {
         backToDestination(waitingPoint);
     }
