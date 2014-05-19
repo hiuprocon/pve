@@ -98,6 +98,7 @@ System.out.println("Sample2:reciveMessage: "+message);
      */
     @Override
     protected void move() {
+//System.out.println("Sample2:mode="+mode);
         switch(mode) {
         case GO_TO_WAITING_POINT: goToWaitingPoint(); break;
         case WAIT_UNTIL_MESSAGE: waitUntilMessage(); break;
@@ -110,7 +111,16 @@ System.out.println("Sample2:reciveMessage: "+message);
     // The following methods implement processes for each mode.
 
     void goToWaitingPoint() {
-        goToDestination(waitingPoint);
+        if (checkAllConflict(loc,waitingPoint,null)) {
+System.out.println("GAHA:CONFLICT");
+            Vector v = new Vector(waitingPoint);
+            v.sub(loc);
+            v = Vector.simpleRotateY(45,v);
+            v.add(loc);
+            goToDestination(v);
+        } else {
+            goToDestination(waitingPoint);
+        }
     }
     void waitUntilMessage() {
         stopCar();

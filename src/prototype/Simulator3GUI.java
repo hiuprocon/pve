@@ -206,12 +206,13 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
         }
     }
     void defaultView() {
+        double x = 120;
         double y = 100;
-        double z = 300;
-        canvas.setCameraLocImmediately(0, y, z);
+        double z = 120;
+        canvas.setCameraLocImmediately(x, y, z);
         canvas.setCameraLookAtPointImmediately(0, 0, 0);
         canvas.setNavigationMode(A3CanvasInterface.NaviMode.SIMPLE,
-                Math.sqrt(y * y + z * z));
+                Math.sqrt(x*x + y*y + z*z));
     }
 
     void topView() {

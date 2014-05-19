@@ -52,6 +52,11 @@ public abstract class SampleBase {
     protected Vector vel;
     // Manager of jewels
     protected JewelSet jewelSet;
+    // Location of Obstacle1
+    protected Vector obstacle1;
+    // Location of Obstacle2
+    protected Vector obstacle2;
+
 
     /*
      * The constructor of SampleBase.
@@ -112,6 +117,16 @@ public abstract class SampleBase {
                 processEvent(me);
             }
         }
+        ret = socket.send("searchObstacles");
+        String[] s = ret.split("\\s");
+        double x = Double.parseDouble(s[2]);
+        double y = Double.parseDouble(s[3]);
+        double z = Double.parseDouble(s[4]);
+        obstacle1 = new Vector(x,y,z);
+        x = Double.parseDouble(s[6]);
+        y = Double.parseDouble(s[7]);
+        z = Double.parseDouble(s[8]);
+        obstacle2 = new Vector(x,y,z);
     }
 
     /*
@@ -134,6 +149,59 @@ public abstract class SampleBase {
     protected abstract void move();
 
     /*
+     * Check if the point could be an obstacle to a forward movement.
+     * The route is given as a pair of source and destination.
+     * The argument `dis` is used as the threashold of distance
+     * between the route and the point.
+     */
+    protected boolean checkConflict(Vector src,Vector dest,Vector point,double dis) {
+        Vector center = new Vector();
+        center.add(src,dest);
+        center.scale(0.5);
+        Vector dir = new Vector();
+        dir.sub(dest,src);
+        double dirLength = dir.length();
+        if (dirLength!=0.0) dir.scale(1.0/dirLength);
+        Vector pDir = new Vector();
+        pDir.sub(point,src);
+        if (pDir.dot(dir)<0.0)
+            return false;
+        if (pDir.dot(dir)>dirLength)
+            return false;
+
+        Vector dir2 = new Vector(dir);
+        dir2 = Vector.simpleRotateY(90,dir2);
+        if (Math.abs(pDir.dot(dir2)) < dis)
+            return true;
+        else
+            return false;
+    }
+
+    /*
+     * Check existance of obstacles. The route is specified by 
+     * source and destination. If targetJewelLoc is given, it is
+     * excluded from obstacles. If targetJewelLoc==null, ignored.
+     */
+    protected boolean checkAllConflict(Vector src,Vector dest,Vector targetJewelLoc) {
+        for (Vector v : jewelSet.getVectors()) {
+            if (v.equals(src))
+                continue;
+            if (v.equals(dest))
+                continue;
+            if (targetJewelLoc!=null && v.epsilonEquals(targetJewelLoc,1.0))
+                continue;
+            if (checkConflict(src,dest,v,1.5)) {
+                return true;
+            }
+        }
+        if (checkConflict(src,dest,obstacle1,3.0))
+            return true;
+        if (checkConflict(src,dest,obstacle2,3.0))
+            return true;
+        return false;
+    }
+
+    /*
      * Drive this car to the given location (v).
      */
     protected void goToDestination(Vector v) {
@@ -146,8 +214,8 @@ public abstract class SampleBase {
         if (dis!=0.0) dir.normalize();
 
         double targetVel = dis > 20 ? 20 : dis;
-        if (dir.dot(front)>0.0) {
-            steering = 0.2 * dir.dot(left);
+        if (dir.dot(front)>-0.7) {
+            steering = 0.3 * dir.dot(left);
             power = 300*(targetVel - vel.length());
             power = power > 500 ? 500 : power;
             power = power < -500 ? -500 : power;
@@ -172,8 +240,8 @@ public abstract class SampleBase {
         if (dis!=0.0) dir.normalize();
 
         double targetVel = dis > 15 ? 15 : dis;
-        if (dir.dot(front)>0.0) {
-            steering = 0.2 * dir.dot(left);
+        if (dir.dot(front)>-0.7) {
+            steering = 0.3 * dir.dot(left);
             power = 300*(targetVel - vel.length());
             power = power > 300 ? 300 : power;
             power = power < -300 ? -300 : power;
@@ -199,7 +267,7 @@ public abstract class SampleBase {
 
         double targetVel = dis > 15 ? 15 : dis;
         if (dir.dot(front)<0.0) {
-            steering = 0.2 * dir.dot(left);
+            steering = 0.3 * dir.dot(left);
             power = -300*(targetVel - vel.length());
             power = power > 300 ? 300 : power;
             power = power < -300 ? -300 : power;

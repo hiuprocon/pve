@@ -1,4 +1,4 @@
-import java.util.HashMap;
+import java.util.*;
 
 /*
  * JewelSet manages ids and coodinates of jewels.
@@ -42,6 +42,20 @@ public class JewelSet {
      */
     public Vector get(String id) {
         return jewels.get(id);
+    }
+
+    /*
+     * Returns the all id of jewels.
+     */
+    public Set<String> getIDs() {
+        return jewels.keySet();
+    }
+
+    /*
+     * Returns the all vectors of jewels.
+     */
+    public Collection<Vector> getVectors() {
+        return jewels.values();
     }
 
     /*
