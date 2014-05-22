@@ -143,8 +143,6 @@ public class Sample1 extends SampleBase {
         } else if ((mode==S1Mode.GO_TO_TARGET_JEWEL)
                  &&(e instanceof HoldingJewelEvent)) {
             mode = S1Mode.DEVELOP_STRATEGY2;
-            s = socket.send("sendMessage wait");
-System.out.println("Sample1:sendMessage(wait):"+s);
         } else if ((mode==S1Mode.DEVELOP_STRATEGY2)
                  &&(e instanceof StrategyDevelopedEvent)) {
             mode = S1Mode.GO_TO_VIA_POINT;

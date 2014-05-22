@@ -63,13 +63,13 @@ static const Vec3d elevatorBottom(0,0,62.5);
 // Location of the elevator top
 static const Vec3d elevatorTop(0,15.0,62.5);
 // Location of the switch1
-static const Vec3d switch1(0,0.5,-11+62.5);
+static const Vec3d switch1(0,0.0,-11+62.5);
 // Location of the switch2
-static const Vec3d switch2(0,0.5,11+62.5);
+static const Vec3d switch2(0,0.0,11+62.5);
 // Location of the goal1
-static const Vec3d goal1(-10,15.5,62.5);
+static const Vec3d goal1(-10,15.0,62.5);
 // Location of the goal2
-static const Vec3d goal2( 10,15.5,62.5);
+static const Vec3d goal2( 10,15.0,62.5);
 
 /*
  *   SampleBase is a super class of Sample1 and Sample2.

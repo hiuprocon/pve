@@ -167,8 +167,6 @@ void Sample1::processEvent(Event *e) {
     } else if ((mode==GO_TO_TARGET_JEWEL)
       &&(dynamic_cast<HoldingJewelEvent*>(e))) {
         mode = DEVELOP_STRATEGY2;
-        s = socket->send("sendMessage wait");
-cout << "Sample1:sendMessage(wait):" << s << endl;
     } else if ((mode==DEVELOP_STRATEGY2)
       &&(dynamic_cast<StrategyDevelopedEvent*>(e))) {
         mode = GO_TO_VIA_POINT;
