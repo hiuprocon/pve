@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <math.h>
 #include "MySocket.h"
 #include "SampleBase.h"
 using namespace std;
@@ -65,6 +66,32 @@ Vec3d JewelSet::get(const string id) {
     } else
         return *(jewels[id]);
 }
+
+/*
+ * Returns the all id of jewels.
+ */
+vector<string> JewelSet::getIDs() {
+    vector<string> array;
+
+    for (map<string, Vec3d*>::iterator itr = jewels.begin(); itr != jewels.end(); itr++) {
+        array.push_back(itr->first) ;
+    }
+    return array;
+}
+
+/*
+ * Returns the all vectors of jewels.
+ */
+vector<Vec3d> JewelSet::getVectors() {
+    vector<Vec3d> array;
+
+    for (map<string, Vec3d*>::iterator itr = jewels.begin(); itr != jewels.end(); itr++) {
+        Vec3d v = Vec3d(*(itr->second));
+        array.push_back(v) ;
+    }
+    return array;
+}
+
 
 /*
  * Returns the id of the jewel which is nearest to given coodinate.
@@ -137,6 +164,13 @@ void SampleBase::stateCheck() {
         }
         processEvent(new MessageEvent(rets));
     }
+    ret = socket->send("searchObstacles");
+    istringstream is(ret);
+    char buffer[16];
+    is.read(buffer,5);
+    is >> obstacle1.x >> obstacle1.y >> obstacle1.z;
+    is.read(buffer,3);
+    is >> obstacle2.x >> obstacle2.y >> obstacle2.z;
 }
 
 /*
@@ -153,22 +187,83 @@ void SampleBase::start() {
 }
 
 /*
+ * Check if the point could be an obstacle to a forward movement.
+ * The route is given as a pair of source and destination.
+ * The argument `dis` is used as the threashold of distance
+ * between the route and the point.
+ */
+bool SampleBase::checkConflict(const Vec3d& src,const Vec3d& dest,const Vec3d& point,double dis) {
+    Vec3d center;
+    center = src + dest;
+    center = 0.5 * center;
+    Vec3d dir;
+    dir = dest - src;
+    double dirLength = dir.length();
+    if (dirLength!=0.0) dir = (1.0/dirLength) * dir;
+    Vec3d pDir;
+    pDir = point - src;
+    if ((pDir * dir)<0.0)
+        return false;
+    if ((pDir * dir)>dirLength)
+        return false;
+
+    Vec3d dir2 = Vec3d(dir);
+    dir2 = dir2.simpleRotateY(90);
+    if (fabs(pDir * dir2) < dis)
+        return true;
+    else
+        return false;
+}
+
+/*
+ * Check existance of obstacles. The route is specified by 
+ * source and destination. If targetJewelLoc is given, it is
+ * excluded from obstacles. If targetJewelLoc==null, ignored.
+ */
+bool SampleBase::checkAllConflict(const Vec3d& src,const Vec3d& dest,const Vec3d& targetJewelLoc) {
+    vector<Vec3d> array = jewelSet.getVectors();
+    for (vector<Vec3d>::iterator itr = array.begin(); itr != array.end(); itr++) {
+        Vec3d v = (*itr);
+        if (v == src)
+            continue;
+        if (v == dest)
+            continue;
+        if (targetJewelLoc.x<1000 && v.epsilonEquals(targetJewelLoc,1.0))
+            continue;
+        if (checkConflict(src,dest,v,1.5)) {
+            return true;
+        }
+    }
+    if (checkConflict(src,dest,obstacle1,3.0))
+        return true;
+    if (checkConflict(src,dest,obstacle2,3.0))
+        return true;
+    return false;
+}
+
+
+/*
  * Drive this car to the given location (v).
  */
-void SampleBase::goToDestination(Vec3d v) {
+void SampleBase::goToDestination(const Vec3d& v) {
     double power = 0.0;
     double steering = 0.0;
 
-    Vec3d tmpV;
-    tmpV = v - loc;
-    tmpV.normalize();
+    Vec3d dir;
+    dir = v - loc;
+    double dis = dir.length();
+    if (dis!=0.0) dir = (1.0/dis) * dir;
 
-    if (tmpV * front < 0.0)
-        steering = 3.0;
-    else
-        steering = -3.0 * (tmpV * left);
-    if (steering<0.1 && steering > -0.1)
-        power = 1.0 * (tmpV * front);
+    double targetVel = dis > 20 ? 20 : dis;
+    if ((dir * front) > -0.7) {
+        steering = 0.3 * (dir * left);
+        power = 300*(targetVel - vel.length());
+        power = power > 500 ? 500 : power;
+        power = power < -500 ? -500 : power;
+    } else {
+        steering = 0.2;
+        power = 150;
+    }
 
     ostringstream oss;
     oss << "drive " << setprecision(16) << power << " " << steering;
@@ -178,19 +273,25 @@ void SampleBase::goToDestination(Vec3d v) {
 /*
  * Drive this car to the given location (v) with jewels.
  */
-void SampleBase::goToDestinationWithJewel(Vec3d v) {
+void SampleBase::goToDestinationWithJewel(const Vec3d& v) {
     double power = 0.0;
     double steering = 0.0;
 
-    Vec3d tmpV;
-    tmpV = v - loc;
-    tmpV.normalize();
+    Vec3d dir;
+    dir = v - loc;
+    double dis = dir.length();
+    if (dis!=0.0) dir = (1.0/dis) * dir;
 
-    if (tmpV * front < 0.0)
-        steering = 3.0;
-    else
-        steering = -3.0 * (tmpV * left);
-    power = 0.5;//1.0 * (tmpV * front);
+    double targetVel = dis > 15 ? 15 : dis;
+    if ((dir * front) > -0.7) {
+        steering = 0.3 * (dir * left);
+        power = 300*(targetVel - vel.length());
+        power = power > 300 ? 300 : power;
+        power = power < -300 ? -300 : power;
+    } else {
+        steering = 0.2;
+        power = 100;
+    }
 
     ostringstream oss;
     oss << "drive " << setprecision(16) << power << " " << steering;
@@ -200,20 +301,25 @@ void SampleBase::goToDestinationWithJewel(Vec3d v) {
 /*
  * Back this car to the given location (v).
  */
-void SampleBase::backToDestination(Vec3d v) {
+void SampleBase::backToDestination(const Vec3d& v) {
     double power = 0.0;
     double steering = 0.0;
 
-    Vec3d tmpV;
-    tmpV = v - loc;
-    tmpV.normalize();
+    Vec3d dir;
+    dir = v - loc;
+    double dis = dir.length();
+    if (dis!=0.0) dir = (1.0/dis) * dir;
 
-    if (tmpV * front > 0.0)
-        steering = 3.0;
-    else
-        steering = 3.0 * (tmpV * left);
-    if (steering<0.1 && steering > -0.1)
-        power = 0.3 * (tmpV * front);
+    double targetVel = dis > 15 ? 15 : dis;
+    if ((dir * front) < -0.7) {
+        steering = 0.3 * (dir * left);
+        power = -300*(targetVel - vel.length());
+        power = power > 300 ? 300 : power;
+        power = power < -300 ? -300 : power;
+    } else {
+        steering = 1.0;
+        power = 150;
+    }
 
     ostringstream oss;
     oss << "drive " << setprecision(16) << power << " " << steering;

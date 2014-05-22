@@ -8,9 +8,9 @@ using namespace std;
  * These modes correspond to states of FSM (Finite State Machine).
  */
 enum S1Mode {
-    DETERMINE_TARGET_JEWEL = 0,
+    DEVELOP_STRATEGY1 = 0,
     GO_TO_TARGET_JEWEL = 1,
-    DETERMINE_WHITCH_VIA_POINT = 2,
+    DEVELOP_STRATEGY2 = 2,
     GO_TO_VIA_POINT = 3,
     GET_ON_ELEVATOR = 4,
     WAIT_UNTIL_TOP = 5,
@@ -26,10 +26,9 @@ enum S1Mode {
  * These events are created in stateCheck() method
  * and passed to processEvent() method.
  */
-class DetermineTargetJewelEvent : public Event {};
+class StrategyDevelopedEvent : public Event {};
 class HoldingJewelEvent : public Event {};
 class NotHoldingJewelEvent : public Event {};
-class DetermineViaPointEvent : public Event {};
 class ArrivalViaPoint1Event : public Event {};
 class ArrivalElevatorBottomEvent : public Event {};
 class ArrivalElevatorTopEvent : public Event {};
@@ -37,8 +36,8 @@ class ArrivalGoalEvent : public Event {};
 class ArrivalViaPoint2Event : public Event {};
 
 //For convenience, this car goes by way of via points.
-static const Vec3d viaPointA( 30,0, 0);
-static const Vec3d viaPointB(-30,0, 0);
+static const Vec3d viaPointA( 30,0, 62.5);
+static const Vec3d viaPointB(-30,0, 62.5);
 
 /*
  * Sample1 is a program which controls the red car in the
@@ -53,9 +52,9 @@ public:
     void stateCheck();
     void processEvent(Event *e);
     void move();
-    void determineTargetJewel();
+    void developStrategy1();
     void goToTargetJewel();
-    void determineWitchViaPoint();
+    void developStrategy2();
     void goToViaPoint1();
     void getOnElevator();
     void waitUntilTop();
@@ -81,7 +80,7 @@ private:
  * (computer networking).
  */
 Sample1::Sample1(int port) : SampleBase(port) {
-    mode = DETERMINE_TARGET_JEWEL;
+    mode = DEVELOP_STRATEGY1;
     targetJewel = "none";
     targetViaPoint1.x = 1000000.0;
     targetViaPoint2.x = 1000000.0;
@@ -162,23 +161,23 @@ void Sample1::stateCheck() {
  */
 void Sample1::processEvent(Event *e) {
     string s;
-    if ((mode==DETERMINE_TARGET_JEWEL)
-      &&(dynamic_cast<DetermineTargetJewelEvent*>(e))) {
+    if ((mode==DEVELOP_STRATEGY1)
+      &&(dynamic_cast<StrategyDevelopedEvent*>(e))) {
         mode = GO_TO_TARGET_JEWEL;
     } else if ((mode==GO_TO_TARGET_JEWEL)
       &&(dynamic_cast<HoldingJewelEvent*>(e))) {
-        mode = DETERMINE_WHITCH_VIA_POINT;
+        mode = DEVELOP_STRATEGY2;
         s = socket->send("sendMessage wait");
 cout << "Sample1:sendMessage(wait):" << s << endl;
-    } else if ((mode==DETERMINE_WHITCH_VIA_POINT)
-      &&(dynamic_cast<DetermineViaPointEvent*>(e))) {
+    } else if ((mode==DEVELOP_STRATEGY2)
+      &&(dynamic_cast<StrategyDevelopedEvent*>(e))) {
         mode = GO_TO_VIA_POINT;
     } else if ((mode==GO_TO_VIA_POINT)
       &&(dynamic_cast<ArrivalViaPoint1Event*>(e))) {
         mode = GET_ON_ELEVATOR;
     } else if ((mode==GO_TO_VIA_POINT)
       &&(dynamic_cast<NotHoldingJewelEvent*>(e))) {
-        mode = DETERMINE_TARGET_JEWEL;
+        mode = DEVELOP_STRATEGY1;
     } else if ((mode==GET_ON_ELEVATOR)
       &&(dynamic_cast<ArrivalElevatorBottomEvent*>(e))) {
         mode = WAIT_UNTIL_TOP;
@@ -186,7 +185,7 @@ cout << "Sample1:sendMessage(wait):" << s << endl;
 cout << "Sample1:sendMessage(pushSwitch):" << s << endl;
     } else if ((mode==GET_ON_ELEVATOR)
       &&(dynamic_cast<NotHoldingJewelEvent*>(e))) {
-        mode = DETERMINE_TARGET_JEWEL;
+        mode = DEVELOP_STRATEGY1;
     } else if ((mode==WAIT_UNTIL_TOP)
       &&(dynamic_cast<ArrivalElevatorTopEvent*>(e))) {
         mode = GO_TO_GOAL;
@@ -206,7 +205,7 @@ cout << "Sample1:sendMessage(wait):" << s << endl;
         mode = GO_TO_VIA_POINT2;
     } else if ((mode==GO_TO_VIA_POINT2)
       &&(dynamic_cast<ArrivalViaPoint2Event*>(e))) {
-        mode = DETERMINE_TARGET_JEWEL;
+        mode = DEVELOP_STRATEGY1;
     } else if ((true)&&(dynamic_cast<MessageEvent*>(e))) {
         string message = (dynamic_cast<MessageEvent*>(e))->message;
         cout << "Sample1: Message received?: " << message << endl;
@@ -222,35 +221,48 @@ cout << "Sample1:sendMessage(wait):" << s << endl;
  */
 void Sample1::move() {
 //cout << "Sample1:mode=" << mode << endl;
-  switch(mode) {
-  case DETERMINE_TARGET_JEWEL: determineTargetJewel(); break;
-  case GO_TO_TARGET_JEWEL: goToTargetJewel(); break;
-  case DETERMINE_WHITCH_VIA_POINT: determineWitchViaPoint(); break;
-  case GO_TO_VIA_POINT: goToViaPoint1(); break;
-  case GET_ON_ELEVATOR: getOnElevator(); break;
-  case WAIT_UNTIL_TOP: waitUntilTop(); break;
-  case GO_TO_GOAL: goToGoal(); break;
-  case BACK_TO_ELEVATOR_TOP: backToElevatorTop(); break;
-  case WAIT_UNTIL_BOTTOM: waitUntilBottom(); break;
-  case GO_TO_VIA_POINT2: goToViaPoint2(); break;
-  case END: end(); break;
-  default: cout << "Sample1: Unknown mode?" << mode << endl;
-  }
+    switch(mode) {
+    case DEVELOP_STRATEGY1: developStrategy1(); break;
+    case GO_TO_TARGET_JEWEL: goToTargetJewel(); break;
+    case DEVELOP_STRATEGY2: developStrategy2(); break;
+    case GO_TO_VIA_POINT: goToViaPoint1(); break;
+    case GET_ON_ELEVATOR: getOnElevator(); break;
+    case WAIT_UNTIL_TOP: waitUntilTop(); break;
+    case GO_TO_GOAL: goToGoal(); break;
+    case BACK_TO_ELEVATOR_TOP: backToElevatorTop(); break;
+    case WAIT_UNTIL_BOTTOM: waitUntilBottom(); break;
+    case GO_TO_VIA_POINT2: goToViaPoint2(); break;
+    case END: end(); break;
+    default: cout << "Sample1: Unknown mode?" << mode << endl;
+    }
 }
 
 // The following methods implement processes for each mode.
 
-void Sample1::determineTargetJewel() {
+void Sample1::developStrategy1() {
     targetJewel = jewelSet.getNearest(loc);
-    processEvent(new DetermineTargetJewelEvent());
+    targetJewelLoc = jewelSet.get(targetJewel);
+    //if (targetJewelLoc!=NULL)...
+    processEvent(new StrategyDevelopedEvent());
 }
 
 void Sample1::goToTargetJewel() {
-    if (targetJewelLoc.x<10000.0)
-        goToDestination(targetJewelLoc);
+    if (targetJewelLoc.x<10000.0) {
+        Vec3d dummy = Vec3d(10000,0,0);
+        if (checkAllConflict(loc,targetJewelLoc,dummy)) {
+cout << "GAHA:CONFLICT1" << endl;
+            Vec3d v = Vec3d(targetJewelLoc);
+            v = v - loc;
+            v = v.simpleRotateY(45);
+            v = v + loc;
+            goToDestination(v);
+        } else {
+            goToDestination(targetJewelLoc);
+        }
+    }
 }
 
-void Sample1::determineWitchViaPoint() {
+void Sample1::developStrategy2() {
     if (loc.x>0.0) {
         targetViaPoint1 = viaPointA;
         targetGoal = goal1;
@@ -260,11 +272,20 @@ void Sample1::determineWitchViaPoint() {
         targetGoal = goal2;
         targetViaPoint2 = viaPointA;
     }
-    processEvent(new DetermineViaPointEvent());
+    processEvent(new StrategyDevelopedEvent());
 }
 
 void Sample1::goToViaPoint1() {
-    goToDestinationWithJewel(targetViaPoint1);
+    if (checkAllConflict(loc,targetViaPoint1,targetJewelLoc)) {
+        cout << "GAHA:CONFLICT2" << endl;
+        Vec3d v = Vec3d(targetViaPoint1);
+        v = v - loc;
+        v.simpleRotateY(45);
+        v = v + loc;
+        goToDestination(v);
+    } else {
+        goToDestinationWithJewel(targetViaPoint1);
+    }
 }
 
 void Sample1::getOnElevator() {

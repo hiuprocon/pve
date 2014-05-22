@@ -27,6 +27,12 @@ Vec3d::Vec3d(string str) {
   is >> this->x >> this->y >> this->z;
 }
 
+Vec3d::Vec3d(const Vec3d& v) {
+  this->x = v.x;
+  this->y = v.y;
+  this->z = v.z;
+}
+
 Vec3d& Vec3d::operator=(const Vec3d& v) {
   this->x=v.x;
   this->y=v.y;

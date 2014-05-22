@@ -4,6 +4,7 @@
 
 #include <string>
 #include <map>
+#include <vector>
 #include "Vec3d.h"
 #include "MySocket.h"
 using namespace std;
@@ -48,6 +49,8 @@ public:
     void load(const string str);
     int size();
     Vec3d get(const string id);
+    vector<string> getIDs();
+    vector<Vec3d> getVectors();
     string getNearest(const Vec3d v);
 private:
     map<string, Vec3d*> jewels;
@@ -56,17 +59,17 @@ private:
 // Simulation step time
 static const double dt = 1.0/30.0;
 // Location of the elevator bottom
-static const Vec3d elevatorBottom(0,1.0,0);
+static const Vec3d elevatorBottom(0,0,62.5);
 // Location of the elevator top
-static const Vec3d elevatorTop(0,15.0,0);
+static const Vec3d elevatorTop(0,15.0,62.5);
 // Location of the switch1
-static const Vec3d switch1(0,0.5,-11);
+static const Vec3d switch1(0,0.5,-11+62.5);
 // Location of the switch2
-static const Vec3d switch2(0,0.5,11);
+static const Vec3d switch2(0,0.5,11+62.5);
 // Location of the goal1
-static const Vec3d goal1(-10,15.5,0);
+static const Vec3d goal1(-10,15.5,62.5);
 // Location of the goal2
-static const Vec3d goal2( 10,15.5,0);
+static const Vec3d goal2( 10,15.5,62.5);
 
 /*
  *   SampleBase is a super class of Sample1 and Sample2.
@@ -94,9 +97,11 @@ public:
     virtual void processEvent(Event *e) = 0;
     virtual void move() = 0;
     void start();
-    void goToDestination(Vec3d v);
-    void goToDestinationWithJewel(Vec3d v);
-    void backToDestination(Vec3d v);
+    bool checkConflict(const Vec3d& src,const Vec3d& dest,const Vec3d& point,double dis);
+    bool checkAllConflict(const Vec3d& src,const Vec3d& dest,const Vec3d& targetJewelLoc);
+    void goToDestination(const Vec3d& v);
+    void goToDestinationWithJewel(const Vec3d& v);
+    void backToDestination(const Vec3d& v);
     void stopCar();
 protected:
     // socket
@@ -119,6 +124,10 @@ protected:
     Vec3d vel;
     // Manager of jewels
     JewelSet jewelSet;
+    // Location of obstacle1
+    Vec3d obstacle1;
+    // Location of obstacle2
+    Vec3d obstacle2;
 };
 
 #endif

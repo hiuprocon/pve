@@ -15,6 +15,7 @@ public:
     Vec3d(double x,double y,double z);
     Vec3d(double xyz[]);
     Vec3d(string str);
+    Vec3d(const Vec3d& v);
 
     Vec3d& operator=(const Vec3d& v);
     Vec3d& operator+=(const Vec3d& v);
