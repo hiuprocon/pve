@@ -9,17 +9,17 @@
 /* Simulation step time */
 const double dt = 1.0/30.0;
 /* Location of the elevator bottom */
-const vec3d elevatorBottom = {0.0,1.0,0.0};
+const vec3d elevatorBottom = {0.0,0.0,62.5};
 /* Location of the elevator top */
-const vec3d elevatorTop = {0.0,15.0,0.0};
+const vec3d elevatorTop = {0.0,15.0,62.5};
 /* Location of the switch1 */
-const vec3d switch1 = {0.0,0.5,-11.0};
+const vec3d switch1 = {0.0,0.0,-11.0+62.5};
 /* Location of the switch2 */
-const vec3d switch2 = {0.0,0.5,11.0};
+const vec3d switch2 = {0.0,0.0,11.0+62.5};
 /* Location of the goal1 */
-const vec3d goal1 = {-10.0,15.5,0.0};
+const vec3d goal1 = {-10.0,15.0,62.5};
 /* Location of the goal2 */
-const vec3d goal2 = {10.0,15.5,0.0};
+const vec3d goal2 = {10.0,15.0,62.5};
 
 /* current simulation time */
 double currentTime;
@@ -41,6 +41,10 @@ vec3d vel;
 int jewels_count;
 /* Jewel Set */
 struct jewel jewels[20];
+/* Location of Obstacle1 */
+vec3d obstacle1;
+/* Location of Obstacle2 */
+vec3d obstacle2;
 
 void init_car(int port) {
   currentTime = 0.0;
@@ -51,6 +55,8 @@ void init_car(int port) {
   setXYZToVec3d(0.0, 0.0, 0.0, &left);
   setXYZToVec3d(0.0, 0.0, 0.0, &oldLoc);
   setXYZToVec3d(0.0, 0.0, 0.0, &vel);
+  setXYZToVec3d(0.0, 0.0, 0.0, &obstacle1);
+  setXYZToVec3d(0.0, 0.0, 0.0, &obstacle2);
   init_my_socket(port);
 }
 
@@ -115,7 +121,7 @@ int get_nearest_jewel(vec3d *pos,char *id,vec3d *ret) {
 }
 
 void state_check() {
-  char *msg;
+  char *msg, *tmp;
   setVec3dToVec3d(&loc, &oldLoc);
   msg = my_send("getLoc");
   setStrToVec3d(msg,&loc);
@@ -131,6 +137,22 @@ void state_check() {
   v3scale(&vel,1.0/dt,&vel);
   msg = my_send("searchJewels");
   makeJewelSet(msg);
+  msg = my_send("searchObstacles");
+  tmp = strtok(msg," ");
+  tmp = strtok(NULL," ");
+  tmp = strtok(NULL," ");
+  obstacle1.x = atof(tmp);
+  tmp = strtok(NULL," ");
+  obstacle1.y = atof(tmp);
+  tmp = strtok(NULL," ");
+  obstacle1.z = atof(tmp);
+  tmp = strtok(NULL," ");
+  tmp = strtok(NULL," ");
+  obstacle2.x = atof(tmp);
+  tmp = strtok(NULL," ");
+  obstacle2.y = atof(tmp);
+  tmp = strtok(NULL," ");
+  obstacle2.z = atof(tmp);
 }
 
 void make_events_basic() {
@@ -169,20 +191,76 @@ void start() {
 /* void process_event(struct event *e); */
 /* void move(); */
 
+int check_conflict(const vec3d *src,const vec3d *dest,const vec3d *point,double dis) {
+  vec3d dir;
+  double dirLength;
+  vec3d pDir;
+  double d;
+  vec3d dir2;
+
+  v3sub(dest,src,&dir);
+  dirLength = v3length(&dir);
+  if (dirLength!=0.0) v3scale(&dir,1.0/dirLength,&dir);
+  v3sub(point,src,&pDir);
+  d = v3dot(&pDir,&dir);
+  if (d<0.0)
+    return 0;
+  if (d>dirLength)
+    return 0;
+
+  setVec3dToVec3d(&dir,&dir2);
+  v3simpleRotateY(&dir2,90);
+  d = fabs(v3dot(&pDir,&dir2));
+  if (d<dis)
+    return 1;
+  else
+    return 0;
+}
+
+int check_all_conflict(const vec3d *src,const vec3d *dest,const vec3d *targetJewelLoc) {
+  int i;
+  vec3d v;
+  for (i=0;i<jewels_count;i++) {
+    v = jewels[i].loc;
+    if (v3equals(&v,src))
+      continue;
+    if (v3equals(&v,dest))
+      continue;
+    if (targetJewelLoc!=NULL && v3epsilonEquals(&v,targetJewelLoc,1.0))
+      continue;
+    if (check_conflict(src,dest,&v,1.5)) {
+      return 1;
+    }
+  }
+  if (check_conflict(src,dest,&obstacle1,3.0))
+    return 1;
+  if (check_conflict(src,dest,&obstacle2,3.0))
+    return 1;
+  return 0;
+}
+
 void go_to_destination(const vec3d *v) {
   double power = 0.0;
   double steering = 0.0;
-  vec3d tmpV;
   char msg[100];
+  vec3d dir;
+  double dis;
+  double targetVel;
 
-  v3sub(v,&loc,&tmpV);
-  v3normalize(&tmpV);
-  if (v3dot(&tmpV,&front)<0.0)
-    steering = 3.0;
-  else
-    steering = -3.0 * v3dot(&tmpV,&left);
-  if (fabs(steering)<0.1)
-    power = 1.0 * v3dot(&tmpV,&front);
+  v3sub(v,&loc,&dir);
+  dis = v3length(&dir);
+  if (dis!=0.0) v3normalize(&dir);
+
+  targetVel = dis > 20 ? 20 : dis;
+  if (v3dot(&dir,&front)>-0.7) {
+    steering = 0.3 * v3dot(&dir,&left);
+    power = 300*(targetVel - v3length(&vel));
+    power = power > 500 ? 500 : power;
+    power = power < -500 ? -500 : power;
+  } else {
+    steering = 0.2;
+    power = 150;
+  }
 
   sprintf(msg,"drive %.16f %.16f",power,steering);
   my_send(msg);
@@ -191,16 +269,25 @@ void go_to_destination(const vec3d *v) {
 void go_to_destination_with_jewels(const vec3d *v) {
   double power = 0.0;
   double steering = 0.0;
-  vec3d tmpV;
   char msg[100];
+  vec3d dir;
+  double dis;
+  double targetVel;
 
-  v3sub(v,&loc,&tmpV);
-  v3normalize(&tmpV);
-  if (v3dot(&tmpV,&front)<0.0)
-    steering = 3.0;
-  else
-    steering = -3.0 * v3dot(&tmpV,&left);
-  power = 0.5;//1.0 * v3dot(&tmpV,&front);
+  v3sub(v,&loc,&dir);
+  dis = v3length(&dir);
+  if (dis!=0.0) v3normalize(&dir);
+
+  targetVel = dis > 15 ? 15 : dis;
+  if (v3dot(&dir,&front)>-0.7) {
+    steering = 0.3 * v3dot(&dir,&left);
+    power = 300*(targetVel - v3length(&vel));
+    power = power > 300 ? 300 : power;
+    power = power < -300 ? -300 : power;
+  } else {
+    steering = 0.2;
+    power = 100;
+  }
 
   sprintf(msg,"drive %.16f %.16f",power,steering);
   my_send(msg);
@@ -209,17 +296,25 @@ void go_to_destination_with_jewels(const vec3d *v) {
 void back_to_destination(const vec3d *v) {
   double power = 0.0;
   double steering = 0.0;
-  vec3d tmpV;
   char msg[100];
+  vec3d dir;
+  double dis;
+  double targetVel;
 
-  v3sub(v,&loc,&tmpV);
-  v3normalize(&tmpV);
-  if (v3dot(&tmpV,&front)>0.0)
-    steering = 3.0;
-  else
-    steering = 3.0 * v3dot(&tmpV,&left);
-  if (fabs(steering)<0.1)
-    power = 0.3 * v3dot(&tmpV,&front);
+  v3sub(v,&loc,&dir);
+  dis = v3length(&dir);
+  if (dis!=0.0) v3normalize(&dir);
+
+  targetVel = dis > 15 ? 15 : dis;
+  if (v3dot(&dir,&front)<0.0) {
+    steering = 0.3 * v3dot(&dir,&left);
+    power = -300*(targetVel - v3length(&vel));
+    power = power > 300 ? 300 : power;
+    power = power < -300 ? -300 : power;
+  } else {
+    steering = 1.0;
+    power = 150;
+  }
 
   sprintf(msg,"drive %.16f %.16f",power,steering);
   my_send(msg);

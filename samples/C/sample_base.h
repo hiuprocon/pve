@@ -62,7 +62,10 @@ int get_nearest_jewel(vec3d *pos,char *id,vec3d *ret);
 
 void init_car(int port);
 void make_events_basic();
+void start();
 
+int check_conflict(const vec3d *src,const vec3d *dest,const vec3d *point,double dis);
+int check_all_conflict(const vec3d *src,const vec3d *dest,const vec3d *targetJewelLoc);
 void go_to_destination(const vec3d *v);
 void go_to_destination_with_jewels(const vec3d *v);
 void back_to_destination(const vec3d *v);

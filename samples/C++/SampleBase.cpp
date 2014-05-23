@@ -193,9 +193,6 @@ void SampleBase::start() {
  * between the route and the point.
  */
 bool SampleBase::checkConflict(const Vec3d& src,const Vec3d& dest,const Vec3d& point,double dis) {
-    Vec3d center;
-    center = src + dest;
-    center = 0.5 * center;
     Vec3d dir;
     dir = dest - src;
     double dirLength = dir.length();

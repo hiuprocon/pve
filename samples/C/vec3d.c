@@ -156,6 +156,16 @@ void v3simpleRotateY(vec3d *v,double ry) {
   v->z = zz;
 }
 
+int v3equals(const vec3d *u, const vec3d *v) {
+  if (u->x != v->x)
+    return 0;
+  if (u->y != v->y)
+    return 0;
+  if (u->z != v->z)
+    return 0;
+  return 1;
+}
+
 int v3epsilonEquals(const vec3d *u, const vec3d *v,double eps) {
   double dx = u->x - v->x;
   double dy = u->y - v->y;

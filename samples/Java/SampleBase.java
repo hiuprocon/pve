@@ -155,9 +155,6 @@ public abstract class SampleBase {
      * between the route and the point.
      */
     protected boolean checkConflict(Vector src,Vector dest,Vector point,double dis) {
-        Vector center = new Vector();
-        center.add(src,dest);
-        center.scale(0.5);
         Vector dir = new Vector();
         dir.sub(dest,src);
         double dirLength = dir.length();

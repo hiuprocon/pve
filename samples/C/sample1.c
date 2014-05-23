@@ -5,9 +5,9 @@
 #include "my_socket.h"
 
 /* Mode CONST */
-#define DETERMINE_TARGET_JEWEL 101
+#define DEVELOP_STRATEGY1 101
 #define GO_TO_TARGET_JEWEL 102
-#define DETERMINE_WHITCH_VIA_POINT 103
+#define DEVELOP_STRATEGY2 103
 #define GO_TO_VIA_POINT 104
 #define GET_ON_ELEVATOR 105
 #define WAIT_UNTIL_TOP 106
@@ -18,22 +18,21 @@
 #define END 111
 
 /* Event CONST */
-const int DETERMINE_TARGET_JEWEL_EVENT = 101;
+const int STRATEGY_DEVELOPED_EVENT = 101;
 const int HOLDING_JEWEL_EVENT = 102;
 const int NOT_HOLDING_JEWEL_EVENT = 103;
-const int DETERMINE_VIA_POINT_EVENT = 104;
-const int ARRIVAL_VIA_POINT1_EVENT = 105;
-const int ARRIVAL_ELEVATOR_BOTTOM_EVENT = 106;
-const int ARRIVAL_ELEVATOR_TOP_EVENT = 107;
-const int ARRIVAL_GOAL_EVENT = 108;
-const int ARRIVAL_VIA_POINT2_EVENT = 109;
+const int ARRIVAL_VIA_POINT1_EVENT = 104;
+const int ARRIVAL_ELEVATOR_BOTTOM_EVENT = 105;
+const int ARRIVAL_ELEVATOR_TOP_EVENT = 106;
+const int ARRIVAL_GOAL_EVENT = 107;
+const int ARRIVAL_VIA_POINT2_EVENT = 108;
 
 /* For Convenience, this car goes by way of via points. */
-const vec3d viaPointA = { 30,0,0};
-const vec3d viaPointB = {-30,0,0};
+const vec3d viaPointA = { 30,0,62.5};
+const vec3d viaPointB = {-30,0,62.5};
 
 /* The mode of this car. */
-int mode = DETERMINE_TARGET_JEWEL;
+int mode = DEVELOP_STRATEGY1;
 
 /* The following variables are targets. */
 char targetJewel[10];
@@ -109,23 +108,21 @@ void make_events() {
 
 void process_event(struct event *e) {
   char *s;
-  if ((mode==DETERMINE_TARGET_JEWEL)
-    &&(e->id==DETERMINE_TARGET_JEWEL_EVENT)) {
+  if ((mode==DEVELOP_STRATEGY1)
+    &&(e->id==STRATEGY_DEVELOPED_EVENT)) {
     mode = GO_TO_TARGET_JEWEL;
   } else if ((mode==GO_TO_TARGET_JEWEL)
            &&(e->id == HOLDING_JEWEL_EVENT)) {
-    mode = DETERMINE_WHITCH_VIA_POINT;
-    s = my_send("sendMessage wait");
-printf("Sample1:sendMessage(wait):%s\n",s);
-  } else if ((mode==DETERMINE_WHITCH_VIA_POINT)
-           &&(e->id == DETERMINE_VIA_POINT_EVENT)) {
+    mode = DEVELOP_STRATEGY2;
+  } else if ((mode==DEVELOP_STRATEGY2)
+           &&(e->id == STRATEGY_DEVELOPED_EVENT)) {
     mode = GO_TO_VIA_POINT;
   } else if ((mode==GO_TO_VIA_POINT)
            &&(e->id==ARRIVAL_VIA_POINT1_EVENT)) {
     mode = GET_ON_ELEVATOR;
   } else if ((mode==GO_TO_VIA_POINT)
            &&(e->id==NOT_HOLDING_JEWEL_EVENT)) {
-    mode = DETERMINE_TARGET_JEWEL;
+    mode = DEVELOP_STRATEGY1;
   } else if ((mode==GET_ON_ELEVATOR)
            &&(e->id==ARRIVAL_ELEVATOR_BOTTOM_EVENT)) {
     mode = WAIT_UNTIL_TOP;
@@ -133,7 +130,7 @@ printf("Sample1:sendMessage(wait):%s\n",s);
 printf("Sample1:sendMessage(pushSwitch):%s\n",s);
   } else if ((mode==GET_ON_ELEVATOR)
            &&(e->id==NOT_HOLDING_JEWEL_EVENT)) {
-    mode = DETERMINE_TARGET_JEWEL;
+    mode = DEVELOP_STRATEGY1;
   } else if ((mode==WAIT_UNTIL_TOP)
            &&(e->id==ARRIVAL_ELEVATOR_TOP_EVENT)) {
     mode = GO_TO_GOAL;
@@ -153,7 +150,7 @@ printf("Sample1:sendMessage(wait):%s\n",s);
     mode = GO_TO_VIA_POINT2;
   } else if ((mode==GO_TO_VIA_POINT2)
            &&(e->id==ARRIVAL_VIA_POINT2_EVENT)) {
-    mode = DETERMINE_TARGET_JEWEL;
+    mode = DEVELOP_STRATEGY1;
   } else if (e->id==MESSAGE_EVENT) {
 printf("Sample1: Message received?: %s\n",e->message);
   } else {
@@ -161,18 +158,27 @@ printf("Sample1: Message received?: %s\n",e->message);
   }
 }
 
-void determineTargetJewel() {
+void developStrategy1() {
   struct event e;
   get_nearest_jewel(&loc,targetJewel,&targetJewelLoc);
-  e.id=DETERMINE_TARGET_JEWEL_EVENT;
+  e.id=STRATEGY_DEVELOPED_EVENT;
   process_event(&e);
 }
 
 void goToTargetJewel() {
-  go_to_destination(&targetJewelLoc);
+  vec3d v;
+  if (check_all_conflict(&loc,&targetJewelLoc,NULL)) {
+printf("GAHA:CONFLICT1\n");
+    v3sub(&targetJewelLoc,&loc,&v);
+    v3simpleRotateY(&v,45);
+    v3add(&v,&loc,&v);
+    go_to_destination(&v);
+  } else {
+    go_to_destination(&targetJewelLoc);
+  }
 }
 
-void determineWitchViaPoint() {
+void developStrategy2() {
   struct event e;
   if (loc.x>0.0) {
     setVec3dToVec3d(&viaPointA,&targetViaPoint1);
@@ -183,12 +189,21 @@ void determineWitchViaPoint() {
     setVec3dToVec3d(&goal2,&targetGoal);
     setVec3dToVec3d(&viaPointA,&targetViaPoint2);
   }
-  e.id = DETERMINE_VIA_POINT_EVENT;
+  e.id = STRATEGY_DEVELOPED_EVENT;
   process_event(&e);
 }
 
 void goToViaPoint1() {
-  go_to_destination_with_jewels(&targetViaPoint1);
+  vec3d v;
+  if (check_all_conflict(&loc,&targetViaPoint1,&targetJewelLoc)) {
+printf("GAHA:CONFLICT2\n");
+    v3sub(&targetJewelLoc,&loc,&v);
+    v3simpleRotateY(&v,45);
+    v3add(&v,&loc,&v);
+    go_to_destination_with_jewels(&v);
+  } else {
+    go_to_destination_with_jewels(&targetViaPoint1);
+  }
 }
 
 void getOnElevator() {
@@ -222,9 +237,9 @@ void end() {
 void move() {
 //printf("GAHA: mode=%d\n",mode);
   switch(mode) {
-  case DETERMINE_TARGET_JEWEL: determineTargetJewel(); break;
+  case DEVELOP_STRATEGY1: developStrategy1(); break;
   case GO_TO_TARGET_JEWEL: goToTargetJewel(); break;
-  case DETERMINE_WHITCH_VIA_POINT: determineWitchViaPoint(); break;
+  case DEVELOP_STRATEGY2: developStrategy2(); break;
   case GO_TO_VIA_POINT: goToViaPoint1(); break;
   case GET_ON_ELEVATOR: getOnElevator(); break;
   case WAIT_UNTIL_TOP: waitUntilTop(); break;

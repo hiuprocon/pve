@@ -23,6 +23,7 @@ double v3lengthSquared(const vec3d *v);
 void v3normalize(vec3d *v);
 void v3rotate(vec3d *v,const vec3d *rot);
 void v3simpleRotateY(vec3d *v,double ry);
+int v3equals(const vec3d *u,const vec3d *v);
 int v3epsilonEquals(const vec3d *u,const vec3d *v,double eps);
 
 void printVec3d(const vec3d *v);

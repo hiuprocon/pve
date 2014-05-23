@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <sys/param.h>
 #include <sys/uio.h>
 #include <unistd.h>
@@ -46,6 +47,7 @@ int init_my_socket(int port)
     }
 
     recieve_buf = (char*)malloc(sizeof(char)*MSG_BUF_LEN);
+    return 0;
 }
 
 /* Send a one-line message, and receive a one-line message. */

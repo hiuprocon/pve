@@ -131,7 +131,17 @@ void Sample2::move() {
 // The following methods implement processes for each mode.
 
 void Sample2::goToWaitingPoint() {
-    goToDestination(waitingPoint);
+    Vec3d dummy = Vec3d(10000,0,0);
+    if (checkAllConflict(loc,waitingPoint,dummy)) {
+cout << "GAHA: CONFLICT" << endl;
+        Vec3d v = Vec3d(waitingPoint);
+        v = v - loc;
+        v = v.simpleRotateY(45);
+        v = v + loc;
+        goToDestination(v);
+    } else {
+        goToDestination(waitingPoint);
+    }
 }
 
 void Sample2::waitUntilMessage() {
