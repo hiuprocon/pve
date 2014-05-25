@@ -254,7 +254,7 @@ System.out.println("GAHA:CONFLICT2");
             v.sub(loc);
             v = Vector.simpleRotateY(45,v);
             v.add(loc);
-            goToDestination(v);
+            goToDestinationWithJewel(v);
         } else {
             goToDestinationWithJewel(targetViaPoint1);
         }

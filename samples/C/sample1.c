@@ -197,7 +197,7 @@ void goToViaPoint1() {
   vec3d v;
   if (check_all_conflict(&loc,&targetViaPoint1,&targetJewelLoc)) {
 printf("GAHA:CONFLICT2\n");
-    v3sub(&targetJewelLoc,&loc,&v);
+    v3sub(&targetViaPoint1,&loc,&v);
     v3simpleRotateY(&v,45);
     v3add(&v,&loc,&v);
     go_to_destination_with_jewels(&v);

@@ -280,7 +280,7 @@ void Sample1::goToViaPoint1() {
         v = v - loc;
         v.simpleRotateY(45);
         v = v + loc;
-        goToDestination(v);
+        goToDestinationWithJewel(v);
     } else {
         goToDestinationWithJewel(targetViaPoint1);
     }
