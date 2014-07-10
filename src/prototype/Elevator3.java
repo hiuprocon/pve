@@ -101,12 +101,13 @@ public class Elevator3 extends PVEObject implements CollisionListener {
     public void collided(PVEPart a, PVEPart b) {
         PVEObject aa = a.getObject();
         PVEObject bb = b.getObject();
+        Vector3d myLoc = getLoc();
         ArrayList<Jewel> alTmp = holder.getJewelsCopy();
         int jewelsCount=0;
         for (Jewel j:alTmp) {
             Vector3d jLoc = j.getLoc();
-            if (jLoc.x<5.0 && jLoc.x>-5.0)
-                if (jLoc.z<5.0 && jLoc.z>-5.0)
+            if (Math.abs(myLoc.x - jLoc.x)<5.0)
+                if (Math.abs(myLoc.z - jLoc.z)<5.0)
                     jewelsCount++;
         }
         if ((a == switch1 || a == switch2) && (bb instanceof CarInterface) && (jewelsCount<=5))
