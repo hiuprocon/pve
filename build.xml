@@ -209,8 +209,11 @@
         <copy todir="package/Challenge2014/samples/">
             <fileset dir="samples">
                 <include name="**"/>
-                <exclude name="README.txt"/>
-                <exclude name="list.txt"/>
+            </fileset>
+        </copy>
+        <copy todir="package/Challenge2014/samples2/">
+            <fileset dir="samples2">
+                <include name="**"/>
             </fileset>
         </copy>
         <copy file="dist/pve-api.jar" todir="package/Challenge2014/lib/"/>

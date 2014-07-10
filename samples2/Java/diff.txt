@@ -1,0 +1,306 @@
+diff -r samples/Java/JewelSet.java samples2/Java/JewelSet.java
+69a70,71
+>             if (v.x * jv.x < 0.0)
+>                 continue;
+diff -r samples/Java/Sample1.java samples2/Java/Sample1.java
+51a52
+>     String lastMessage;
+66a68
+>         lastMessage = "dummy";
+158,159c160,161
+<            s = socket.send("sendMessage pushSwitch");
+< System.out.println("Sample1:sendMessage(pushSwitch):"+s);
+---
+>            s = socket.send("sendMessage READY");
+> System.out.println("Sample1:sendMessage(READY):"+s);
+168c170,173
+<             mode = S1Mode.BACK_TO_ELEVATOR_TOP;
+---
+>             //mode = S1Mode.BACK_TO_ELEVATOR_TOP;
+>             mode = S1Mode.GO_TO_VIA_POINT2;
+>             s = socket.send("sendMessage GOAL");
+> System.out.println("Sample1:sendMessage(GOAL):"+s);
+184,185c189,190
+<             String message = ((MessageEvent)e).message;
+<             System.out.println("Sample1: Message received?: "+message);
+---
+>             lastMessage = ((MessageEvent)e).message;
+>             System.out.println("Sample1: Message received: "+lastMessage);
+264c269,272
+<         goToDestinationWithJewel(elevatorBottom);
+---
+>         if (lastMessage.equals("READY"))
+>             goToDestinationWithJewel(elevatorBottom);
+>         else
+>             stopCar();
+diff -r samples/Java/Sample2.java samples2/Java/Sample2.java
+6,7c6,11
+<     GO_TO_WAITING_POINT,
+<     WAIT_UNTIL_MESSAGE,
+---
+>     DEVELOP_STRATEGY1,
+>     GO_TO_TARGET_JEWEL,
+>     DEVELOP_STRATEGY2,
+>     GO_TO_VIA_POINT,
+>     GET_ON_ELEVATOR,
+>     BACK_TO_VIA_POINT2,
+9c13,14
+<     BACK_TO_WAITING_POINT
+---
+>     GO_TO_VIA_POINT3,
+>     END
+17c22
+< class ArrivalWaitingPointEvent extends Event {}
+---
+> class ArrivalViaPoint3Event extends Event {}
+22,24c27,29
+<  * simulation environment. This car operates the elevator
+<  * on demand of the red car. Basic functions are implemented
+<  * in the SampleBase class which is extended by this Sample2 class.
+---
+>  * simulation environment. This car carries all jewels.
+>  * Basic functions are implemented in the SampleBase class
+>  * which is extended by this Sample2 class.
+27,28c32,34
+<     // Location of waiting point.
+<     static final Vector waitingPoint = new Vector(0,0,30);
+---
+>     //For convenience, this car goes by way of via points.
+>     static final Vector viaPointA = new Vector( 30,0, 62.5);
+>     static final Vector viaPointB = new Vector(-30,0, 62.5);
+30c36
+<     // The mode of this car
+---
+>     // The mode of this car.
+31a38,44
+>     // The following variables are targets.
+>     String targetJewel;
+>     Vector targetJewelLoc;
+>     Vector targetViaPoint1;
+>     Vector targetViaPoint2;
+>     Vector targetViaPoint3;
+>     String lastMessage;
+40c53,59
+<         mode = S2Mode.GO_TO_WAITING_POINT;
+---
+>         mode = S2Mode.DEVELOP_STRATEGY1;
+>         targetJewel = null;
+>         targetJewelLoc = null;
+>         targetViaPoint1 = null;
+>         targetViaPoint2 = null;
+>         targetViaPoint3 = null;
+>         lastMessage = "dummy";
+50c69
+<     protected void stateCheck() { 
+---
+>     protected void stateCheck() {
+54,55c73,100
+<         // car has arrived at the waiting point?
+<         tmpV.sub(waitingPoint,loc);
+---
+>         // the car holds the jewel?
+>         if (targetJewel!=null)
+>             targetJewelLoc = jewelSet.get(targetJewel);
+>         if (targetJewelLoc!=null) {
+>             boolean hold = true;
+>             tmpV.sub(targetJewelLoc,loc);
+>             if (tmpV.length()>2.0) {
+>                 hold = false;
+>             } else {
+>                 tmpV.normalize();
+>                 if (tmpV.dot(front)<0.6)
+>                     hold = false;
+>             }
+>             if (hold==true)
+>                 processEvent(new HoldingJewelEvent());
+>             else
+>                 processEvent(new NotHoldingJewelEvent());
+>         }
+> 
+>         // car has arrived at the via point?
+>         if (targetViaPoint1!=null) {
+>             tmpV.sub(targetViaPoint1,loc);
+>             if (tmpV.length()<2.0)
+>                 processEvent(new ArrivalViaPoint1Event());
+>         }
+> 
+>         // car has arrived at the elevator bottom?
+>         tmpV.sub(elevatorBottom,loc);
+57c102,109
+<             processEvent(new ArrivalWaitingPointEvent());
+---
+>             processEvent(new ArrivalElevatorBottomEvent());
+> 
+>         // car has arrived at the via point2?
+>         if (targetViaPoint2!=null) {
+>             tmpV.sub(targetViaPoint2,loc);
+>             if (tmpV.length()<2.0)
+>                 processEvent(new ArrivalViaPoint2Event());
+>         }
+62a115,121
+> 
+>         // car has arrived at the via point3?
+>         if (targetViaPoint3!=null) {
+>             tmpV.sub(targetViaPoint3,loc);
+>             if (tmpV.length()<2.0)
+>                 processEvent(new ArrivalViaPoint3Event());
+>         }
+73,75c132,158
+<         if ((mode==S2Mode.GO_TO_WAITING_POINT)
+<           &&(e instanceof ArrivalWaitingPointEvent)) {
+<             mode = S2Mode.WAIT_UNTIL_MESSAGE;
+---
+>         String s;
+>         if ((mode==S2Mode.DEVELOP_STRATEGY1)
+>           &&(e instanceof StrategyDevelopedEvent)) {
+>             mode = S2Mode.GO_TO_TARGET_JEWEL;
+>         } else if ((mode==S2Mode.GO_TO_TARGET_JEWEL)
+>                  &&(e instanceof HoldingJewelEvent)) {
+>             mode = S2Mode.DEVELOP_STRATEGY2;
+>         } else if ((mode==S2Mode.DEVELOP_STRATEGY2)
+>                  &&(e instanceof StrategyDevelopedEvent)) {
+>             mode = S2Mode.GO_TO_VIA_POINT;
+>         } else if ((mode==S2Mode.GO_TO_VIA_POINT)
+>                 &&(e instanceof ArrivalViaPoint1Event)) {
+>            mode = S2Mode.GET_ON_ELEVATOR;
+>         } else if ((mode==S2Mode.GO_TO_VIA_POINT)
+>                 &&(e instanceof NotHoldingJewelEvent)) {
+>            mode = S2Mode.DEVELOP_STRATEGY1;
+>         } else if ((mode==S2Mode.GET_ON_ELEVATOR)
+>                 &&(e instanceof ArrivalElevatorBottomEvent)) {
+>            mode = S2Mode.BACK_TO_VIA_POINT2;
+>            s = socket.send("sendMessage READY");
+> System.out.println("Sample2:sendMessage(READY):"+s);
+>         } else if ((mode==S2Mode.GET_ON_ELEVATOR)
+>                 &&(e instanceof NotHoldingJewelEvent)) {
+>            mode = S2Mode.DEVELOP_STRATEGY1;
+>         } else if ((mode==S2Mode.BACK_TO_VIA_POINT2)
+>                  &&(e instanceof ArrivalViaPoint2Event)) {
+>            mode = S2Mode.GO_TO_SWITCH;
+77,90c160,169
+<           &&(e instanceof ArrivalSwitchEvent)) {
+<             mode = S2Mode.WAIT_UNTIL_MESSAGE;
+<         } else if ((mode==S2Mode.WAIT_UNTIL_MESSAGE)
+<                  &&(e instanceof MessageEvent)) {
+<             String message = ((MessageEvent)e).message;
+< System.out.println("Sample2:reciveMessage: "+message);
+<             if (message.equals("wait")) {
+<                 mode = S2Mode.BACK_TO_WAITING_POINT;
+<             } else if (message.equals("pushSwitch")) {
+<                 mode = S2Mode.GO_TO_SWITCH;
+<             }
+<         } else if ((mode==S2Mode.BACK_TO_WAITING_POINT)
+<                  &&(e instanceof ArrivalWaitingPointEvent)) {
+<             mode = S2Mode.WAIT_UNTIL_MESSAGE;
+---
+>                  &&(e instanceof ArrivalSwitchEvent)) {
+>            mode = S2Mode.GO_TO_VIA_POINT3;
+>            s = socket.send("sendMessage NOT_READY");
+> System.out.println("Sample2:sendMessage(NOT_READY):"+s);
+>         } else if ((mode==S2Mode.GO_TO_VIA_POINT3)
+>                  &&(e instanceof ArrivalViaPoint3Event)) {
+>            mode = S2Mode.DEVELOP_STRATEGY1;
+>         } else if ((true)&&(e instanceof MessageEvent)) {
+>            lastMessage = ((MessageEvent)e).message;
+>            System.out.println("Sample2: Message received: "+lastMessage);
+103,104c182,187
+<         case GO_TO_WAITING_POINT: goToWaitingPoint(); break;
+<         case WAIT_UNTIL_MESSAGE: waitUntilMessage(); break;
+---
+>         case DEVELOP_STRATEGY1: developStrategy1(); break;
+>         case GO_TO_TARGET_JEWEL: goToTargetJewel(); break;
+>         case DEVELOP_STRATEGY2: developStrategy2(); break;
+>         case GO_TO_VIA_POINT: goToViaPoint1(); break;
+>         case GET_ON_ELEVATOR: getOnElevator(); break;
+>         case BACK_TO_VIA_POINT2: backToViaPoint2(); break;
+106c189,190
+<         case BACK_TO_WAITING_POINT: backToWaitingPoint(); break;
+---
+>         case GO_TO_VIA_POINT3: goToViaPoint3(); break;
+>         case END: end(); break;
+113,116c197,235
+<     void goToWaitingPoint() {
+<         if (checkAllConflict(loc,waitingPoint,null)) {
+< System.out.println("GAHA:CONFLICT");
+<             Vector v = new Vector(waitingPoint);
+---
+>     void developStrategy1() {
+>         targetJewel = jewelSet.getNearest(loc);
+>         targetJewelLoc = jewelSet.get(targetJewel);
+>         //if (targetJewelLoc!=null)...
+>         processEvent(new StrategyDevelopedEvent());
+>     }
+> 
+>     void goToTargetJewel() {
+>         if (targetJewelLoc!=null) {
+>             if (checkAllConflict(loc,targetJewelLoc,null)) {
+> System.out.println("GAHA:CONFLICT1");
+>                 Vector v = new Vector(targetJewelLoc);
+>                 v.sub(loc);
+>                 v = Vector.simpleRotateY(45,v);
+>                 v.add(loc);
+>                 goToDestination(v);
+>             } else {
+>                 goToDestination(targetJewelLoc);
+>             }
+>         }
+>     }
+> 
+>     void developStrategy2() {
+>         if (loc.x>0.0) {
+>             targetViaPoint1 = viaPointA;
+>             targetViaPoint2 = viaPointA;
+>             targetViaPoint3 = viaPointB;
+>         } else {
+>             targetViaPoint1 = viaPointB;
+>             targetViaPoint2 = viaPointB;
+>             targetViaPoint3 = viaPointA;
+>         }
+>         processEvent(new StrategyDevelopedEvent());
+>     }
+> 
+>     void goToViaPoint1() {
+>         if (checkAllConflict(loc,targetViaPoint1,targetJewelLoc)) {
+> System.out.println("GAHA:CONFLICT2");
+>             Vector v = new Vector(targetViaPoint1);
+120c239
+<             goToDestination(v);
+---
+>             goToDestinationWithJewel(v);
+122c241
+<             goToDestination(waitingPoint);
+---
+>             goToDestinationWithJewel(targetViaPoint1);
+125,126c244,250
+<     void waitUntilMessage() {
+<         stopCar();
+---
+> 
+>     void getOnElevator() {
+>         goToDestinationWithJewel(elevatorBottom);
+>     }
+> 
+>     void backToViaPoint2() {
+>         backToDestination(targetViaPoint2);
+127a252
+> 
+129c254,257
+<         goToDestination(switch1);
+---
+>         if (lastMessage.equals("READY"))
+>             goToDestination(switch1);
+>         else
+>             stopCar();
+132,133c260,268
+<     void backToWaitingPoint() {
+<         backToDestination(waitingPoint);
+---
+>     void goToViaPoint3() {
+>         if (lastMessage.equals("GOAL"))
+>             goToDestination(targetViaPoint3);
+>         else
+>             stopCar();
+>     }
+> 
+>     void end() {
+>         stopCar();
