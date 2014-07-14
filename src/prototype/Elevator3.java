@@ -102,23 +102,23 @@ public class Elevator3 extends PVEObject implements CollisionListener {
         PVEObject aa = a.getObject();
         PVEObject bb = b.getObject();
         Vector3d myLoc = getLoc();
-        ArrayList<Jewel> alTmp = holder.getJewelsCopy();
-        int jewelsCount=0;
-        for (Jewel j:alTmp) {
+        ArrayList<Burden> alTmp = holder.getBurdensCopy();
+        int burdensCount=0;
+        for (Burden j:alTmp) {
             Vector3d jLoc = j.getLoc();
             if (Math.abs(myLoc.x - jLoc.x)<5.0)
                 if (Math.abs(myLoc.z - jLoc.z)<5.0)
-                    jewelsCount++;
+                    burdensCount++;
         }
-        if ((a == switch1 || a == switch2) && (bb instanceof CarInterface) && (jewelsCount<=5))
+        if ((a == switch1 || a == switch2) && (bb instanceof CarInterface) && (burdensCount<=5))
             setUp();
-        if ((aa instanceof CarInterface) && (b == switch1 || b == switch2) && (jewelsCount<=5))
+        if ((aa instanceof CarInterface) && (b == switch1 || b == switch2) && (burdensCount<=5))
             setUp();
-        if ((a == goal1 || a == goal2) && bb instanceof Jewel) {
-            holder.processGoal((Jewel)bb);
+        if ((a == goal1 || a == goal2) && bb instanceof Burden) {
+            holder.processGoal((Burden)bb);
         }
-        if (aa instanceof Jewel && (b == goal1 || b == goal2)) {
-            holder.processGoal((Jewel)aa);
+        if (aa instanceof Burden && (b == goal1 || b == goal2)) {
+            holder.processGoal((Burden)aa);
         }
     }
     double getHeight() {

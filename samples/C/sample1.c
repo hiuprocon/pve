@@ -6,7 +6,7 @@
 
 /* Mode CONST */
 #define DEVELOP_STRATEGY1 101
-#define GO_TO_TARGET_JEWEL 102
+#define GO_TO_TARGET_BURDEN 102
 #define DEVELOP_STRATEGY2 103
 #define GO_TO_VIA_POINT 104
 #define GET_ON_ELEVATOR 105
@@ -19,8 +19,8 @@
 
 /* Event CONST */
 const int STRATEGY_DEVELOPED_EVENT = 101;
-const int HOLDING_JEWEL_EVENT = 102;
-const int NOT_HOLDING_JEWEL_EVENT = 103;
+const int HOLDING_BURDEN_EVENT = 102;
+const int NOT_HOLDING_BURDEN_EVENT = 103;
 const int ARRIVAL_VIA_POINT1_EVENT = 104;
 const int ARRIVAL_ELEVATOR_BOTTOM_EVENT = 105;
 const int ARRIVAL_ELEVATOR_TOP_EVENT = 106;
@@ -35,8 +35,8 @@ const vec3d viaPointB = {-30,0,62.5};
 int mode = DEVELOP_STRATEGY1;
 
 /* The following variables are targets. */
-char targetJewel[10];
-vec3d targetJewelLoc;
+char targetBurden[10];
+vec3d targetBurdenLoc;
 vec3d targetViaPoint1;
 vec3d targetViaPoint2;
 vec3d targetGoal;
@@ -47,13 +47,13 @@ void make_events() {
   int hold, isError;
   make_events_basic();
 
-  // the car holds the jewel?
-  isError = get_jewel_loc(targetJewel,&targetJewelLoc);
+  // the car holds the burden?
+  isError = get_burden_loc(targetBurden,&targetBurdenLoc);
   hold = 1;
   if (isError==ERROR) {
     hold = 0;
   } else {
-    v3sub(&targetJewelLoc,&loc,&tmpV);
+    v3sub(&targetBurdenLoc,&loc,&tmpV);
     if (v3length(&tmpV)>2.0) {
       hold = 0;
     } else {
@@ -63,10 +63,10 @@ void make_events() {
     }
   }
   if (hold==1) {
-    e.id = HOLDING_JEWEL_EVENT;
+    e.id = HOLDING_BURDEN_EVENT;
     process_event(&e);
   } else {
-    e.id = NOT_HOLDING_JEWEL_EVENT;
+    e.id = NOT_HOLDING_BURDEN_EVENT;
     process_event(&e);
   }
 
@@ -110,9 +110,9 @@ void process_event(struct event *e) {
   char *s;
   if ((mode==DEVELOP_STRATEGY1)
     &&(e->id==STRATEGY_DEVELOPED_EVENT)) {
-    mode = GO_TO_TARGET_JEWEL;
-  } else if ((mode==GO_TO_TARGET_JEWEL)
-           &&(e->id == HOLDING_JEWEL_EVENT)) {
+    mode = GO_TO_TARGET_BURDEN;
+  } else if ((mode==GO_TO_TARGET_BURDEN)
+           &&(e->id == HOLDING_BURDEN_EVENT)) {
     mode = DEVELOP_STRATEGY2;
   } else if ((mode==DEVELOP_STRATEGY2)
            &&(e->id == STRATEGY_DEVELOPED_EVENT)) {
@@ -121,7 +121,7 @@ void process_event(struct event *e) {
            &&(e->id==ARRIVAL_VIA_POINT1_EVENT)) {
     mode = GET_ON_ELEVATOR;
   } else if ((mode==GO_TO_VIA_POINT)
-           &&(e->id==NOT_HOLDING_JEWEL_EVENT)) {
+           &&(e->id==NOT_HOLDING_BURDEN_EVENT)) {
     mode = DEVELOP_STRATEGY1;
   } else if ((mode==GET_ON_ELEVATOR)
            &&(e->id==ARRIVAL_ELEVATOR_BOTTOM_EVENT)) {
@@ -129,7 +129,7 @@ void process_event(struct event *e) {
     s = my_send("sendMessage pushSwitch");
 printf("Sample1:sendMessage(pushSwitch):%s\n",s);
   } else if ((mode==GET_ON_ELEVATOR)
-           &&(e->id==NOT_HOLDING_JEWEL_EVENT)) {
+           &&(e->id==NOT_HOLDING_BURDEN_EVENT)) {
     mode = DEVELOP_STRATEGY1;
   } else if ((mode==WAIT_UNTIL_TOP)
            &&(e->id==ARRIVAL_ELEVATOR_TOP_EVENT)) {
@@ -160,21 +160,21 @@ printf("Sample1: Message received?: %s\n",e->message);
 
 void developStrategy1() {
   struct event e;
-  get_nearest_jewel(&loc,targetJewel,&targetJewelLoc);
+  get_nearest_burden(&loc,targetBurden,&targetBurdenLoc);
   e.id=STRATEGY_DEVELOPED_EVENT;
   process_event(&e);
 }
 
-void goToTargetJewel() {
+void goToTargetBurden() {
   vec3d v;
-  if (check_all_conflict(&loc,&targetJewelLoc,NULL)) {
+  if (check_all_conflict(&loc,&targetBurdenLoc,NULL)) {
 printf("GAHA:CONFLICT1\n");
-    v3sub(&targetJewelLoc,&loc,&v);
+    v3sub(&targetBurdenLoc,&loc,&v);
     v3simpleRotateY(&v,45);
     v3add(&v,&loc,&v);
     go_to_destination(&v);
   } else {
-    go_to_destination(&targetJewelLoc);
+    go_to_destination(&targetBurdenLoc);
   }
 }
 
@@ -195,19 +195,19 @@ void developStrategy2() {
 
 void goToViaPoint1() {
   vec3d v;
-  if (check_all_conflict(&loc,&targetViaPoint1,&targetJewelLoc)) {
+  if (check_all_conflict(&loc,&targetViaPoint1,&targetBurdenLoc)) {
 printf("GAHA:CONFLICT2\n");
     v3sub(&targetViaPoint1,&loc,&v);
     v3simpleRotateY(&v,45);
     v3add(&v,&loc,&v);
-    go_to_destination_with_jewels(&v);
+    go_to_destination_with_burdens(&v);
   } else {
-    go_to_destination_with_jewels(&targetViaPoint1);
+    go_to_destination_with_burdens(&targetViaPoint1);
   }
 }
 
 void getOnElevator() {
-  go_to_destination_with_jewels(&elevatorBottom);
+  go_to_destination_with_burdens(&elevatorBottom);
 }
 
 void waitUntilTop() {
@@ -215,7 +215,7 @@ void waitUntilTop() {
 }
 
 void goToGoal() {
-  go_to_destination_with_jewels(&targetGoal);
+  go_to_destination_with_burdens(&targetGoal);
 }
 
 void backToElevatorTop() {
@@ -238,7 +238,7 @@ void move() {
 //printf("GAHA: mode=%d\n",mode);
   switch(mode) {
   case DEVELOP_STRATEGY1: developStrategy1(); break;
-  case GO_TO_TARGET_JEWEL: goToTargetJewel(); break;
+  case GO_TO_TARGET_BURDEN: goToTargetBurden(); break;
   case DEVELOP_STRATEGY2: developStrategy2(); break;
   case GO_TO_VIA_POINT: goToViaPoint1(); break;
   case GET_ON_ELEVATOR: getOnElevator(); break;

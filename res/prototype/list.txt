@@ -2,7 +2,7 @@ http://hiu.ks1.org/pve/res/prototype/Goal.wrl
 http://hiu.ks1.org/pve/res/prototype/Ground.wrl
 http://hiu.ks1.org/pve/res/prototype/Ground2.wrl
 http://hiu.ks1.org/pve/res/prototype/Jewel.wrl
-http://hiu.ks1.org/pve/res/prototype/JewelField.wrl
+http://hiu.ks1.org/pve/res/prototype/BurdenField.wrl
 http://hiu.ks1.org/pve/res/prototype/PCGrid.a3
 http://hiu.ks1.org/pve/res/prototype/Switch.wrl
 http://hiu.ks1.org/pve/res/prototype/WireBox.wrl

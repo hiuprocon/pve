@@ -47,7 +47,7 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
     Action3D blueViewI;
     VRML defaultViewI;
     VRML resetWorldI;
-    Action3D[] jewelsI = new Action3D[20];
+    Action3D[] burdensI = new Action3D[20];
 
     public Simulator3GUI(Simulator3 simulator) {
         super("Simulator3");
@@ -185,21 +185,21 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
                 canvas.addLockedA3(defaultViewI);
                 canvas.addLockedA3(resetWorldI);
                 for (int i=0;i<10;i++) {
-                    jewelsI[i] = new Action3D("x-res:///res/prototype/box.a3");
-                    jewelsI[i].setScale(0.1);
-                    jewelsI[i].setLoc(i/30.0-0.166,0.31,-1.0);
-                    canvas.addLockedA3(jewelsI[i]);
+                    burdensI[i] = new Action3D("x-res:///res/prototype/box.a3");
+                    burdensI[i].setScale(0.1);
+                    burdensI[i].setLoc(i/30.0-0.166,0.31,-1.0);
+                    canvas.addLockedA3(burdensI[i]);
                 }
                 for (int i=10;i<20;i++) {
-                    jewelsI[i] = new Action3D("x-res:///res/prototype/box.a3");
-                    jewelsI[i].setScale(0.1);
-                    jewelsI[i].setLoc((i-10)/30.0-0.166,0.29,-1.0);
-                    canvas.addLockedA3(jewelsI[i]);
+                    burdensI[i] = new Action3D("x-res:///res/prototype/box.a3");
+                    burdensI[i].setScale(0.1);
+                    burdensI[i].setLoc((i-10)/30.0-0.166,0.29,-1.0);
+                    canvas.addLockedA3(burdensI[i]);
                 }
             }
             timerI.setLabel("time: 0.0");
             for (int i=0;i<20;i++) {
-                jewelsI[i].change("haltWhite");
+                burdensI[i].change("haltWhite");
             }
         } catch(Exception e) {
             e.printStackTrace();
@@ -244,11 +244,11 @@ public class Simulator3GUI extends JFrame implements ActionListener, ChangeListe
         canvas.setNavigationMode(A3CanvasInterface.NaviMode.CHASE, lookAt, camera,
                 up, 10.0);
     }
-    void goal(Jewel j) {
+    void goal(Burden j) {
         String s = (String)j.getUserData();
         int i = s.startsWith("jA1.")?0:10;
         i += Integer.parseInt(s.substring(4));
-        this.jewelsI[i].change("vertigoRed");
+        this.burdensI[i].change("vertigoRed");
     }
 
     public void setCar1(CarInterface c) {

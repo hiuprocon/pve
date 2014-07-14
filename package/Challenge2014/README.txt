@@ -3,9 +3,10 @@
 This package consists of a simulation environment and its samples.
 
 This computer simulation environment is used for International
-Programming Contest.  Samples are A) Server/Client sample and
-B) simple client implementation and its usage example
-C) a complete sample program to clear the game. There is a brief
+Programming Contest.  The simulator can be executed using files
+named Server.* . Samples are A) a keyboard controllable client
+B) a complete sample program to clear the game, and C) an advanced
+sample program to check a method for extension. There is a brief
 description of these samples a bit later.
 
 This simulation environment and samples work on Windows (32bit, 64bit),
@@ -22,27 +23,29 @@ NOTICE:
 2. Rules of the Challenge
 
 * Participants develop programs for simulated cars
-  which bring jewels to the goals by collecting all of them 
+  which bring burdens to the goals by collecting all of them 
   which scattered in a virtual environment.
+  Burdens displayed in windows of the simulator look like
+  some creature.
 * There are two cars in the virtual environment. And
   two cars must cooperate to clear the challenge.
 * The winner is determined by time to clear the challenge.
-* Jewels are placed by random number. So simulations are
+* Burdens are placed by random number. So simulations are
   executed at 10 times, and the average time is used to
   determine the winner.
 * The time limit of the challenge is 5,000 sec.
   If the program could not complete the challenge in time limit,
   5,000 sec is used to calculate the average time.
-* To bring jewels to the goals, cars have to use the elevator.
-  The elevator can carry 5 jewels. But 6 or more jewels can
+* To bring burdens to the goals, cars have to use the elevator.
+  The elevator can carry 5 burden. But 6 or more burdens can
   not be carried at one time.
 
-3. A) Server/Client sample program
+3. A) a keyboard controllable client
 
 3.1 What does this sample do?
 
 We propose a challenge as the subject for our programming contest
-(both international and local), which is to bring jewels to the goal by
+(both international and local), which is to bring burdens to the goal by
 collecting all of them which scattered in a playing field by
 manipulating multiple cars.
 
@@ -53,7 +56,7 @@ This server program provides a playing field.
 
 
 Client program runs two clients. These are for controlling a red-colored
-car and a blued-colored car which carries jewels to the gols.
+car and a blued-colored car which carries burdens to the gols.
 
 
 Each client connects to the server via an internet socket interface.
@@ -79,21 +82,9 @@ to the server and the result which the server returns will be shown on
 the window.
 
 
-4. B) Simple sample of client implementation and its usage example
+4. B) a complete sample program to clear the game
 
-In the samples/Java/simple folder, we provide a simple socket communication
-sample.
-
-MySocket is a simple client for one-line text messaging.
-ControlCarTest sends "getLoc" "drive" and "stepForward" commands
-using MySocket class.
-
-To execute this sample, At first, run the server. Then check
-"only one car" button. Finally, run CoontrolCarTest class.
-
-5. C) a complete sample program to clear the game
-
-In the samples/Java/complete folder, we provide a complete sample program
+In the samples/* folder, we provide a complete sample program
 to clear the game.
 
 This sample program is separated to many classes. Executable classes
@@ -103,6 +94,16 @@ in comments in SampleBase.java.
 
 To execute this sample, At first, run the server. Then run Sample1
 and Sample2.
+
+5. C) an advanced sample program to check a method for extension
+
+In the samples2/* folder, we provide an advanced sample program
+to check a method for extension
+
+To briefly check the difference between B) sample and C) sample,
+view state machine diagrams in each UML folders.
+
+A method for executing C) sample is same as B) sample.
 
 6. Communcations protocol
 
@@ -116,11 +117,13 @@ Available commands are as follows:
     * drive - controlling a car
     * getLoc - getting its location
     * getRev - getting its rotaion angle
-    * seachJewels - getting jewels informations
+    * seachBurdens - getting burdens informations
     * stepForward - steping the simulation process forward
     * sendMessage - sending a message to another car
     * receiveMessages - receiving all messages in own mailbox
     * setWaitTime - controling simulation speed
+    * getElevator1Height - get the height of the elevator1
+    * getElevator2Height - get the height of the elevator2
 Please refer to the next section for more details of those commands.
 
 All commands are case-sensitive. When you send a wrong command (for
@@ -182,24 +185,24 @@ Example:
     Request: getRev
     Response: -1.4273451865348383 90.01178963772256 -0.0056981111728151
 
-6.4 Obtaining the locations of all jewels in the playing field
+6.4 Obtaining the locations of all burdens in the playing field
 
-Request: searchJewels
+Request: searchBurdens
 Response: n id_1 x_1 y_1 z_1 id_2 x_2 y_2 z_2 ...
 
     Request has no parameters.
     Response Parameters:
-        n - the number of jewels
-        id_1 - id of the jewel #1
-        x_1 - the x-coordinate of the jewel #1
-        y_1 - the y-coordinate of the jewel #1
-        z_1 - the z-coordinate of the jewel #1
-        id_2 - id of the jewel #2
-        x_2 - the x-coordinate of the jewel #2
-        y_2 - the y-coordinate of the jewel #2
-        z_2 - the z-coordinate of the jewel #2
+        n - the number of burdens
+        id_1 - id of the burden #1
+        x_1 - the x-coordinate of the burden #1
+        y_1 - the y-coordinate of the burden #1
+        z_1 - the z-coordinate of the burden #1
+        id_2 - id of the burden #2
+        x_2 - the x-coordinate of the burden #2
+        y_2 - the y-coordinate of the burden #2
+        z_2 - the z-coordinate of the burden #2
         ...
-    This response returns the location of all jewels. So, we get 40
+    This response returns the location of all burdens. So, we get 40
     items with a single-line in the problem setting we provided in
     this package! The example of the response is below (it's a
     single-line).
@@ -273,3 +276,18 @@ Example:
     Request: setWaitTime 0
     Response: OK
 
+6.9 Get the height of the elevator
+
+There are tow elevators in the play field. And you get the height
+of these elevators by following command
+
+Request: getElevator1Height or getElevator2Height
+Response: a real number
+
+    Request has no parameters.
+    "getElevator1Height" returns the height of elevator1
+    "getElevator2Height" returns the height of elevator2
+
+Example:
+    Request: getElevator1Height
+    Response: 0.0

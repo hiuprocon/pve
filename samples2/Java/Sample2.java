@@ -4,7 +4,7 @@
  */
 enum S2Mode {
     DEVELOP_STRATEGY1,
-    GO_TO_TARGET_JEWEL,
+    GO_TO_TARGET_BURDEN,
     DEVELOP_STRATEGY2,
     GO_TO_VIA_POINT,
     GET_ON_ELEVATOR,
@@ -24,7 +24,7 @@ class ArrivalSwitchEvent extends Event {}
 
 /*
  * Sample2 is a program which controls the blue car in the
- * simulation environment. This car carries all jewels.
+ * simulation environment. This car carries all burdens.
  * Basic functions are implemented in the SampleBase class
  * which is extended by this Sample2 class.
  */
@@ -36,8 +36,8 @@ public class Sample2 extends SampleBase {
     // The mode of this car.
     S2Mode mode;
     // The following variables are targets.
-    String targetJewel;
-    Vector targetJewelLoc;
+    String targetBurden;
+    Vector targetBurdenLoc;
     Vector targetViaPoint1;
     Vector targetViaPoint2;
     Vector targetViaPoint3;
@@ -51,8 +51,8 @@ public class Sample2 extends SampleBase {
     public Sample2() {
         super(20000);
         mode = S2Mode.DEVELOP_STRATEGY1;
-        targetJewel = null;
-        targetJewelLoc = null;
+        targetBurden = null;
+        targetBurdenLoc = null;
         targetViaPoint1 = null;
         targetViaPoint2 = null;
         targetViaPoint3 = null;
@@ -70,12 +70,12 @@ public class Sample2 extends SampleBase {
         super.stateCheck();
         Vector tmpV = new Vector();
 
-        // the car holds the jewel?
-        if (targetJewel!=null)
-            targetJewelLoc = jewelSet.get(targetJewel);
-        if (targetJewelLoc!=null) {
+        // the car holds the burden?
+        if (targetBurden!=null)
+            targetBurdenLoc = burdenSet.get(targetBurden);
+        if (targetBurdenLoc!=null) {
             boolean hold = true;
-            tmpV.sub(targetJewelLoc,loc);
+            tmpV.sub(targetBurdenLoc,loc);
             if (tmpV.length()>2.0) {
                 hold = false;
             } else {
@@ -84,9 +84,9 @@ public class Sample2 extends SampleBase {
                     hold = false;
             }
             if (hold==true)
-                processEvent(new HoldingJewelEvent());
+                processEvent(new HoldingBurdenEvent());
             else
-                processEvent(new NotHoldingJewelEvent());
+                processEvent(new NotHoldingBurdenEvent());
         }
 
         // car has arrived at the via point?
@@ -132,9 +132,9 @@ public class Sample2 extends SampleBase {
         String s;
         if ((mode==S2Mode.DEVELOP_STRATEGY1)
           &&(e instanceof StrategyDevelopedEvent)) {
-            mode = S2Mode.GO_TO_TARGET_JEWEL;
-        } else if ((mode==S2Mode.GO_TO_TARGET_JEWEL)
-                 &&(e instanceof HoldingJewelEvent)) {
+            mode = S2Mode.GO_TO_TARGET_BURDEN;
+        } else if ((mode==S2Mode.GO_TO_TARGET_BURDEN)
+                 &&(e instanceof HoldingBurdenEvent)) {
             mode = S2Mode.DEVELOP_STRATEGY2;
         } else if ((mode==S2Mode.DEVELOP_STRATEGY2)
                  &&(e instanceof StrategyDevelopedEvent)) {
@@ -143,7 +143,7 @@ public class Sample2 extends SampleBase {
                 &&(e instanceof ArrivalViaPoint1Event)) {
            mode = S2Mode.GET_ON_ELEVATOR;
         } else if ((mode==S2Mode.GO_TO_VIA_POINT)
-                &&(e instanceof NotHoldingJewelEvent)) {
+                &&(e instanceof NotHoldingBurdenEvent)) {
            mode = S2Mode.DEVELOP_STRATEGY1;
         } else if ((mode==S2Mode.GET_ON_ELEVATOR)
                 &&(e instanceof ArrivalElevatorBottomEvent)) {
@@ -151,7 +151,7 @@ public class Sample2 extends SampleBase {
            s = socket.send("sendMessage READY");
 System.out.println("Sample2:sendMessage(READY):"+s);
         } else if ((mode==S2Mode.GET_ON_ELEVATOR)
-                &&(e instanceof NotHoldingJewelEvent)) {
+                &&(e instanceof NotHoldingBurdenEvent)) {
            mode = S2Mode.DEVELOP_STRATEGY1;
         } else if ((mode==S2Mode.BACK_TO_VIA_POINT2)
                  &&(e instanceof ArrivalViaPoint2Event)) {
@@ -180,7 +180,7 @@ System.out.println("Sample2:sendMessage(NOT_READY):"+s);
 //System.out.println("Sample2:mode="+mode);
         switch(mode) {
         case DEVELOP_STRATEGY1: developStrategy1(); break;
-        case GO_TO_TARGET_JEWEL: goToTargetJewel(); break;
+        case GO_TO_TARGET_BURDEN: goToTargetBurden(); break;
         case DEVELOP_STRATEGY2: developStrategy2(); break;
         case GO_TO_VIA_POINT: goToViaPoint1(); break;
         case GET_ON_ELEVATOR: getOnElevator(); break;
@@ -195,23 +195,23 @@ System.out.println("Sample2:sendMessage(NOT_READY):"+s);
     // The following methods implement processes for each mode.
 
     void developStrategy1() {
-        targetJewel = jewelSet.getNearest(loc);
-        targetJewelLoc = jewelSet.get(targetJewel);
-        //if (targetJewelLoc!=null)...
+        targetBurden = burdenSet.getNearest(loc);
+        targetBurdenLoc = burdenSet.get(targetBurden);
+        //if (targetBurdenLoc!=null)...
         processEvent(new StrategyDevelopedEvent());
     }
 
-    void goToTargetJewel() {
-        if (targetJewelLoc!=null) {
-            if (checkAllConflict(loc,targetJewelLoc,null)) {
+    void goToTargetBurden() {
+        if (targetBurdenLoc!=null) {
+            if (checkAllConflict(loc,targetBurdenLoc,null)) {
 System.out.println("GAHA:CONFLICT1");
-                Vector v = new Vector(targetJewelLoc);
+                Vector v = new Vector(targetBurdenLoc);
                 v.sub(loc);
                 v = Vector.simpleRotateY(45,v);
                 v.add(loc);
                 goToDestination(v);
             } else {
-                goToDestination(targetJewelLoc);
+                goToDestination(targetBurdenLoc);
             }
         }
     }
@@ -230,20 +230,20 @@ System.out.println("GAHA:CONFLICT1");
     }
 
     void goToViaPoint1() {
-        if (checkAllConflict(loc,targetViaPoint1,targetJewelLoc)) {
+        if (checkAllConflict(loc,targetViaPoint1,targetBurdenLoc)) {
 System.out.println("GAHA:CONFLICT2");
             Vector v = new Vector(targetViaPoint1);
             v.sub(loc);
             v = Vector.simpleRotateY(45,v);
             v.add(loc);
-            goToDestinationWithJewel(v);
+            goToDestinationWithBurden(v);
         } else {
-            goToDestinationWithJewel(targetViaPoint1);
+            goToDestinationWithBurden(targetViaPoint1);
         }
     }
 
     void getOnElevator() {
-        goToDestinationWithJewel(elevatorBottom);
+        goToDestinationWithBurden(elevatorBottom);
     }
 
     void backToViaPoint2() {

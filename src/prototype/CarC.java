@@ -99,8 +99,8 @@ public class CarC extends PVEObject implements PVEMsgListener, CarInterface {
             return msgGetLoc(line);
         else if (line.equals("getRev"))
             return msgGetRev(line);
-        else if (line.equals("searchJewels"))
-            return msgSearchJewels(line);
+        else if (line.equals("searchBurdens"))
+            return msgSearchBurdens(line);
         else if (line.equals("stepForward"))
             return msgStepForward(line);
         return "ERROR";
@@ -128,8 +128,8 @@ public class CarC extends PVEObject implements PVEMsgListener, CarInterface {
         Vector3d v = Util.rot2rev(getRot());
         return ""+v.x+" "+v.y+" "+v.z;
     }
-    String msgSearchJewels(String line) {
-        return simulator.searchJewels();
+    String msgSearchBurdens(String line) {
+        return simulator.searchBurdens();
     }
     String msgStepForward(String line) {
         simulator.stepForward();

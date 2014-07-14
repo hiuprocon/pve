@@ -37,10 +37,10 @@ vec3d left;
 vec3d oldLoc;
 /* Velocity of this car */
 vec3d vel;
-/* number of jewels */
-int jewels_count;
-/* Jewel Set */
-struct jewel jewels[20];
+/* number of burdens */
+int burdens_count;
+/* Burden Set */
+struct burden burdens[20];
 /* Location of Obstacle1 */
 vec3d obstacle1;
 /* Location of Obstacle2 */
@@ -60,13 +60,13 @@ void init_car(int port) {
   init_my_socket(port);
 }
 
-void makeJewelSet(char *data) {
+void makeBurdenSet(char *data) {
   char *numStr, *idStr, *xStr, *yStr, *zStr;
   int i, num;
   double x, y, z;
   numStr = strtok(data," ");
   num = atoi(numStr);
-  jewels_count = 0;
+  burdens_count = 0;
   for (i=0;i<num;i++) {
     idStr = strtok(NULL," ");
     xStr = strtok(NULL," ");
@@ -75,48 +75,48 @@ void makeJewelSet(char *data) {
     x = atof(xStr);
     y = atof(yStr);
     z = atof(zStr);
-    strcpy(jewels[jewels_count].id,idStr);
-    setXYZToVec3d(x,y,z,&(jewels[jewels_count].loc));
-    jewels_count++;
+    strcpy(burdens[burdens_count].id,idStr);
+    setXYZToVec3d(x,y,z,&(burdens[burdens_count].loc));
+    burdens_count++;
   }
 }
 
-int get_jewel_loc(char *id,vec3d *ret) {
+int get_burden_loc(char *id,vec3d *ret) {
   int i;
-  for (i=0;i<jewels_count;i++) {
-    if (strcmp(id,jewels[i].id)==0) {
-      ret->x = jewels[i].loc.x;
-      ret->y = jewels[i].loc.y;
-      ret->z = jewels[i].loc.z;
+  for (i=0;i<burdens_count;i++) {
+    if (strcmp(id,burdens[i].id)==0) {
+      ret->x = burdens[i].loc.x;
+      ret->y = burdens[i].loc.y;
+      ret->z = burdens[i].loc.z;
       return NO_ERROR;
     }
   }
   return ERROR;
 }
 
-int get_nearest_jewel(vec3d *pos,char *id,vec3d *ret) {
+int get_nearest_burden(vec3d *pos,char *id,vec3d *ret) {
   int i, idx;
   double len, min;
   vec3d tmpV;
 
-  if (jewels_count==0)
+  if (burdens_count==0)
     return ERROR;
 
   idx = 0;
   min = 1000000.0;
-  for (i=0;i<jewels_count;i++) {
-    v3sub(pos,&(jewels[i].loc),&tmpV);
+  for (i=0;i<burdens_count;i++) {
+    v3sub(pos,&(burdens[i].loc),&tmpV);
     len = v3length(&tmpV);
     if (min>len) {
       idx = i;
       min = len;
     }
   }
-  ret->x = jewels[idx].loc.x;
-  ret->y = jewels[idx].loc.y;
-  ret->z = jewels[idx].loc.z;
-  //id = jewels[idx].id;
-  strcpy(id,jewels[idx].id);
+  ret->x = burdens[idx].loc.x;
+  ret->y = burdens[idx].loc.y;
+  ret->z = burdens[idx].loc.z;
+  //id = burdens[idx].id;
+  strcpy(id,burdens[idx].id);
   return NO_ERROR;
 }
 
@@ -135,8 +135,8 @@ void state_check() {
   //v3simpleRotateY(&left,rot.y);
   v3sub(&loc,&oldLoc,&vel);
   v3scale(&vel,1.0/dt,&vel);
-  msg = my_send("searchJewels");
-  makeJewelSet(msg);
+  msg = my_send("searchBurdens");
+  makeBurdenSet(msg);
   msg = my_send("searchObstacles");
   tmp = strtok(msg," ");
   tmp = strtok(NULL," ");
@@ -170,7 +170,7 @@ void make_events_basic() {
     }
   }
 
-  if (jewels_count==0) {
+  if (burdens_count==0) {
     e.id = CLEAR_EVENT;
     process_event(&e);
   }
@@ -217,16 +217,16 @@ int check_conflict(const vec3d *src,const vec3d *dest,const vec3d *point,double 
     return 0;
 }
 
-int check_all_conflict(const vec3d *src,const vec3d *dest,const vec3d *targetJewelLoc) {
+int check_all_conflict(const vec3d *src,const vec3d *dest,const vec3d *targetBurdenLoc) {
   int i;
   vec3d v;
-  for (i=0;i<jewels_count;i++) {
-    v = jewels[i].loc;
+  for (i=0;i<burdens_count;i++) {
+    v = burdens[i].loc;
     if (v3equals(&v,src))
       continue;
     if (v3equals(&v,dest))
       continue;
-    if (targetJewelLoc!=NULL && v3epsilonEquals(&v,targetJewelLoc,1.0))
+    if (targetBurdenLoc!=NULL && v3epsilonEquals(&v,targetBurdenLoc,1.0))
       continue;
     if (check_conflict(src,dest,&v,1.5)) {
       return 1;
@@ -266,7 +266,7 @@ void go_to_destination(const vec3d *v) {
   my_send(msg);
 }
 
-void go_to_destination_with_jewels(const vec3d *v) {
+void go_to_destination_with_burdens(const vec3d *v) {
   double power = 0.0;
   double steering = 0.0;
   char msg[100];

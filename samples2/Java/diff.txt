@@ -1,4 +1,4 @@
-diff -r samples/Java/JewelSet.java samples2/Java/JewelSet.java
+diff -r samples/Java/BurdenSet.java samples2/Java/BurdenSet.java
 69a70,71
 >             if (v.x * jv.x < 0.0)
 >                 continue;
@@ -27,10 +27,10 @@ diff -r samples/Java/Sample1.java samples2/Java/Sample1.java
 >             lastMessage = ((MessageEvent)e).message;
 >             System.out.println("Sample1: Message received: "+lastMessage);
 264c269,272
-<         goToDestinationWithJewel(elevatorBottom);
+<         goToDestinationWithBurden(elevatorBottom);
 ---
 >         if (lastMessage.equals("READY"))
->             goToDestinationWithJewel(elevatorBottom);
+>             goToDestinationWithBurden(elevatorBottom);
 >         else
 >             stopCar();
 diff -r samples/Java/Sample2.java samples2/Java/Sample2.java
@@ -39,7 +39,7 @@ diff -r samples/Java/Sample2.java samples2/Java/Sample2.java
 <     WAIT_UNTIL_MESSAGE,
 ---
 >     DEVELOP_STRATEGY1,
->     GO_TO_TARGET_JEWEL,
+>     GO_TO_TARGET_BURDEN,
 >     DEVELOP_STRATEGY2,
 >     GO_TO_VIA_POINT,
 >     GET_ON_ELEVATOR,
@@ -58,7 +58,7 @@ diff -r samples/Java/Sample2.java samples2/Java/Sample2.java
 <  * on demand of the red car. Basic functions are implemented
 <  * in the SampleBase class which is extended by this Sample2 class.
 ---
->  * simulation environment. This car carries all jewels.
+>  * simulation environment. This car carries all burdens.
 >  * Basic functions are implemented in the SampleBase class
 >  * which is extended by this Sample2 class.
 27,28c32,34
@@ -74,8 +74,8 @@ diff -r samples/Java/Sample2.java samples2/Java/Sample2.java
 >     // The mode of this car.
 31a38,44
 >     // The following variables are targets.
->     String targetJewel;
->     Vector targetJewelLoc;
+>     String targetBurden;
+>     Vector targetBurdenLoc;
 >     Vector targetViaPoint1;
 >     Vector targetViaPoint2;
 >     Vector targetViaPoint3;
@@ -84,8 +84,8 @@ diff -r samples/Java/Sample2.java samples2/Java/Sample2.java
 <         mode = S2Mode.GO_TO_WAITING_POINT;
 ---
 >         mode = S2Mode.DEVELOP_STRATEGY1;
->         targetJewel = null;
->         targetJewelLoc = null;
+>         targetBurden = null;
+>         targetBurdenLoc = null;
 >         targetViaPoint1 = null;
 >         targetViaPoint2 = null;
 >         targetViaPoint3 = null;
@@ -98,12 +98,12 @@ diff -r samples/Java/Sample2.java samples2/Java/Sample2.java
 <         // car has arrived at the waiting point?
 <         tmpV.sub(waitingPoint,loc);
 ---
->         // the car holds the jewel?
->         if (targetJewel!=null)
->             targetJewelLoc = jewelSet.get(targetJewel);
->         if (targetJewelLoc!=null) {
+>         // the car holds the burden?
+>         if (targetBurden!=null)
+>             targetBurdenLoc = burdenSet.get(targetBurden);
+>         if (targetBurdenLoc!=null) {
 >             boolean hold = true;
->             tmpV.sub(targetJewelLoc,loc);
+>             tmpV.sub(targetBurdenLoc,loc);
 >             if (tmpV.length()>2.0) {
 >                 hold = false;
 >             } else {
@@ -112,9 +112,9 @@ diff -r samples/Java/Sample2.java samples2/Java/Sample2.java
 >                     hold = false;
 >             }
 >             if (hold==true)
->                 processEvent(new HoldingJewelEvent());
+>                 processEvent(new HoldingBurdenEvent());
 >             else
->                 processEvent(new NotHoldingJewelEvent());
+>                 processEvent(new NotHoldingBurdenEvent());
 >         }
 > 
 >         // car has arrived at the via point?
@@ -153,9 +153,9 @@ diff -r samples/Java/Sample2.java samples2/Java/Sample2.java
 >         String s;
 >         if ((mode==S2Mode.DEVELOP_STRATEGY1)
 >           &&(e instanceof StrategyDevelopedEvent)) {
->             mode = S2Mode.GO_TO_TARGET_JEWEL;
->         } else if ((mode==S2Mode.GO_TO_TARGET_JEWEL)
->                  &&(e instanceof HoldingJewelEvent)) {
+>             mode = S2Mode.GO_TO_TARGET_BURDEN;
+>         } else if ((mode==S2Mode.GO_TO_TARGET_BURDEN)
+>                  &&(e instanceof HoldingBurdenEvent)) {
 >             mode = S2Mode.DEVELOP_STRATEGY2;
 >         } else if ((mode==S2Mode.DEVELOP_STRATEGY2)
 >                  &&(e instanceof StrategyDevelopedEvent)) {
@@ -164,7 +164,7 @@ diff -r samples/Java/Sample2.java samples2/Java/Sample2.java
 >                 &&(e instanceof ArrivalViaPoint1Event)) {
 >            mode = S2Mode.GET_ON_ELEVATOR;
 >         } else if ((mode==S2Mode.GO_TO_VIA_POINT)
->                 &&(e instanceof NotHoldingJewelEvent)) {
+>                 &&(e instanceof NotHoldingBurdenEvent)) {
 >            mode = S2Mode.DEVELOP_STRATEGY1;
 >         } else if ((mode==S2Mode.GET_ON_ELEVATOR)
 >                 &&(e instanceof ArrivalElevatorBottomEvent)) {
@@ -172,7 +172,7 @@ diff -r samples/Java/Sample2.java samples2/Java/Sample2.java
 >            s = socket.send("sendMessage READY");
 > System.out.println("Sample2:sendMessage(READY):"+s);
 >         } else if ((mode==S2Mode.GET_ON_ELEVATOR)
->                 &&(e instanceof NotHoldingJewelEvent)) {
+>                 &&(e instanceof NotHoldingBurdenEvent)) {
 >            mode = S2Mode.DEVELOP_STRATEGY1;
 >         } else if ((mode==S2Mode.BACK_TO_VIA_POINT2)
 >                  &&(e instanceof ArrivalViaPoint2Event)) {
@@ -208,7 +208,7 @@ diff -r samples/Java/Sample2.java samples2/Java/Sample2.java
 <         case WAIT_UNTIL_MESSAGE: waitUntilMessage(); break;
 ---
 >         case DEVELOP_STRATEGY1: developStrategy1(); break;
->         case GO_TO_TARGET_JEWEL: goToTargetJewel(); break;
+>         case GO_TO_TARGET_BURDEN: goToTargetBurden(); break;
 >         case DEVELOP_STRATEGY2: developStrategy2(); break;
 >         case GO_TO_VIA_POINT: goToViaPoint1(); break;
 >         case GET_ON_ELEVATOR: getOnElevator(); break;
@@ -225,23 +225,23 @@ diff -r samples/Java/Sample2.java samples2/Java/Sample2.java
 <             Vector v = new Vector(waitingPoint);
 ---
 >     void developStrategy1() {
->         targetJewel = jewelSet.getNearest(loc);
->         targetJewelLoc = jewelSet.get(targetJewel);
->         //if (targetJewelLoc!=null)...
+>         targetBurden = burdenSet.getNearest(loc);
+>         targetBurdenLoc = burdenSet.get(targetBurden);
+>         //if (targetBurdenLoc!=null)...
 >         processEvent(new StrategyDevelopedEvent());
 >     }
 > 
->     void goToTargetJewel() {
->         if (targetJewelLoc!=null) {
->             if (checkAllConflict(loc,targetJewelLoc,null)) {
+>     void goToTargetBurden() {
+>         if (targetBurdenLoc!=null) {
+>             if (checkAllConflict(loc,targetBurdenLoc,null)) {
 > System.out.println("GAHA:CONFLICT1");
->                 Vector v = new Vector(targetJewelLoc);
+>                 Vector v = new Vector(targetBurdenLoc);
 >                 v.sub(loc);
 >                 v = Vector.simpleRotateY(45,v);
 >                 v.add(loc);
 >                 goToDestination(v);
 >             } else {
->                 goToDestination(targetJewelLoc);
+>                 goToDestination(targetBurdenLoc);
 >             }
 >         }
 >     }
@@ -260,24 +260,24 @@ diff -r samples/Java/Sample2.java samples2/Java/Sample2.java
 >     }
 > 
 >     void goToViaPoint1() {
->         if (checkAllConflict(loc,targetViaPoint1,targetJewelLoc)) {
+>         if (checkAllConflict(loc,targetViaPoint1,targetBurdenLoc)) {
 > System.out.println("GAHA:CONFLICT2");
 >             Vector v = new Vector(targetViaPoint1);
 120c239
 <             goToDestination(v);
 ---
->             goToDestinationWithJewel(v);
+>             goToDestinationWithBurden(v);
 122c241
 <             goToDestination(waitingPoint);
 ---
->             goToDestinationWithJewel(targetViaPoint1);
+>             goToDestinationWithBurden(targetViaPoint1);
 125,126c244,250
 <     void waitUntilMessage() {
 <         stopCar();
 ---
 > 
 >     void getOnElevator() {
->         goToDestinationWithJewel(elevatorBottom);
+>         goToDestinationWithBurden(elevatorBottom);
 >     }
 > 
 >     void backToViaPoint2() {

@@ -25,7 +25,7 @@ public class Simulator3 implements SimulatorInterface, CollisionListener, Elevat
     Obstacle3 obstacle2;
     CarInterface car1;
     CarInterface car2;
-    ArrayList<Jewel> jewels = new ArrayList<Jewel>();
+    ArrayList<Burden> burdens = new ArrayList<Burden>();
     Simulator3GUI gui;
     int waitTime = 33;
     Random random;
@@ -71,7 +71,7 @@ public class Simulator3 implements SimulatorInterface, CollisionListener, Elevat
 
         w.pause();
         w.clear();
-        jewels.clear();
+        burdens.clear();
 
 //jp.sourceforge.acerola3d.A23.clearZipCache();
 //VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
@@ -179,20 +179,20 @@ Action3D.clearCash("x-res:///res/prototype/ChoroQblue.a3");
 
         Vector3d v;
         for (int i = 0; i < 10; i++) {
-            Jewel2 j = new Jewel2();
+            Burden2 j = new Burden2();
             j.setUserData("jA1." + i);
             v = getRandomLocLJ();
             j.setLocRev(v.x, v.y, v.z, 0, 0, 0);
             w.add(j);
-            jewels.add(j);
+            burdens.add(j);
         }
         for (int i = 0; i < 10; i++) {
-            Jewel2 j = new Jewel2();
+            Burden2 j = new Burden2();
             j.setUserData("jA2." + i);
             v = getRandomLocRJ();
             j.setLocRev(v.x, v.y, v.z, 0, 0, 0);
             w.add(j);
-            jewels.add(j);
+            burdens.add(j);
         }
         w.resume();
         w.stepForward();
@@ -203,8 +203,8 @@ Action3D.clearCash("x-res:///res/prototype/ChoroQblue.a3");
         Action3D grid1 = new Action3D("x-res:///res/prototype/PCGrid.a3");
         Action3D grid2 = new Action3D("x-res:///res/prototype/PCGrid.a3");
         Action3D grid3 = new Action3D("x-res:///res/prototype/PCGrid.a3");
-        VRML jewelField1 = new VRML("x-res:///res/prototype/JewelField.wrl");
-        VRML jewelField2 = new VRML("x-res:///res/prototype/JewelField.wrl");
+        VRML burdenField1 = new VRML("x-res:///res/prototype/BurdenField.wrl");
+        VRML burdenField2 = new VRML("x-res:///res/prototype/BurdenField.wrl");
         Action3D sb = new Action3D("x-res:///res/prototype/SkyBox02.a3");
         if (bgm==null) {
             bgm = new Action3D("x-res:///res/prototype/md_rock55.a3");
@@ -225,12 +225,12 @@ Action3D.clearCash("x-res:///res/prototype/ChoroQblue.a3");
         grid3.setRev(0,90,0);
         grid3.setLoc(-150,0,0);
         mainCanvas.add(grid3);
-        jewelField1.setScaleX(60);jewelField1.setScaleY(0.1);jewelField1.setScaleZ(80);
-        jewelField1.setLoc(50,0,0);
-        mainCanvas.add(jewelField1);
-        jewelField2.setScaleX(60);jewelField2.setScaleY(0.1);jewelField2.setScaleZ(80);
-        jewelField2.setLoc(-50,0,0);
-        mainCanvas.add(jewelField2);
+        burdenField1.setScaleX(60);burdenField1.setScaleY(0.1);burdenField1.setScaleZ(80);
+        burdenField1.setLoc(50,0,0);
+        mainCanvas.add(burdenField1);
+        burdenField2.setScaleX(60);burdenField2.setScaleY(0.1);burdenField2.setScaleZ(80);
+        burdenField2.setLoc(-50,0,0);
+        mainCanvas.add(burdenField2);
         mainCanvas.setBackground(sb);
         bgmFlag = false;
         mainCanvas.addLockedA3(bgm);
@@ -340,15 +340,15 @@ Action3D.clearCash("x-res:///res/prototype/ChoroQblue.a3");
     public void collided(PVEPart a, PVEPart b) {
         ;
     }
-    void goal(Jewel j) {
+    void goal(Burden j) {
         gui.appendText("goal! "+j.getUserData());
         gui.goal(j);
         w.del(j);
         se.change("power20");
-        synchronized(jewels) {
-            jewels.remove(j);
+        synchronized(burdens) {
+            burdens.remove(j);
         }
-        if (jewels.size()==0) {
+        if (burdens.size()==0) {
             bgm.change("jingle06");
             w.pause();
             try{Thread.sleep(1000);}catch(Exception e){;}
@@ -363,10 +363,10 @@ Action3D.clearCash("x-res:///res/prototype/ChoroQblue.a3");
         gui.updateTime(5000.0);
         gui.appendText(String.format("time up!!!!!  time=%9.2f",5000.0));
     }
-    public String searchJewels() {
-        synchronized(jewels) {
-            String s = ""+jewels.size();
-            for (Jewel j:jewels) {
+    public String searchBurdens() {
+        synchronized(burdens) {
+            String s = ""+burdens.size();
+            for (Burden j:burdens) {
                 Vector3d v = j.getLoc();
                 s = s +" "+j.getUserData().toString()+" "+v.x+" "+v.y+" "+v.z;
             }
@@ -399,15 +399,15 @@ Action3D.clearCash("x-res:///res/prototype/ChoroQblue.a3");
         s3.start();
     }
     @Override
-    public ArrayList<Jewel> getJewelsCopy() {
-        ArrayList<Jewel> alTmp = new ArrayList<Jewel>();
-        synchronized (jewels) {
-            alTmp.addAll(jewels);
+    public ArrayList<Burden> getBurdensCopy() {
+        ArrayList<Burden> alTmp = new ArrayList<Burden>();
+        synchronized (burdens) {
+            alTmp.addAll(burdens);
         }
         return alTmp;
     }
     @Override
-    public void processGoal(Jewel j) {
+    public void processGoal(Burden j) {
         goal(j);
     }
     @Override

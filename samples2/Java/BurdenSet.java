@@ -1,23 +1,23 @@
 import java.util.*;
 
 /*
- * JewelSet manages ids and coodinates of jewels.
+ * BurdenSet manages ids and coodinates of burdens.
  */
-public class JewelSet {
-    HashMap<String,Vector> jewels;
+public class BurdenSet {
+    HashMap<String,Vector> burdens;
 
     /*
-     * Constructs empty JewelSet.
+     * Constructs empty BurdenSet.
      */
-    public JewelSet() {
-        jewels = new HashMap<String,Vector>();
+    public BurdenSet() {
+        burdens = new HashMap<String,Vector>();
     }
 
     /*
-     * Loads coodinates of jewels from the server response.
+     * Loads coodinates of burdens from the server response.
      */
     public void load(String info) {
-        jewels.clear();
+        burdens.clear();
         String[] ss = info.split("\\s");
         int n = Integer.parseInt(ss[0]);
         for (int i=0;i<n;i++) {
@@ -26,47 +26,49 @@ public class JewelSet {
             double y = Double.parseDouble(ss[ii+2]);
             double z = Double.parseDouble(ss[ii+3]);
             Vector jv = new Vector(x,y,z);
-            jewels.put(ss[ii],jv);
+            burdens.put(ss[ii],jv);
         }
     }
 
     /*
-     * Returns the number of jewels.
+     * Returns the number of burdens.
      */
     public int size() {
-        return jewels.size();
+        return burdens.size();
     }
 
     /*
-     * Returns the coodinate of the jewel indicated by given id.
+     * Returns the coodinate of the burden indicated by given id.
      */
     public Vector get(String id) {
-        return jewels.get(id);
+        return burdens.get(id);
     }
 
     /*
-     * Returns the all id of jewels.
+     * Returns the all id of burdens.
      */
     public Set<String> getIDs() {
-        return jewels.keySet();
+        return burdens.keySet();
     }
 
     /*
-     * Returns the all vectors of jewels.
+     * Returns the all vectors of burdens.
      */
     public Collection<Vector> getVectors() {
-        return jewels.values();
+        return burdens.values();
     }
 
     /*
-     * Returns the id of the jewel which is nearest to given coodinate.
+     * Returns the id of the burden which is nearest to given coodinate.
      */
     public String getNearest(Vector v) {
         double min = Double.MAX_VALUE;
         String retId = null;
         Vector tmpV = new Vector();
-        for (String id : jewels.keySet()) {
-            Vector jv = jewels.get(id);
+        for (String id : burdens.keySet()) {
+            Vector jv = burdens.get(id);
+            if (v.x * jv.x < 0.0)
+                continue;
             tmpV.sub(jv,v);
             double l = tmpV.lengthSquared();
             if (min>l) {

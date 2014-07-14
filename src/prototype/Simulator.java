@@ -30,7 +30,7 @@ public class Simulator implements SimulatorInterface, CollisionListener {
     CarInterface car1;
     CarInterface car2;
     CarInterface car3;
-    ArrayList<Jewel> jewels = new ArrayList<Jewel>();
+    ArrayList<Burden> burdens = new ArrayList<Burden>();
     SimulatorGUI gui;
 
     public Simulator() throws Exception {
@@ -168,22 +168,22 @@ public class Simulator implements SimulatorInterface, CollisionListener {
         gui.setCar3(car3);
 
         for (int i = 0; i < 10; i++) {
-            Jewel j = new Jewel();
+            Burden j = new Burden();
             j.setUserData("jA1." + i);
             double x = 60 * Math.random() - 30 - 85;
             double z = 80 * Math.random() - 40;
             j.setLocRev(x, 2, z, 0, 0, 0);
             w.add(j);
-            jewels.add(j);
+            burdens.add(j);
         }
         for (int i = 0; i < 10; i++) {
-            Jewel j = new Jewel();
+            Burden j = new Burden();
             j.setUserData("jA2." + i);
             double x = 60 * Math.random() - 30 + 85;
             double z = 80 * Math.random() - 40;
             j.setLocRev(x, 2, z, 0, 0, 0);
             w.add(j);
-            jewels.add(j);
+            burdens.add(j);
         }
 
         //A3CanvasInterface mainCanvas = w.getMainCanvas();
@@ -241,19 +241,19 @@ public class Simulator implements SimulatorInterface, CollisionListener {
             lifter2.setUp();
         if (aa == car3 && bb == switch2)
             lifter2.setUp();
-        if ((aa == goal1 || aa == goal2) && bb instanceof Jewel) {
+        if ((aa == goal1 || aa == goal2) && bb instanceof Burden) {
             gui.appendText("goal!");
             w.del(bb);
         }
-        if (aa instanceof Jewel && (bb == goal1 || bb == goal2)) {
+        if (aa instanceof Burden && (bb == goal1 || bb == goal2)) {
             gui.appendText("goal!");
             w.del(aa);
         }
 
     }
-    public String searchJewels() {
-        String s = ""+jewels.size();
-        for (Jewel j:jewels) {
+    public String searchBurdens() {
+        String s = ""+burdens.size();
+        for (Burden j:burdens) {
             Vector3d v = j.getLoc();
             s = s +" "+j.getUserData().toString()+" "+v.x+" "+v.y+" "+v.z;
         }

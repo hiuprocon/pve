@@ -10,7 +10,7 @@
 using namespace std;
 
 /*
- * This header file contains definitions of Events, JewelSet and SambleBase.
+ * This header file contains definitions of Events, BurdenSet and SambleBase.
  */
 
 /*
@@ -22,7 +22,7 @@ public:
 };
 
 /*
- * This event is used for informing that all jewels are
+ * This event is used for informing that all burdens are
  * collected successfully.
  */
 class ClearedEvent : public Event {
@@ -40,12 +40,12 @@ public:
 };
 
 /*
- * JewelSet manages ids and coodinates of jewels.
+ * BurdenSet manages ids and coodinates of burdens.
  */
-class JewelSet {
+class BurdenSet {
 public:
-    JewelSet();
-    ~JewelSet();
+    BurdenSet();
+    ~BurdenSet();
     void load(const string str);
     int size();
     Vec3d get(const string id);
@@ -53,7 +53,7 @@ public:
     vector<Vec3d> getVectors();
     string getNearest(const Vec3d v);
 private:
-    map<string, Vec3d*> jewels;
+    map<string, Vec3d*> burdens;
 };
 
 // Simulation step time
@@ -98,9 +98,9 @@ public:
     virtual void move() = 0;
     void start();
     bool checkConflict(const Vec3d& src,const Vec3d& dest,const Vec3d& point,double dis);
-    bool checkAllConflict(const Vec3d& src,const Vec3d& dest,const Vec3d& targetJewelLoc);
+    bool checkAllConflict(const Vec3d& src,const Vec3d& dest,const Vec3d& targetBurdenLoc);
     void goToDestination(const Vec3d& v);
-    void goToDestinationWithJewel(const Vec3d& v);
+    void goToDestinationWithBurden(const Vec3d& v);
     void backToDestination(const Vec3d& v);
     void stopCar();
 protected:
@@ -122,8 +122,8 @@ protected:
     Vec3d oldLoc;
     // Velocity of this car
     Vec3d vel;
-    // Manager of jewels
-    JewelSet jewelSet;
+    // Manager of burdens
+    BurdenSet burdenSet;
     // Location of obstacle1
     Vec3d obstacle1;
     // Location of obstacle2

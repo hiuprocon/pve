@@ -80,8 +80,8 @@ public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
             return msgGetLoc(line);
         else if (line.equals("getRev"))
             return msgGetRev(line);
-        else if (line.equals("searchJewels"))
-            return msgSearchJewels(line);
+        else if (line.equals("searchBurdens"))
+            return msgSearchBurdens(line);
         else if (line.equals("searchObstacles"))
             return msgSearchObstacles(line);
         else if (line.equals("getElevator1Height"))
@@ -120,8 +120,8 @@ public class CarA extends SimpleCarObj implements PVEMsgListener, CarInterface {
         Vector3d v = Util.rot2rev(getRot());
         return ""+v.x+" "+v.y+" "+v.z;
     }
-    String msgSearchJewels(String line) {
-        return simulator.searchJewels();
+    String msgSearchBurdens(String line) {
+        return simulator.searchBurdens();
     }
     String msgSearchObstacles(String line) {
         return simulator.searchObstacles();

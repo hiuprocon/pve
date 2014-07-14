@@ -15,7 +15,7 @@ int main(int argc, char *argv[]){
     //printf("%s\n",msg);
   }
 
-  msg = my_send("searchJewels");
+  msg = my_send("searchBurdens");
   printf("%s\n",msg);
 
   my_close();

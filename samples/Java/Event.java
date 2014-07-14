@@ -28,7 +28,7 @@ class MessageEvent extends Event {
 }
 
 /*
- * This event is used for informing that all jewels are
+ * This event is used for informing that all burdens are
  * collected successfully.
  */
 class ClearedEvent extends Event {

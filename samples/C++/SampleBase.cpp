@@ -16,28 +16,28 @@ MessageEvent::MessageEvent(string msg) {
 }
 
 /*
- * Constructs empty JewelSet.
+ * Constructs empty BurdenSet.
  */
-JewelSet::JewelSet() {
+BurdenSet::BurdenSet() {
 }
 
 /*
- * The destructor of JewelSet.
+ * The destructor of BurdenSet.
  */
-JewelSet::~JewelSet() {
-    for (map<string, Vec3d*>::iterator itr = jewels.begin(); itr != jewels.end(); itr++) {
+BurdenSet::~BurdenSet() {
+    for (map<string, Vec3d*>::iterator itr = burdens.begin(); itr != burdens.end(); itr++) {
         delete itr->second;
     }
 }
 
 /*
- * Loads coodinates of jewels from the server response.
+ * Loads coodinates of burdens from the server response.
  */
-void JewelSet::load(const string str) {
-    for (map<string, Vec3d*>::iterator itr = jewels.begin(); itr != jewels.end(); itr++) {
+void BurdenSet::load(const string str) {
+    for (map<string, Vec3d*>::iterator itr = burdens.begin(); itr != burdens.end(); itr++) {
         delete itr->second;
     }
-    jewels.clear();
+    burdens.clear();
     istringstream is(str);
     int n;
     is >> n;
@@ -45,47 +45,47 @@ void JewelSet::load(const string str) {
     double x,y,z;
     for (int i=0;i<n;i++) {
         is >> id >> x >> y >> z;
-        jewels[id] = new Vec3d(x,y,z);
+        burdens[id] = new Vec3d(x,y,z);
     }
 }
 
 /*
- * Returns the number of jewels.
+ * Returns the number of burdens.
  */
-int JewelSet::size() {
-    return jewels.size();
+int BurdenSet::size() {
+    return burdens.size();
 }
 
 /*
- * Returns the coodinate of the jewel indicated by given id.
+ * Returns the coodinate of the burden indicated by given id.
  */
-Vec3d JewelSet::get(const string id) {
-    if (jewels.count(id)==0) {
+Vec3d BurdenSet::get(const string id) {
+    if (burdens.count(id)==0) {
         Vec3d dummy;
         return dummy; // This must not be execute.
     } else
-        return *(jewels[id]);
+        return *(burdens[id]);
 }
 
 /*
- * Returns the all id of jewels.
+ * Returns the all id of burdens.
  */
-vector<string> JewelSet::getIDs() {
+vector<string> BurdenSet::getIDs() {
     vector<string> array;
 
-    for (map<string, Vec3d*>::iterator itr = jewels.begin(); itr != jewels.end(); itr++) {
+    for (map<string, Vec3d*>::iterator itr = burdens.begin(); itr != burdens.end(); itr++) {
         array.push_back(itr->first) ;
     }
     return array;
 }
 
 /*
- * Returns the all vectors of jewels.
+ * Returns the all vectors of burdens.
  */
-vector<Vec3d> JewelSet::getVectors() {
+vector<Vec3d> BurdenSet::getVectors() {
     vector<Vec3d> array;
 
-    for (map<string, Vec3d*>::iterator itr = jewels.begin(); itr != jewels.end(); itr++) {
+    for (map<string, Vec3d*>::iterator itr = burdens.begin(); itr != burdens.end(); itr++) {
         Vec3d v = Vec3d(*(itr->second));
         array.push_back(v) ;
     }
@@ -94,13 +94,13 @@ vector<Vec3d> JewelSet::getVectors() {
 
 
 /*
- * Returns the id of the jewel which is nearest to given coodinate.
+ * Returns the id of the burden which is nearest to given coodinate.
  */
-string JewelSet::getNearest(const Vec3d v) {
+string BurdenSet::getNearest(const Vec3d v) {
     string retId;
     double min = 1.0e+100;
 
-    for (map<string, Vec3d*>::iterator itr = jewels.begin(); itr != jewels.end(); itr++) {
+    for (map<string, Vec3d*>::iterator itr = burdens.begin(); itr != burdens.end(); itr++) {
         string id = itr->first ;
         Vec3d loc = *(itr->second);
         double d = (v-loc).length();
@@ -149,9 +149,9 @@ void SampleBase::stateCheck() {
     //left.simpleRotateY(rot.y);
     vel = loc - oldLoc;
     vel *= 1.0/dt;
-    ret = socket->send("searchJewels");
-    jewelSet.load(ret);
-    if (jewelSet.size()==0)
+    ret = socket->send("searchBurdens");
+    burdenSet.load(ret);
+    if (burdenSet.size()==0)
         processEvent(new ClearedEvent());
     ret = socket->send("receiveMessages");
     string rets(ret);
@@ -214,18 +214,18 @@ bool SampleBase::checkConflict(const Vec3d& src,const Vec3d& dest,const Vec3d& p
 
 /*
  * Check existance of obstacles. The route is specified by 
- * source and destination. If targetJewelLoc is given, it is
- * excluded from obstacles. If targetJewelLoc==null, ignored.
+ * source and destination. If targetBurdenLoc is given, it is
+ * excluded from obstacles. If targetBurdenLoc==null, ignored.
  */
-bool SampleBase::checkAllConflict(const Vec3d& src,const Vec3d& dest,const Vec3d& targetJewelLoc) {
-    vector<Vec3d> array = jewelSet.getVectors();
+bool SampleBase::checkAllConflict(const Vec3d& src,const Vec3d& dest,const Vec3d& targetBurdenLoc) {
+    vector<Vec3d> array = burdenSet.getVectors();
     for (vector<Vec3d>::iterator itr = array.begin(); itr != array.end(); itr++) {
         Vec3d v = (*itr);
         if (v == src)
             continue;
         if (v == dest)
             continue;
-        if (targetJewelLoc.x<1000 && v.epsilonEquals(targetJewelLoc,1.0))
+        if (targetBurdenLoc.x<1000 && v.epsilonEquals(targetBurdenLoc,1.0))
             continue;
         if (checkConflict(src,dest,v,1.5)) {
             return true;
@@ -268,9 +268,9 @@ void SampleBase::goToDestination(const Vec3d& v) {
 }
 
 /*
- * Drive this car to the given location (v) with jewels.
+ * Drive this car to the given location (v) with burdens.
  */
-void SampleBase::goToDestinationWithJewel(const Vec3d& v) {
+void SampleBase::goToDestinationWithBurden(const Vec3d& v) {
     double power = 0.0;
     double steering = 0.0;
 

@@ -50,8 +50,8 @@ public abstract class SampleBase {
     protected Vector oldLoc;
     // Velocity of this car
     protected Vector vel;
-    // Manager of jewels
-    protected JewelSet jewelSet;
+    // Manager of burdens
+    protected BurdenSet burdenSet;
     // Location of Obstacle1
     protected Vector obstacle1;
     // Location of Obstacle2
@@ -71,7 +71,7 @@ public abstract class SampleBase {
         left = new Vector();
         oldLoc = new Vector();
         vel = new Vector();
-        jewelSet = new JewelSet();
+        burdenSet = new BurdenSet();
     }
 
     /*
@@ -104,9 +104,9 @@ public abstract class SampleBase {
         //left = Vector.simpleRotateY(rot.y, new Vector(1,0,0));
         vel.sub(loc,oldLoc);
         vel.scale(1.0/dt);
-        ret = socket.send("searchJewels");
-        jewelSet.load(ret);
-        if (jewelSet.size()==0)
+        ret = socket.send("searchBurdens");
+        burdenSet.load(ret);
+        if (burdenSet.size()==0)
             processEvent(new ClearedEvent());
         ret = socket.send("receiveMessages");
         if (ret.length()>9) {
@@ -176,16 +176,16 @@ public abstract class SampleBase {
 
     /*
      * Check existance of obstacles. The route is specified by 
-     * source and destination. If targetJewelLoc is given, it is
-     * excluded from obstacles. If targetJewelLoc==null, ignored.
+     * source and destination. If targetBurdenLoc is given, it is
+     * excluded from obstacles. If targetBurdenLoc==null, ignored.
      */
-    protected boolean checkAllConflict(Vector src,Vector dest,Vector targetJewelLoc) {
-        for (Vector v : jewelSet.getVectors()) {
+    protected boolean checkAllConflict(Vector src,Vector dest,Vector targetBurdenLoc) {
+        for (Vector v : burdenSet.getVectors()) {
             if (v.equals(src))
                 continue;
             if (v.equals(dest))
                 continue;
-            if (targetJewelLoc!=null && v.epsilonEquals(targetJewelLoc,1.0))
+            if (targetBurdenLoc!=null && v.epsilonEquals(targetBurdenLoc,1.0))
                 continue;
             if (checkConflict(src,dest,v,1.5)) {
                 return true;
@@ -225,9 +225,9 @@ public abstract class SampleBase {
     }
 
     /*
-     * Drive this car to the given location (v) with jewels.
+     * Drive this car to the given location (v) with burdens.
      */
-    protected void goToDestinationWithJewel(Vector v) {
+    protected void goToDestinationWithBurden(Vector v) {
         double power = 0.0;
         double steering = 0.0;
 

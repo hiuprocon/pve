@@ -24,7 +24,7 @@ public class Simulator2 implements SimulatorInterface, CollisionListener {
     PVEObject floor2;
     CarInterface car1;
     CarInterface car2;
-    ArrayList<Jewel> jewels = new ArrayList<Jewel>();
+    ArrayList<Burden> burdens = new ArrayList<Burden>();
     Simulator2GUI gui;
     int waitTime = 33;
     Random random;
@@ -54,7 +54,7 @@ public class Simulator2 implements SimulatorInterface, CollisionListener {
 
         w.pause();
         w.clear();
-        jewels.clear();
+        burdens.clear();
 
 //jp.sourceforge.acerola3d.A23.clearZipCache();
 VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
@@ -143,22 +143,22 @@ VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
             random = new Random(seed);
         }
         for (int i = 0; i < 10; i++) {
-            Jewel j = new Jewel();
+            Burden j = new Burden();
             j.setUserData("jA1." + i);
             double x = 60 * random.nextDouble() - 30 - 50;
             double z = 80 * random.nextDouble() - 40;
             j.setLocRev(x, 2, z, 0, 0, 0);
             w.add(j);
-            jewels.add(j);
+            burdens.add(j);
         }
         for (int i = 0; i < 10; i++) {
-            Jewel j = new Jewel();
+            Burden j = new Burden();
             j.setUserData("jA2." + i);
             double x = 60 * random.nextDouble() - 30 + 50;
             double z = 80 * random.nextDouble() - 40;
             j.setLocRev(x, 2, z, 0, 0, 0);
             w.add(j);
-            jewels.add(j);
+            burdens.add(j);
         }
         w.resume();
         w.stepForward();
@@ -169,15 +169,15 @@ VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
         Action3D grid1 = null;
         Action3D grid2 = null;
         Action3D grid3 = null;
-        VRML jewelField1 = null;
-        VRML jewelField2 = null;
+        VRML burdenField1 = null;
+        VRML burdenField2 = null;
         try {
             light = new Action3D("x-res:///res/DirectionalLightSet.a3");
             grid1 = new Action3D("x-res:///res/prototype/PCGrid.a3");
             grid2 = new Action3D("x-res:///res/prototype/PCGrid.a3");
             grid3 = new Action3D("x-res:///res/prototype/PCGrid.a3");
-            jewelField1 = new VRML("x-res:///res/prototype/JewelField.wrl");
-            jewelField2 = new VRML("x-res:///res/prototype/JewelField.wrl");
+            burdenField1 = new VRML("x-res:///res/prototype/BurdenField.wrl");
+            burdenField2 = new VRML("x-res:///res/prototype/BurdenField.wrl");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -192,12 +192,12 @@ VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
         grid3.setRev(0,90,0);
         grid3.setLoc(-150,0,0);
         mainCanvas.add(grid3);
-        jewelField1.setScaleX(60);jewelField1.setScaleY(0.1);jewelField1.setScaleZ(80);
-        jewelField1.setLoc(50,0,0);
-        mainCanvas.add(jewelField1);
-        jewelField2.setScaleX(60);jewelField2.setScaleY(0.1);jewelField2.setScaleZ(80);
-        jewelField2.setLoc(-50,0,0);
-        mainCanvas.add(jewelField2);
+        burdenField1.setScaleX(60);burdenField1.setScaleY(0.1);burdenField1.setScaleZ(80);
+        burdenField1.setLoc(50,0,0);
+        mainCanvas.add(burdenField1);
+        burdenField2.setScaleX(60);burdenField2.setScaleY(0.1);burdenField2.setScaleZ(80);
+        burdenField2.setLoc(-50,0,0);
+        mainCanvas.add(burdenField2);
         mainCanvas.setBackground(new A3Background(0.1f, 0.3f, 0.5f));
 
         gui.defaultView();
@@ -263,36 +263,36 @@ VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
             return;
         // System.out.println("collided "+(String)(aa.getUserData())+":"+
         // ((String)bb.getUserData()));
-        ArrayList<Jewel> alTmp = new ArrayList<Jewel>();
-        synchronized (jewels) {
-            alTmp.addAll(jewels);
+        ArrayList<Burden> alTmp = new ArrayList<Burden>();
+        synchronized (burdens) {
+            alTmp.addAll(burdens);
         }
-        int jewelsCount=0;
-        for (Jewel j:alTmp) {
+        int burdensCount=0;
+        for (Burden j:alTmp) {
             Vector3d jLoc = j.getLoc();
             if (jLoc.x<5.0 && jLoc.x>-5.0)
                 if (jLoc.z<5.0 && jLoc.z>-5.0)
-                    jewelsCount++;
+                    burdensCount++;
         }
-        if ((aa == switch1 || aa == switch2) && (bb instanceof CarInterface) && (jewelsCount<=5))
+        if ((aa == switch1 || aa == switch2) && (bb instanceof CarInterface) && (burdensCount<=5))
             elevator.setUp();
-        if ((aa instanceof CarInterface) && (bb == switch1 || bb == switch2) && (jewelsCount<=5))
+        if ((aa instanceof CarInterface) && (bb == switch1 || bb == switch2) && (burdensCount<=5))
             elevator.setUp();
-        if ((aa == goal1 || aa == goal2) && bb instanceof Jewel) {
-            goal((Jewel)bb);
+        if ((aa == goal1 || aa == goal2) && bb instanceof Burden) {
+            goal((Burden)bb);
         }
-        if (aa instanceof Jewel && (bb == goal1 || bb == goal2)) {
-            goal((Jewel)aa);
+        if (aa instanceof Burden && (bb == goal1 || bb == goal2)) {
+            goal((Burden)aa);
         }
 
     }
-    void goal(Jewel j) {
+    void goal(Burden j) {
         gui.appendText("goal! "+j.getUserData());
         w.del(j);
-        synchronized(jewels) {
-            jewels.remove(j);
+        synchronized(burdens) {
+            burdens.remove(j);
         }
-        if (jewels.size()==0) {
+        if (burdens.size()==0) {
             w.pause();
             try{Thread.sleep(1000);}catch(Exception e){;}
             gui.updateTime(w.getTime());
@@ -305,10 +305,10 @@ VRML.clearCash("x-res:///res/prototype/Jewel.wrl");
         gui.updateTime(5000.0);
         gui.appendText(String.format("time up!!!!!  time=%9.2f",5000.0));
     }
-    public String searchJewels() {
-        synchronized(jewels) {
-            String s = ""+jewels.size();
-            for (Jewel j:jewels) {
+    public String searchBurdens() {
+        synchronized(burdens) {
+            String s = ""+burdens.size();
+            for (Burden j:burdens) {
                 Vector3d v = j.getLoc();
                 s = s +" "+j.getUserData().toString()+" "+v.x+" "+v.y+" "+v.z;
             }
