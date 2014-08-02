@@ -105,6 +105,8 @@ int get_nearest_burden(vec3d *pos,char *id,vec3d *ret) {
   idx = 0;
   min = 1000000.0;
   for (i=0;i<burdens_count;i++) {
+    if ((pos->x * burdens[i].loc.x)<0.0)
+      continue;
     v3sub(pos,&(burdens[i].loc),&tmpV);
     len = v3length(&tmpV);
     if (min>len) {

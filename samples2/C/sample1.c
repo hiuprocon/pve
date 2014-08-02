@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "sample_base.h"
 #include "abstract.h"
 #include "vec3d.h"
@@ -41,7 +42,7 @@ vec3d targetViaPoint1;
 vec3d targetViaPoint2;
 vec3d targetGoal;
 
-char* lastMessage = "";
+char lastMessage[100] = "dummy";
 
 void make_events() {
   vec3d tmpV;
@@ -157,7 +158,7 @@ printf("Sample1:sendMessage(wait):%s\n",s);
            &&(e->id==ARRIVAL_VIA_POINT2_EVENT)) {
     mode = DEVELOP_STRATEGY1;
   } else if (e->id==MESSAGE_EVENT) {
-    lastMessage = e->message;
+    strcpy(lastMessage,e->message);
 printf("Sample1: Message received: %s\n",e->message);
   } else {
     //printf("Unprocessed event: "+e->id);
