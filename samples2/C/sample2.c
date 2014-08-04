@@ -93,7 +93,7 @@ void make_events() {
 
   // car has arrived at the switch?
   v3sub(&switch1,&loc,&tmpV);
-  if (v3length(&tmpV)<2.0) {
+  if (v3length(&tmpV)<1.0) {
     e.id = ARRIVAL_SWITCH_EVENT;
     process_event(&e);
   }
@@ -137,6 +137,8 @@ printf("Sample2:sendMessage(READY):%s\n",s);
   } else if ((mode==GO_TO_SWITCH)
            &&(e->id==ARRIVAL_SWITCH_EVENT)) {
     mode = GO_TO_VIA_POINT3;
+    s = my_send("sendMessage NOT_READY");
+printf("Sample2:sendMessage(NOT_READY):%s\n",s);
   } else if ((mode==GO_TO_VIA_POINT3)
            &&(e->id==ARRIVAL_VIA_POINT3_EVENT)) {
     mode = DEVELOP_STRATEGY1;
