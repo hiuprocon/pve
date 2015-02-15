@@ -3,6 +3,7 @@ http://hiu.ks1.org/pve/lib/DAELoader.jar
 http://hiu.ks1.org/pve/lib/Loader3DS1_2.jar
 http://hiu.ks1.org/pve/lib/NWM.jar
 http://hiu.ks1.org/pve/lib/a3-vrml97.jar
+http://hiu.ks1.org/pve/lib/a3viewer.jar
 http://hiu.ks1.org/pve/lib/acerola3d.jar
 http://hiu.ks1.org/pve/lib/ecj-4.2.1.jar
 http://hiu.ks1.org/pve/lib/gluegen-rt-natives-linux-amd64.jar

@@ -395,6 +395,8 @@ Action3D.clearCash("x-res:///res/prototype/ChoroQblue.a3");
     }
 
     public static void main(String args[]) throws Exception {
+        jp.sourceforge.acerola3d.A23.initA23();
+        System.setProperty("j3d.viewFrustumCulling","false");
         Simulator3 s3 = new Simulator3(args);
         s3.start();
     }
