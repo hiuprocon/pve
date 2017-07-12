@@ -17,3 +17,6 @@ https://s314.do-johodai.ac.jp/pve/res/lines.txt
 https://s314.do-johodai.ac.jp/pve/res/stk_racetrack.zip
 https://s314.do-johodai.ac.jp/pve/res/stk_tux.a3
 https://s314.do-johodai.ac.jp/pve/res/stk_wilber2.a3
+https://s314.do-johodai.ac.jp/pve/res/ETRobo2017Course10.a3
+https://s314.do-johodai.ac.jp/pve/res/BlackBox.wrl
+https://s314.do-johodai.ac.jp/pve/res/WhiteBox.wrl
