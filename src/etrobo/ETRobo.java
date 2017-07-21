@@ -55,18 +55,18 @@ public class ETRobo extends PVEObject {
 
     @Override
     protected PVEPart[] createParts() {
-        box = new Box(Type.DYNAMIC,2,new Vector3d(1,2,0.5),"x-res:///res/Box.wrl");
+        box = new Box(Type.DYNAMIC,0.635,new Vector3d(1.2,1.44,0.4),"x-res:///res/Box.wrl");
         box.setInitLocRev(0,0,0, 0,0,0);
         camera = new Camera(Type.DYNAMIC,0.01,W,H,0.1);
-        camera.setInitLocRev(0,-1.05,0, -90,0,0);
+        camera.setInitLocRev(0,-0.77,0, -90,0,0);
         radar = new Radar(Type.DYNAMIC,0.01);
-        radar.setInitLocRev(0,1.05,0, 0,0,0);
+        radar.setInitLocRev(0,0.77,0, 0,0,0);
         myBody = new Compound(Type.DYNAMIC,box,camera,radar);
-        myBody.setInitLocRev(0.0, 1.5,   0, 0,0, 0);
-        tireR = new Cylinder(Type.DYNAMIC,0.1,0.1,1);
-        tireR.setInitLocRev( 0.65,0.5,0.0, 0,0,90);
-        tireL = new Cylinder(Type.DYNAMIC,0.1,0.1,1);
-        tireL.setInitLocRev(-0.65,0.5,0.0, 0,0,90);
+        myBody.setInitLocRev(0, 1.12, 0,  0,0,0);
+        tireR = new Cylinder(Type.DYNAMIC,0.03,0.1,0.8);
+        tireR.setInitLocRev( 0.7,0.4,0.0, 0,0,90);
+        tireL = new Cylinder(Type.DYNAMIC,0.03,0.1,0.8);
+        tireL.setInitLocRev(-0.7,0.4,0.0, 0,0,90);
         tail = new Box(Type.DYNAMIC,0.1,new Vector3d(0.1,0.7,0.1),"x-res:///res/Box.wrl");
         tail.setInitLocRev(0.0,0.55,-0.3, 45,0,0);
         myBody.disableDeactivation(true);
@@ -81,8 +81,8 @@ public class ETRobo extends PVEObject {
 
     @Override
     protected Constraint[] createConstraints() {
-        hingeR = new Hinge(myBody,tireR,new Vector3d( 0.55,0.5,0),new Vector3d( 1,0,0));
-        hingeL = new Hinge(myBody,tireL,new Vector3d(-0.55,0.5,0),new Vector3d( 1,0,0));
+        hingeR = new Hinge(myBody,tireR,new Vector3d( 0.625,0.4,0),new Vector3d( 1,0,0));
+        hingeL = new Hinge(myBody,tireL,new Vector3d(-0.625,0.4,0),new Vector3d( 1,0,0));
         //fix = new Fix(box,camera,new Vector3d(0.0,0.5,0.0));
         //fix = new Slider(box,camera,new Vector3d(0.0,0.5,0.0),new Vector3d(0,-1,0));fix.setLowerLinLimit(0);fix.setUpperLinLimit(0.00001);
         //fix = new Hinge(box,camera,new Vector3d(0.0,0.5,0.0),new Vector3d(0,-1,0));fix.setLimit(-0.001,0.001);
