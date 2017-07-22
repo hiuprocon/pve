@@ -55,7 +55,7 @@ public class ETRobo extends PVEObject {
 
     @Override
     protected PVEPart[] createParts() {
-        box = new Box(Type.DYNAMIC,0.635,new Vector3d(1.2,1.44,0.4),"x-res:///res/Box.wrl");
+        box = new Box(Type.DYNAMIC,0.635,new Vector3d(1.2,1.44,0.4));
         box.setInitLocRev(0,0,0, 0,0,0);
         camera = new Camera(Type.DYNAMIC,0.01,W,H,0.1);
         camera.setInitLocRev(0,-0.77,0, -90,0,0);
@@ -67,8 +67,9 @@ public class ETRobo extends PVEObject {
         tireR.setInitLocRev( 0.7,0.4,0.0, 0,0,90);
         tireL = new Cylinder(Type.DYNAMIC,0.03,0.1,0.8);
         tireL.setInitLocRev(-0.7,0.4,0.0, 0,0,90);
-        tail = new Box(Type.DYNAMIC,0.1,new Vector3d(0.1,0.7,0.1),"x-res:///res/Box.wrl");
-        tail.setInitLocRev(0.0,0.55,-0.3, 45,0,0);
+        tail = new Box(Type.DYNAMIC,0.1,new Vector3d(0.1,0.6,0.1));
+        tail.setInitLocRev(0, 0.388,-0.462, 45,0,0);
+        tail.setDamping(0,1);//なんとなく
         myBody.disableDeactivation(true);
         tireR.disableDeactivation(true);
         tireL.disableDeactivation(true);
@@ -86,7 +87,7 @@ public class ETRobo extends PVEObject {
         //fix = new Fix(box,camera,new Vector3d(0.0,0.5,0.0));
         //fix = new Slider(box,camera,new Vector3d(0.0,0.5,0.0),new Vector3d(0,-1,0));fix.setLowerLinLimit(0);fix.setUpperLinLimit(0.00001);
         //fix = new Hinge(box,camera,new Vector3d(0.0,0.5,0.0),new Vector3d(0,-1,0));fix.setLimit(-0.001,0.001);
-        hingeT = new Hinge(myBody,tail,new Vector3d(0,0.7,-0.3),new Vector3d(1,0,0));
+        hingeT = new Hinge(myBody,tail,new Vector3d(0,0.6,-0.25),new Vector3d(1,0,0));
         hingeR.disableCollisionsBetweenLinkedBodies = true;
         hingeL.disableCollisionsBetweenLinkedBodies = true;
         hingeT.disableCollisionsBetweenLinkedBodies = true;
@@ -102,9 +103,26 @@ public class ETRobo extends PVEObject {
     }
 
     public void drive(double right,double left,double tail) {
+        /*
         hingeR.enableAngularMotor(true,right,10.0);
         hingeL.enableAngularMotor(true,left,10.0);
         hingeT.enableAngularMotor(true,tail,10.0);
+        */
+        right *= 0.000002;
+        left  *= 0.000002;
+        tail  *= 0.000002;
+        if (right>=0)
+            hingeR.enableAngularMotor(true, 1000, right);
+        else
+            hingeR.enableAngularMotor(true,-1000,-right);
+        if (left>=0)
+            hingeL.enableAngularMotor(true, 1000, left);
+        else
+            hingeL.enableAngularMotor(true,-1000,-left);
+        if (tail>=0)
+            hingeT.enableAngularMotor(true, 1000, tail);
+        else
+            hingeT.enableAngularMotor(true,-1000,-tail);
     }
 
     @Override

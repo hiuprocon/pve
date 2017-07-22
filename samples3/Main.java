@@ -10,7 +10,7 @@ public class Main {
 
         MyProgram prog = new MyProgram();
         ETRobo robo = new ETRobo(prog);
-        robo.setLocRev(0,0.1,0, 0,0,0);
+        robo.setLocRev(0,0.1,0, 0,180,0);
         env.add(robo);
 
         Kaidan10 k = new Kaidan10();
