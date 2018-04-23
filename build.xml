@@ -257,6 +257,18 @@
         </delete>
     </target>
 
+    <target name="javadoc" depends="compile">
+      <javadoc packagenames="com.github.hiuprocon.pve.core,
+                             com.github.hiuprocon.pve.obj,
+                             com.github.hiuprocon.pve.car"
+               sourcepath="src"
+               destdir="docs/api"
+               encoding="utf-8"
+               classpath="lib/*.jar"
+               charset="utf-8">
+        <classpath refid="my.class.path"/>
+      </javadoc>
+    </target>
 <!--
     <target name="Sample0" depends="jar">
         <java classname="samples.ControlCarTest" fork="true">
