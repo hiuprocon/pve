@@ -30,6 +30,7 @@ public abstract class PVEPart {
     Vector3f locRequest;
     Quat4d quatRequest;
     Vector3f velRequest;
+    Vector3f angVelRequest;
     short group = 1;
     short mask = 1;
     // DYNAMICなんだけど一時的にKINEMATICになってる時にtrue
@@ -217,6 +218,14 @@ public abstract class PVEPart {
 
     public void setVel(double x, double y, double z) {
         velRequest = new Vector3f((float) x, (float) y, (float) z);
+    }
+
+    public void setAngVel(Vector3d vel) {
+        angVelRequest = new Vector3f(vel);
+    }
+
+    public void setAngVel(double x, double y, double z) {
+        angVelRequest = new Vector3f((float) x, (float) y, (float) z);
     }
 
     public Vector3d getLoc() {

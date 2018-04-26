@@ -78,6 +78,14 @@ public abstract class PVEObject {
         setVel(vel.x, vel.y, vel.z);
     }
 
+    public void setAngVel(double x, double y, double z) {
+        mainPart.setAngVel(x, y, z);
+    }
+
+    public void setAngVel(Vector3d vel) {
+        setAngVel(vel.x, vel.y, vel.z);
+    }
+
     //ラグがあるので注意
     public Vector3d getLoc() {
         Vector3d v = mainPart.getLoc();

@@ -300,10 +300,16 @@ public class PVEWorld implements Runnable {
 
         for (PVEObject o : objects) {
             for (PVEPart p : o.parts) {
-                if (p.velRequest == null)
-                    continue;
-                p.body.setLinearVelocity(p.velRequest);
-                p.velRequest = null;
+                if (p.velRequest != null) {
+                    p.body.setLinearVelocity(p.velRequest);
+                    p.body.activate();
+                    p.velRequest = null;
+                }
+                if (p.angVelRequest != null) {
+                    p.body.setAngularVelocity(p.angVelRequest);
+                    p.body.activate();
+                    p.angVelRequest = null;
+                }
             }
         }
 

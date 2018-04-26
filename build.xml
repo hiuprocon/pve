@@ -260,7 +260,8 @@
     <target name="javadoc" depends="compile">
       <javadoc packagenames="com.github.hiuprocon.pve.core,
                              com.github.hiuprocon.pve.obj,
-                             com.github.hiuprocon.pve.car"
+                             com.github.hiuprocon.pve.car,
+                             etrobo"
                sourcepath="src"
                destdir="docs/api"
                encoding="utf-8"
