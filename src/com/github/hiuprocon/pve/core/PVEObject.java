@@ -134,4 +134,16 @@ public abstract class PVEObject {
     public Object getUserData() {
         return userData;
     }
+
+    public void setRestitution(double r) {
+        for (PVEPart p : parts) {
+            p.setRestitution(r);
+        }
+    }
+
+    public void setFriction(double f) {
+        for (PVEPart p : parts) {
+            p.setRestitution(r);
+        }
+    }
 }

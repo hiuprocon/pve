@@ -296,6 +296,10 @@ public abstract class PVEPart {
         body.setAngularVelocity(new Vector3f(av));
     }
 
+    public void setRestitution(double r) {
+        body.setRestitution((float)r);
+    }
+
     public void setUserData(Object o) {
         userData = o;
     }
