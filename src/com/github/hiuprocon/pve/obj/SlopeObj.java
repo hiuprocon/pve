@@ -11,8 +11,17 @@ public class SlopeObj extends PVEObject {
     double depth;
     Slope slope;
 
+    public SlopeObj() {
+        this(1,1,1);
+    }
+
     public SlopeObj(double width, double height, double depth) {
         this(Type.STATIC, 0.0, width, height, depth, "x-res:///res/Slope.wrl");
+    }
+
+    public SlopeObj(Type type, double mass, double width, double height,
+            double depth) {
+        this(type,mass,width,height,depth,"x-res:///res/Slope.wrl");
     }
 
     public SlopeObj(Type type, double mass, double width, double height,

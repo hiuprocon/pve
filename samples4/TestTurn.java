@@ -1,4 +1,4 @@
-/* ウィンドウの大きさを調整する */
+/* 物体を回転させる */
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 import jp.sourceforge.acerola3d.a3.*;
@@ -12,7 +12,7 @@ class Test {
 
         //表示用のウィンドウの処理
         A3Window window = (A3Window)world.getMainCanvas();
-        window.setSize(300,800); // ここ！！！！！！！！！！！
+        window.setSize(800,500);
         window.setCameraLocNow(0,6,8);
         window.setCameraLookAtPointNow(0,0,0);
         window.setNavigationMode(A3CanvasInterface.NaviMode.SIMPLE,10.0);
@@ -21,14 +21,18 @@ class Test {
         Ground ground = new Ground();
         world.add(ground);
 
-        //立方体1個生成して10m上から落下
+        //物体を生成して。。。
         BoxObj b = new BoxObj();
-        b.setLocRev(0,10,0, 5,5,5);
+        b.setLocRev(0,1,0, 0,0,0);
         world.add(b);
+        //1秒おきに右，左，右・・・と移動させる
+        for (int i=0;i<100;i++) {
+            Util.sleep(1000);
+            if (i%2==0) {
+                b.setAngVel(0,10,0);
+            } else {
+                b.setAngVel(0,-10,0);
+            }
+        }
     }
 }
-/*
-A3Windowはjavax.swing.JFrameのスーパークラスなので，
-javax.swing.JFrameの持つ色々なウィンドウを操作する
-メソッドが使えます。
- */

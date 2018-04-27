@@ -1,4 +1,4 @@
-/* ウィンドウの大きさを調整する */
+/* 最初のテストプログラム */
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 import jp.sourceforge.acerola3d.a3.*;
@@ -12,7 +12,7 @@ class Test {
 
         //表示用のウィンドウの処理
         A3Window window = (A3Window)world.getMainCanvas();
-        window.setSize(300,800); // ここ！！！！！！！！！！！
+        window.setSize(800,500);
         window.setCameraLocNow(0,6,8);
         window.setCameraLookAtPointNow(0,0,0);
         window.setNavigationMode(A3CanvasInterface.NaviMode.SIMPLE,10.0);
@@ -21,14 +21,25 @@ class Test {
         Ground ground = new Ground();
         world.add(ground);
 
-        //立方体1個生成して10m上から落下
-        BoxObj b = new BoxObj();
-        b.setLocRev(0,10,0, 5,5,5);
-        world.add(b);
+        //いろんな形を作ります。
+        BoxObj b1 = new BoxObj();
+        b1.setLocRev(-1, 0.5, 2,  0,0,0);
+        world.add(b1);
+
+        ConeObj b2 = new ConeObj();
+        b2.setLocRev( 1, 0.5, 2,  0,0,0);
+        world.add(b2);
+
+        CylinderObj b3 = new CylinderObj();
+        b3.setLocRev(-2, 0.5,-2,  0,0,0);
+        world.add(b3);
+
+        SlopeObj b4 = new SlopeObj();
+        b4.setLocRev( 0, 0.5,-2,  0,0,0);
+        world.add(b4);
+
+        SphereObj b5 = new SphereObj();
+        b5.setLocRev( 2, 0.5,-2,  0,0,0);
+        world.add(b5);
     }
 }
-/*
-A3Windowはjavax.swing.JFrameのスーパークラスなので，
-javax.swing.JFrameの持つ色々なウィンドウを操作する
-メソッドが使えます。
- */

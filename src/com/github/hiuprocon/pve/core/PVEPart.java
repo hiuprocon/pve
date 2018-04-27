@@ -72,6 +72,7 @@ public abstract class PVEPart {
      */
     protected final void init() {
         a3 = makeA3Object(a3url);
+        a3.setUserData(this);
         Transform t = new Transform();
         t.setIdentity();
         if (this instanceof SimpleCar)
