@@ -1,11 +1,13 @@
-/* マウスで物体を動かす2 まだ未完成 */
+/* マウスで物体を動かす2
+  マウスで物体をドラッグしようとすると
+  物体を弾くことができる． */
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 import jp.sourceforge.acerola3d.a3.*;
 import javax.vecmath.*;
 import java.awt.event.*;//追加！！！！！
 
-class Test implements MouseListener, MouseMotionListener {
+class Test implements MouseListener {
     public static void main(String args[]) {
         //仮想環境生成
         PVEWorld world = new PVEWorld(PVEWorld.A3WINDOW);
@@ -19,7 +21,6 @@ class Test implements MouseListener, MouseMotionListener {
         //window.setNavigationMode(A3CanvasInterface.NaviMode.SIMPLE,10.0);
         Test t = new Test(window);
         window.getA3Canvas().addMouseListener(t);
-        window.getA3Canvas().addMouseMotionListener(t);
 
         //地面を生成して世界に追加
         Ground ground = new Ground();
@@ -35,7 +36,8 @@ class Test implements MouseListener, MouseMotionListener {
 
     A3Window w;
     PVEObject selectedObj = null;
-    int nowX,nowY,oldX,oldY;
+    Point3d start;
+    Point3d end;
     double depth;
 
     Test(A3Window window) {
@@ -50,37 +52,33 @@ class Test implements MouseListener, MouseMotionListener {
     public void mouseExited(MouseEvent e) {;}
     @Override
     public void mousePressed(MouseEvent e) {
-        //Point3d p = w.canvasToVirtualCS(e.getX(),e.getY(),2.0);
         A3Object a3 = w.pickA3(e.getX(),e.getY());
         if (a3 != null) {
             PVEPart p = (PVEPart)a3.getUserData();
             selectedObj = p.getObject();
             if (selectedObj != null) {
-                nowX = e.getX();
-                nowY = e.getY();
                 Vector3d cameraV = w.getCameraLoc();
                 Vector3d a3V = a3.getLoc();
                 a3V.sub(cameraV);
                 depth = a3V.length();
+                start = w.canvasToVirtualCS(e.getX(),e.getY(),depth);
             }
         }
     }
     @Override
     public void mouseReleased(MouseEvent e) {
-        selectedObj = null;
-    }
-    
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        oldX = nowX; oldY = nowY;
-        nowX = e.getX(); nowY = e.getY();
         if (selectedObj!=null) {
-            Point3d p = w.canvasToVirtualCS(nowX,nowY,depth);
-            selectedObj.setLocRev(p.x,p.y,p.z, 0,0,0);
+            Vector3d cameraV = w.getCameraLoc();
+            Vector3d a3V = selectedObj.getMainA3().getLoc();
+            a3V.sub(cameraV);
+            depth = a3V.length();
+            end = w.canvasToVirtualCS(e.getX(),e.getY(),depth);
+            end.sub(start);
+            end.scale(10);
+            selectedObj.setVel(end.x,end.y,end.z);
+            selectedObj = null;
         }
     }
-    @Override
-    public void mouseMoved(MouseEvent e) {;}
 }
 /*
 まだ未完成
