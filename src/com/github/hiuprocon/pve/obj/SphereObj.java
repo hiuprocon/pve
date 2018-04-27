@@ -13,6 +13,10 @@ public class SphereObj extends PVEObject {
         this(Type.DYNAMIC, 1.0, 1, "x-res:///res/Sphere.wrl");
     }
 
+    public SphereObj(Type type, double mass, double diameter) {
+        this(type, mass, diameter, "x-res:///res/Sphere.wrl");
+    }
+
     public SphereObj(Type type, double mass, double diameter, String a3url) {
         this.type = type;
         this.mass = mass;

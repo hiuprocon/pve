@@ -11,14 +11,23 @@ public class BoxObj extends PVEObject {
     Box box;
 
     public BoxObj() {
-        this(Type.DYNAMIC, 1.0, new Vector3d(1, 1, 1), "x-res:///res/Box.wrl");
+        this(Type.DYNAMIC, 1.0, 1, 1, 1, "x-res:///res/Box.wrl");
+    }
+
+    public BoxObj(Type type, double mass, double xs, double ys, double zs) {
+        this(type,mass,xs,ys,zs,"x-res:///res/Box.wrl");
     }
 
     public BoxObj(Type type, double mass, Vector3d size, String a3url) {
+        this(type,mass,size.x,size.y,size.z,a3url);
+    }
+
+    public BoxObj(Type type, double mass,double xs, double ys, double zs,
+                  String a3url) {
         this.type = type;
         this.mass = mass;
         this.a3url = a3url;
-        this.size = new Vector3d(size);
+        this.size = new Vector3d(xs,ys,zs);
         init();
     }
 

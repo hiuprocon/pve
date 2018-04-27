@@ -14,6 +14,10 @@ public class ConeObj extends PVEObject {
         this(Type.DYNAMIC, 1.0, 1, 1, "x-res:///res/Cone.wrl");
     }
 
+    public ConeObj(Type type, double mass, double height, double radius) {
+        this(Type.DYNAMIC, mass, height, radius, "x-res:///res/Cone.wrl");
+    }
+
     public ConeObj(Type type, double mass, double height, double radius,
             String a3url) {
         this.type = type;

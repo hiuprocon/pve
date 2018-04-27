@@ -143,7 +143,7 @@ public abstract class PVEObject {
 
     public void setFriction(double f) {
         for (PVEPart p : parts) {
-            p.setRestitution(r);
+            p.setFriction(f);
         }
     }
 }

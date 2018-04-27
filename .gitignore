@@ -3,3 +3,5 @@ dist/**/*
 pullFrom*.sh
 /docs/
 /build/
+/samples4/*.class
+

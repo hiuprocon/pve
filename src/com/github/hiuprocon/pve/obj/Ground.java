@@ -7,7 +7,7 @@ public class Ground extends PVEObject {
     FreeShapeA g;
 
     public Ground() {
-        this("x-res:///res/background0.a3");
+        this("x-res:///res/background0.wrl");
     }
 
     public Ground(String a3url) {

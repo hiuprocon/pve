@@ -13,6 +13,9 @@ public class CylinderObj extends PVEObject {
     public CylinderObj() {
         this(Type.DYNAMIC, 1.0, 1, 1, "x-res:///res/Cylinder.wrl");
     }
+    public CylinderObj(Type type, double mass, double height, double diameter) {
+        this(Type.DYNAMIC, mass, height, diameter, "x-res:///res/Cylinder.wrl");
+    }
 
     public CylinderObj(Type type, double mass, double height, double diameter,
             String a3url) {
