@@ -1,16 +1,16 @@
-/* ヒンジの使い方 */
+/* スライダーの使い方 */
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 import jp.sourceforge.acerola3d.a3.*;
 import javax.vecmath.*;
 
-//ヒンジ(蝶番(ちょうつがい))を作ります．
-class Tyoutsugai extends PVEObject {
+//スライダーを試すためのオブジェクト
+class SliderTester extends PVEObject {
     Box b1;
     Box b2;
-    Hinge hinge;
+    Slider slider;
 
-    public Tyoutsugai() {
+    public SliderTester() {
         init();
     }
 
@@ -22,9 +22,9 @@ class Tyoutsugai extends PVEObject {
          * 決定して下さい．
          */
         b1 = new Box(Type.DYNAMIC, 1, new Vector3d(1,0.1,2));
-        b1.setInitLocRev( 0.5,0,0, 0,0,0);
         b2 = new Box(Type.DYNAMIC, 1, new Vector3d(1,0.1,2));
-        b2.setInitLocRev(-0.5,0,0, 0,0,0);
+        b1.setInitLocRev(0,0.05,0, 0,0,0);
+        b2.setInitLocRev(0,0.15,0, 0,0,0);
         return new PVEPart[] {b1,b2};
     }
 
@@ -33,14 +33,18 @@ class Tyoutsugai extends PVEObject {
         /*
          * このメソッドの中でパーツを結び付ける
          * ようなコンストレイントを生成します．
-         * コンストレイントの一つであるヒンジの
+         * コンストレイントの一つであるスライダーの
          * コンストラクタの引数は，結合したい
-         * パーツ2つ，ヒンジを置く位置ベクトル，
-         * ヒンジの回転の軸の方向を示すベクトルです．
+         * パーツ2つ，スライダーを置く位置ベクトル，
+         * スライダーのスライド方向を示すベクトルです．
          */
-        hinge = new Hinge(b1,b2,new Vector3d(0,0,0),
+        slider = new Slider(b1,b2,new Vector3d(0,0.1,0),
                           new Vector3d(0,0,1));
-        return new Constraint[] {hinge};
+        slider.setLowerLinLimit(-2.0);
+        slider.setUpperLinLimit( 2.0);
+        slider.setPoweredLinMotor(true);
+        slider.setMaxLinMotorForce(10.0);
+        return new Constraint[] {slider};
     }
 
     @Override
@@ -49,7 +53,7 @@ class Tyoutsugai extends PVEObject {
     }
 
     public void move(double d) {
-        hinge.enableAngularMotor(true,d,10);
+        slider.setTargetLinMotorVelocity(d);
     }
 }
 
@@ -70,16 +74,17 @@ class Test {
         Ground ground = new Ground();
         world.add(ground);
 
-        //ヒンジ(蝶番(ちょうつがい))を生成して動かします．
-        Tyoutsugai t = new Tyoutsugai();
-        t.setLocRev(0,1,0, 0,0,0);
-        world.add(t);
+        //スライダーを試す物体を生成します．
+        SliderTester s = new SliderTester();
+        s.setLocRev(0,0,0, 0,0,0);
+        world.add(s);
         for (int i=0;i<100;i++) {
             Util.sleep(3000);
             if (i%2==0)
-                t.move(3);
+                s.move(3);
             else
-                t.move(-3);
+                s.move(-3);
+System.out.println("GAHAaaaaaa");
         }
     }
 }

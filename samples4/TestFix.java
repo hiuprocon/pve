@@ -1,4 +1,4 @@
-/* 独自オブジェクトの生成 */
+/* Fixコンストレイント */
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 import jp.sourceforge.acerola3d.a3.*;
@@ -6,10 +6,11 @@ import javax.vecmath.*;
 
 //ダンベルみたいな形を作ってみます．
 class Dumbbells extends PVEObject {
-    Compound dumbbells;
     Sphere sphereR;
     Sphere sphereL;
     Cylinder cylinder;
+    Fix fixR;
+    Fix fixL;
 
     public Dumbbells() {
         init();
@@ -17,25 +18,37 @@ class Dumbbells extends PVEObject {
 
     @Override
     protected PVEPart[] createParts() {
+        /*
+         * このメソッドの中でパーツを生成して
+         * setInitLocRev()でデフォルトの配置を
+         * 決定して下さい．
+         */
         sphereR = new Sphere(Type.DYNAMIC, 1, 1);
         sphereL = new Sphere(Type.DYNAMIC, 1, 1);
         cylinder = new Cylinder(Type.DYNAMIC,1, 1,0.3);
         sphereR.setInitLocRev( 1,0,0, 0,0,0);
         sphereL.setInitLocRev(-1,0,0, 0,0,0);
         cylinder.setInitLocRev(0,0,0, 0,0,90);
-        dumbbells = new Compound(Type.DYNAMIC,
-                                 sphereR,sphereL,cylinder);
-        return new PVEPart[] {dumbbells};
+        return new PVEPart[] {sphereR,sphereL,cylinder};
     }
 
     @Override
     protected Constraint[] createConstraints() {
-        return new Constraint[0];
+        /*
+         * このメソッドの中でパーツを結び付ける
+         * ようなコンストレイントを生成します．
+         * コンストレイントの一つであるFixの
+         * コンストラクタの引数は，結合したい
+         * パーツ2つです．
+         */
+        fixR = new Fix(sphereR,cylinder);
+        fixL = new Fix(sphereL,cylinder);
+        return new Constraint[] {fixR,fixL};
     }
 
     @Override
     protected PVEPart getMainPart() {
-        return dumbbells;
+        return cylinder;
     }
 }
 
