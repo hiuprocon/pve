@@ -18,36 +18,36 @@ class Test {
         //このシーンを使うように指定
         window.prepareScene(1);
         world.useScene(1);
+        //シーン1のカメラなどを設定
+        window.setCameraLocNow(0,6,8, 1);
+        window.setCameraLookAtPointNow(0,0,0, 1);
+        window.setNavigationMode(1, A3CanvasInterface.NaviMode.SIMPLE,10.0);
 
-        //Game Startと表示する．
+        //デフォルトの0番シーンにGame Startと表示する．
         A3Text3D text = new A3Text3D("Game Start");
         text.setLoc(0,0,-10);
         window.add(text);
 
-        //地面を生成して世界に追加
+        //1番シーンで地面を生成して世界に追加
         Ground ground = new Ground();
         world.add(ground);
 
         //3秒表示したら次に進む．
         Util.sleep(3000);
 
-        //シーンを物理エンジンが動作する1に切り替え
-        //各種設定をする
+        //シーンを物理エンジンが動作する1に切り替える
         window.changeActiveScene(1);
-        window.setCameraLocNow(0,6,8);
-        window.setCameraLookAtPointNow(0,0,0);
-        window.setNavigationMode(A3CanvasInterface.NaviMode.SIMPLE,10.0);
 
         //立方体1個生成して10m上から落下
         BoxObj b = new BoxObj();
         b.setLocRev(0,10,0, 5,5,5);
         world.add(b);
-        Util.sleep(10000);
+        Util.sleep(5000);
 
-        //0番シーンに配置されていた文字を
+        //0番シーンに配置されている文字を
         //Game Overに書き換える．
         text.setString("Game Over");
-        //1番シーンに切り替える
+        //0番シーンに切り替える
         window.changeActiveScene(0);
     }
 }

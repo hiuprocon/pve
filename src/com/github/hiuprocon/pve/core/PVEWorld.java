@@ -208,8 +208,13 @@ public class PVEWorld implements Runnable {
             for (PVEObject o : newObjects) {
                 for (PVEPart p : o.parts) {
                     dynamicsWorld.addRigidBody(p.body, p.group, p.mask);
-                    if (mainCanvas != null)
+                    if (mainCanvas != null) {
+                        if (p.locRequest!=null)
+                            p.a3.setLoc(p.locRequest.x,p.locRequest.y,p.locRequest.z);
+                        if (p.quatRequest!=null)
+                            p.a3.setQuat(p.quatRequest.x,p.quatRequest.y,p.quatRequest.z,p.quatRequest.w);
                         mainCanvas.add(p.a3,sceneNo);
+                    }
                 }
                 for (Constraint c : o.constraints)
                     if (c.con instanceof RaycastVehicle)
