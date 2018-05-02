@@ -49,6 +49,7 @@ public class PVEWorld implements Runnable {
     public final float stepTime = 1.0f / 30.0f;
     final long waitTime = 33;
     SimType simType;
+    int sceneNo = 0;
 
     // 物理世界の初期化
     public PVEWorld(CanvasType canvasType) {
@@ -101,7 +102,7 @@ public class PVEWorld implements Runnable {
         mainCanvas.setUpdateInterval(waitTime);
         for (PVEObject o : objects)
             for (PVEPart p : o.parts)
-                mainCanvas.add(p.a3);
+                mainCanvas.add(p.a3,sceneNo);
     }
 
     public A3CanvasInterface getMainCanvas() {
@@ -110,6 +111,14 @@ public class PVEWorld implements Runnable {
 
     public void addSubCanvas(A3CanvasInterface c) {
         mainCanvas.addA3SubCanvas(c);
+    }
+
+    public void useScene(int s) {
+        this.sceneNo = s;
+    }
+
+    public int usedScene() {
+        return this.sceneNo;
     }
 
     // 新規の剛体を加える
@@ -145,9 +154,9 @@ public class PVEWorld implements Runnable {
             ;
         }
         if (mainCanvas != null) {
-            mainCanvas.delAll();
+            mainCanvas.delAll(sceneNo);
             // for (A3CollisionObject co : objects)
-            // mainCanvas.del(co.a3);
+            // mainCanvas.del(co.a3,sceneNo);
         }
         for (PVEObject o : objects)
             for (PVEPart p : o.parts)
@@ -200,7 +209,7 @@ public class PVEWorld implements Runnable {
                 for (PVEPart p : o.parts) {
                     dynamicsWorld.addRigidBody(p.body, p.group, p.mask);
                     if (mainCanvas != null)
-                        mainCanvas.add(p.a3);
+                        mainCanvas.add(p.a3,sceneNo);
                 }
                 for (Constraint c : o.constraints)
                     if (c.con instanceof RaycastVehicle)
@@ -218,7 +227,7 @@ public class PVEWorld implements Runnable {
                 for (PVEPart p : o.parts) {
                     dynamicsWorld.removeRigidBody(p.body);
                     if (mainCanvas != null)
-                        mainCanvas.del(p.a3);
+                        mainCanvas.del(p.a3,sceneNo);
                 }
                 for (Constraint c : o.constraints)
                     if (c.con instanceof RaycastVehicle)
