@@ -46,9 +46,18 @@ class Test {
         a0.setLocRev(1.0,1.5,0, 0,0,0);
         world.add(a0);
         Util.sleep(3000);
-        while (true) {
+        for (int i=0;i<100000;i++) {
             Util.sleep(33);
-            a0.setForce(10,1);
+            double goForward = 1;
+            double goRight = 0;
+            double turnRight = -1;
+            double jump = i%100==0?10:0;
+            boolean grounded = a0.getLoc().y < 0.1;
+            a0.control(goForward,
+                       goRight,
+                       turnRight,
+                       jump,
+                       grounded);
         }
     }
 }

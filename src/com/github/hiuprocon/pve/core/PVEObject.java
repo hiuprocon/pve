@@ -78,12 +78,113 @@ public abstract class PVEObject {
         setVel(vel.x, vel.y, vel.z);
     }
 
+    public void setVelInLocal(Vector3d vel) {
+        Quat4d q = getQuat();
+        Vector3d v = Util.trans(q,vel);
+        setVel(v);
+    }
+
+    public void setVelInLocal(double x, double y, double z) {
+        setVelInLocal(new Vector3d(x,y,z));
+    }
+
     public void setAngVel(double x, double y, double z) {
         mainPart.setAngVel(x, y, z);
     }
 
-    public void setAngVel(Vector3d vel) {
-        setAngVel(vel.x, vel.y, vel.z);
+    public void setAngVel(Vector3d av) {
+        setAngVel(av.x, av.y, av.z);
+    }
+
+    public void setAngVelInLocal(double x, double y, double z) {
+        //自信なし
+        //オイラー角なんだけど強さの調節をどうしよう
+        Quat4d q0 = getQuat();
+        Quat4d q1 = Util.euler2quat(x,y,z);
+        Vector3d v = Util.trans(q0,new Vector3d(q1.x,q1.y,q1.z));
+        q1.x = v.x; q1.y = v.y; q1.z = v.z; 
+        v = Util.quat2euler(q1);
+        setAngVel(v.x, v.y, v.z);
+    }
+
+    public void setAngVelInLocal(Vector3d av) {
+        setAngVelInLocal(av.x,av.y,av.z);
+    }
+
+    public void setForce(double x, double y, double z) {
+        for (PVEPart p : parts) {
+            p.setForce(x, y, z);
+        }
+    }
+
+    public void setForce(Vector3d f) {
+        setForce(f.x, f.y, f.z);
+    }
+
+    public void setForceInLocal(double x, double y, double z) {
+        setForceInLocal(new Vector3d(x, y, z));
+    }
+
+    public void setForceInLocal(Vector3d f) {
+        Quat4d q = getQuat();
+        Vector3d v = Util.trans(q,f);
+        setForce(v);
+    }
+
+    public void setTorque(double x, double y, double z) {
+        mainPart.setTorque(x, y, z);
+    }
+
+    public void setTorque(Vector3d t) {
+        setTorque(t.x, t.y, t.z);
+    }
+
+    public void setTorqueInLocal(double x, double y, double z) {
+        //自信なし
+        //オイラー角なんだけど強さの調節をどうしよう
+        Quat4d q0 = getQuat();
+        Quat4d q1 = Util.euler2quat(x,y,z);
+        Vector3d v = Util.trans(q0,new Vector3d(q1.x,q1.y,q1.z));
+        q1.x = v.x; q1.y = v.y; q1.z = v.z; 
+        v = Util.quat2euler(q1);
+        setTorque(v);
+    }
+
+    public void setTorqueInLocal(Vector3d t) {
+        //オイラー角なんだけど強さの調節をどうしよう
+        setTorqueInLocal(t.x, t.y, t.z);
+    }
+
+    public void goForward(double v) {
+        setVelInLocal(0,0,v);
+    }
+
+    public void goBackward(double v) {
+        setVelInLocal(0,0,-v);
+    }
+
+    public void goRight(double v) {
+        setVelInLocal(-v,0,0);
+    }
+
+    public void goLeft(double v) {
+        setVelInLocal(v,0,0);
+    }
+
+    public void turnRight(double v) {
+        setAngVelInLocal(0,v,0);
+    }
+
+    public void turnLeft(double v) {
+        setAngVelInLocal(0,-v,0);
+    }
+
+    public void turnUp(double v) {
+        setAngVelInLocal(-v,0,0);
+    }
+
+    public void turnDown(double v) {
+        setAngVelInLocal(v,0,0);
     }
 
     //ラグがあるので注意

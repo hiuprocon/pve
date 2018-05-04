@@ -12,6 +12,7 @@ public class Avatar extends PVEObject {
     double height;
     double width;
     PVEPart myBody;
+    double velY = 0.0;
 
     public Avatar(String a3url,double height,double width) {
         this.a3url = a3url;
@@ -37,7 +38,7 @@ public class Avatar extends PVEObject {
         myBody = new FreeShapeD(Type.DYNAMIC,50,a3url,cs2);
         myBody.setInitLocRev(0,0,0,  0,0,0);
         myBody.disableDeactivation(true);
-        myBody.setDamping(0.5,0.0);
+        myBody.setDamping(0.5,0.5);
         myBody.setAngularFactor(0);
         return new PVEPart[]{myBody};
 
@@ -53,14 +54,28 @@ public class Avatar extends PVEObject {
         return myBody;
     }
 
-    public void setForce(double zengo, double sayu) {
-        PVEPart mp = getMainPart();
-        Quat4d q = mp.getQuat();
-        Vector3d front = Util.trans(q,new Vector3d(0,0,1));
-        front.scale(zengo);
-        Vector3d angVel = new Vector3d(0,sayu,0);
-        front.scale(100);mp.applyCentralForce(front);
-        //mp.setLinearVelocity(front);
-        mp.setAngularVelocity(angVel);
+    public void control(double goForward,
+                        double goRight,
+                        double turnRight,
+                        double jump, boolean grounded) {
+        //アバターはVELでコントロールすべし．
+        //重力の効果が無くなってしまうので，
+        //Y方向のVELを重力を考慮して自分で計算すべし．
+        Vector3d vel = new Vector3d();
+        boolean canJump = false;
+        vel.add(new Vector3d(0,0,goForward));
+        vel.add(new Vector3d(goRight,0,0));
+        if (grounded)
+            velY = jump;
+        vel.add(new Vector3d(0,velY,0));
+        Vector3d angVel = new Vector3d(0,-turnRight,0);
+
+        setVelInLocal(vel);
+        setAngVelInLocal(angVel);
+
+        if (grounded)
+            velY = 0.0;
+        else
+            velY -= 1.0;
     }
 }

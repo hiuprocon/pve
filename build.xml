@@ -62,6 +62,7 @@
         <javac srcdir="src" destdir="build" encoding="utf-8" debug="on" source="1.6" target="1.6" includeantruntime="false">
             <classpath refid="my.class.path"/>
             <compilerarg value="-Xlint:unchecked" />
+            <compilerarg value="-Xlint:deprecation" />
         </javac>
         <copy file="src/test_cr/Messages.properties" todir="build/test_cr"/> 
         <copy file="src/test_cr/Messages_en_US.properties" todir="build/test_cr"/> 

@@ -29,9 +29,9 @@ class Test {
         for (int i=0;i<100;i++) {
             Util.sleep(1000);
             if (i%2==0) {
-                b.setAngVel(0,10,0);
+                b.setAngVel(0,3,0);
             } else {
-                b.setAngVel(0,-10,0);
+                b.setAngVel(0,-3,0);
             }
         }
     }

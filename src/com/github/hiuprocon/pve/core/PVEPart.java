@@ -29,6 +29,8 @@ public abstract class PVEPart {
     Vector3f localInertia;
     Vector3f locRequest;
     Quat4d quatRequest;
+    Vector3f forceRequest;
+    Vector3f torqueRequest;
     Vector3f velRequest;
     Vector3f angVelRequest;
     short group = 1;
@@ -227,6 +229,22 @@ public abstract class PVEPart {
 
     public void setAngVel(double x, double y, double z) {
         angVelRequest = new Vector3f((float) x, (float) y, (float) z);
+    }
+
+    public void setForce(Vector3d vel) {
+        forceRequest = new Vector3f(vel);
+    }
+
+    public void setForce(double x, double y, double z) {
+        forceRequest = new Vector3f((float) x, (float) y, (float) z);
+    }
+
+    public void setTorque(Vector3d vel) {
+        torqueRequest = new Vector3f(vel);
+    }
+
+    public void setTorque(double x, double y, double z) {
+        torqueRequest = new Vector3f((float) x, (float) y, (float) z);
     }
 
     public Vector3d getLoc() {

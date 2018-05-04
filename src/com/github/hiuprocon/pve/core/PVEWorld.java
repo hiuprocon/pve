@@ -314,6 +314,16 @@ public class PVEWorld implements Runnable {
 
         for (PVEObject o : objects) {
             for (PVEPart p : o.parts) {
+                if (p.forceRequest != null) {
+                    p.body.applyCentralForce(p.forceRequest);
+                    p.body.activate();
+                    p.forceRequest = null;
+                }
+                if (p.torqueRequest != null) {
+                    p.body.applyTorque(p.torqueRequest);
+                    p.body.activate();
+                    p.torqueRequest = null;
+                }
                 if (p.velRequest != null) {
                     p.body.setLinearVelocity(p.velRequest);
                     p.body.activate();
