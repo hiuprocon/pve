@@ -18,7 +18,7 @@ import jp.sourceforge.acerola3d.a3.*;
 //物理計算をしてくれるクラス
 public class PVEWorld implements Runnable {
     enum CanvasType {
-        A3CANVAS, JA3CANVAS, A3WINDOW, JA3WINDOW
+        A3CANVAS, JA3CANVAS, A3WINDOW, JA3WINDOW, NO_GRAPHICS
     }
     enum SimType {
         AUTO_STEP,
@@ -29,6 +29,7 @@ public class PVEWorld implements Runnable {
     public static CanvasType JA3CANVAS = CanvasType.JA3CANVAS;
     public static CanvasType A3WINDOW = CanvasType.A3WINDOW;
     public static CanvasType JA3WINDOW = CanvasType.JA3WINDOW;
+    public static CanvasType NO_GRAPHICS = CanvasType.NO_GRAPHICS;
 
     public static SimType AUTO_STEP = SimType.AUTO_STEP;
     public static SimType MANUAL_STEP = SimType.MANUAL_STEP;
@@ -98,6 +99,8 @@ public class PVEWorld implements Runnable {
             mainCanvas = new A3Window(300, 300);
         } else if (canvasType == JA3WINDOW) {
             mainCanvas = new JA3Window(300, 300);
+        } else if (canvasType == NO_GRAPHICS) {
+            mainCanvas = new DummyCanvas();
         }
         mainCanvas.setUpdateInterval(waitTime);
         for (PVEObject o : objects)
