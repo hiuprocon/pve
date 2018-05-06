@@ -1,14 +1,20 @@
-/* 自分で時間をコントロールする */
+/* Tickごとの処理(オブジェクトごと) */
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 import jp.sourceforge.acerola3d.a3.*;
 import javax.vecmath.*;
 
+class MyBoxObj extends BoxObj {
+    @Override
+    public void postSimulation() {
+        setAngVel(0,1,0);
+    }
+}
+
 class Test {
     public static void main(String args[]) {
         //仮想環境生成
-        PVEWorld world = new PVEWorld(PVEWorld.A3WINDOW,
-                                      PVEWorld.MANUAL_STEP);
+        PVEWorld world = new PVEWorld(PVEWorld.A3WINDOW);
         world.resume();
 
         //表示用のウィンドウの処理
@@ -23,14 +29,8 @@ class Test {
         world.add(ground);
 
         //立方体1個生成して10m上から落下
-        BoxObj b = new BoxObj();
-        b.setLocRev(0,2,0, 5,5,5);
+        MyBoxObj b = new MyBoxObj();
+        b.setLocRev(0,10,0, 5,5,5);
         world.add(b);
-
-        //
-        while (true) {
-            world.stepForward();
-            Util.sleep(200);
-        }
     }
 }

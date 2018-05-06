@@ -47,8 +47,8 @@ public class PVEWorld implements Runnable {
     boolean pauseRequest = true;
     double time;
     boolean fastForward = false;
-    public final float stepTime = 1.0f / 30.0f;
-    final long waitTime = 33;
+    float stepTime = 1.0f / 30.0f;
+    long waitTime = 33;
     SimType simType;
     int sceneNo = 0;
 
@@ -68,6 +68,15 @@ public class PVEWorld implements Runnable {
             Thread t = new Thread(this);
             t.start();
         }
+    }
+
+    public void setStepTime(float st) {
+        this.stepTime = st;
+        this.waitTime = (int)(1000*st);
+    }
+
+    public float getStepTime() {
+        return this.stepTime;
     }
 
     void makeDynamicsWorld() {
