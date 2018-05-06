@@ -41,5 +41,9 @@ class Test {
         SphereObj b5 = new SphereObj();
         b5.setLocRev( 2, 0.5,-2,  0,0,0);
         world.add(b5);
+
+        //CornerObj b6 = new CornerObj();
+        //b6.setLocRev( 4, 0.5,-2,  0,0,0);
+        //world.add(b6);
     }
 }

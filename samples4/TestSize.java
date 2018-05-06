@@ -27,7 +27,7 @@ class Test {
         world.add(b1);
 
         ConeObj b2 = new ConeObj(Type.DYNAMIC,1, 0.2, 1.5);
-        b2.setLocRev( 1, 0.5, 2,  0,0,0);
+        b2.setLocRev(0.3, 0.1, 2,  0,0,0);
         world.add(b2);
 
         CylinderObj b3 = new CylinderObj(Type.DYNAMIC,1, 2.0, 0.2);
@@ -41,5 +41,9 @@ class Test {
         SphereObj b5 = new SphereObj(Type.DYNAMIC,1, 0.3);
         b5.setLocRev( 0, 1.5,-2,  0,0,0);
         world.add(b5);
+
+        //CornerObj b6 = new CornerObj(Type.DYNAMIC,1, 2,1,4);
+        //b6.setLocRev( 1.0, 1.0,-4.0,  0,0,0);
+        //world.add(b6);
     }
 }

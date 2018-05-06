@@ -28,6 +28,6 @@ public class Cone extends PVEPart {
 
     // 立方体の剛体を作る
     public CollisionShape makeCollisionShape() {
-        return new ConeShape(radius, height);
+        return new ConeShape(radius/2.0f, height);
     }
 }

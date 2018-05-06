@@ -28,7 +28,7 @@ pve-res.jarに入っているファイルを読み込ませるように
 * TestPrimitives.java
     + タイトル：基本の形状
     + 説明：基本となる形のオブジェクトを生成してみます。
-      (Box,Cone,Cylinder,Sphere,Slope)
+      (Box,Cone,Cylinder,Sphere,Slope,Corner)
 * TestSize.java
     + タイトル：基本形状の変形
     + 説明：基本形状の各種サイズを指定して
