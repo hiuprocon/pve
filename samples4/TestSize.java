@@ -42,8 +42,8 @@ class Test {
         b5.setLocRev( 0, 1.5,-2,  0,0,0);
         world.add(b5);
 
-        //CornerObj b6 = new CornerObj(Type.DYNAMIC,1, 2,1,4);
-        //b6.setLocRev( 1.0, 1.0,-4.0,  0,0,0);
-        //world.add(b6);
+        CornerObj b6 = new CornerObj(Type.DYNAMIC,1, 2,1,4);
+        b6.setLocRev( 1.01, 0.5,-4.0,  0,0,0);
+        world.add(b6);
     }
 }

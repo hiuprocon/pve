@@ -1,7 +1,11 @@
 package com.github.hiuprocon.pve.obj;
 
 import com.github.hiuprocon.pve.core.*;
+import com.bulletphysics.linearmath.Transform;
+import javax.vecmath.Vector3f;
 
+//PVEPart#setCenterOfMassTransform(t);ができないので，
+//すごく面倒なことになっている．
 public class CornerObj extends PVEObject {
     Type type;
     String a3url;
@@ -30,12 +34,16 @@ public class CornerObj extends PVEObject {
         this.sizeY = sizeY;
         this.sizeZ = sizeZ;
         init();
+        //Transform t = new Transform();
+        //t.setIdentity();
+        //t.transform(new Vector3f(?,?,?));
+        //corner.setCenterOfMassTransform(t);
     }
 
     @Override
     protected PVEPart[] createParts() {
         corner = new Corner(type, mass, sizeX, sizeY, sizeZ, a3url);
-        // corner.setInitLocRot(0,0,0, 0,0,0);
+        corner.setInitLocRot(0.25*sizeX,-0.25*sizeY,0.25*sizeZ, 0,0,0);
         return new PVEPart[] { corner };
     }
 

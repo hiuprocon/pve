@@ -1,14 +1,12 @@
 package com.github.hiuprocon.pve.core;
 
-import jp.sourceforge.acerola3d.a3.*;
+import javax.vecmath.Vector3f;
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.util.ObjectArrayList;
-import javax.vecmath.*;
 
-public class Corner extends FreeShapeB {
-    float sizeX = 1.0f;
-    float sizeY = 1.0f;
-    float sizeZ = 1.0f;
+public class Corner extends PVEPart {
+    float sizeX, sizeY, sizeZ;
+    String a3url;
 
     public Corner(Type type, double mass) {
         this(type, mass, 1, 1, 1);
@@ -35,10 +33,10 @@ public class Corner extends FreeShapeB {
 
     public CollisionShape makeCollisionShape() {
         ObjectArrayList<Vector3f> vertexes = new ObjectArrayList<Vector3f>();
-        vertexes.add(new Vector3f( 0.0f,-0.5f*sizeY, 0.0f));
-        vertexes.add(new Vector3f(sizeX,-0.5f*sizeY, 0.0f));
-        vertexes.add(new Vector3f( 0.0f, 0.5f*sizeY, 0.0f));
-        vertexes.add(new Vector3f( 0.0f,-0.5f*sizeY,sizeZ));
+        vertexes.add(new Vector3f(-0.25f*sizeX,-0.25f*sizeY,-0.25f*sizeZ));
+        vertexes.add(new Vector3f( 0.75f*sizeX,-0.25f*sizeY,-0.25f*sizeZ));
+        vertexes.add(new Vector3f(-0.25f*sizeX, 0.75f*sizeY,-0.25f*sizeZ));
+        vertexes.add(new Vector3f(-0.25f*sizeX,-0.25f*sizeY, 0.75f*sizeZ));
         return new ConvexHullShape(vertexes);
     }
 }

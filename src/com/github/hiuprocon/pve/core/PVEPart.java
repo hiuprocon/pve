@@ -181,6 +181,12 @@ public abstract class PVEPart {
         body.setAngularVelocity(new Vector3f());
         kinematicTmp = false;
     }
+    /*
+    //これ上手く動かない
+    public void setCenterOfMassTransform(Transform t) {
+        body.setCenterOfMassTransform(t);
+    }
+    */
 
     // 座標変更．副作用で力や速度がリセットされる
     public void setLoc(Vector3d loc) {

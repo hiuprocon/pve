@@ -179,7 +179,7 @@ public class CarBase implements ActiveObject {
     public void beforeExec() {
         Vector3d loc = getLoc();
         vel.sub(loc, oldLoc);
-        vel.scale(1.0 / world.stepTime);
+        vel.scale(1.0 / world.getStepTime());
         oldLoc = loc;
     }
 
