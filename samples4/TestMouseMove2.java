@@ -24,6 +24,7 @@ class Test implements MouseListener {
 
         //地面を生成して世界に追加
         Ground ground = new Ground();
+        ground.getMainA3().setPickable(false);//将来の課題
         world.add(ground);
 
         for (int i=0;i<10;i++) {
