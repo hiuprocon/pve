@@ -19,7 +19,7 @@ class Test implements MouseListener {
         window.setCameraLocNow(0,6,8);
         window.setCameraLookAtPointNow(0,0,0);
         //window.setNavigationMode(A3CanvasInterface.NaviMode.SIMPLE,10.0);
-        Test t = new Test(window);
+        Test t = new Test(world,window);
         window.getA3Canvas().addMouseListener(t);
 
         //地面を生成して世界に追加
@@ -35,14 +35,16 @@ class Test implements MouseListener {
         }
     }
 
-    A3Window w;
+    PVEWorld world;
+    A3Window window;
     PVEObject selectedObj = null;
     Point3d start;
     Point3d end;
     double depth;
 
-    Test(A3Window window) {
-        this.w = window;
+    Test(PVEWorld world,A3Window window) {
+        this.world = world;
+        this.window = window;
     }
 
     @Override
@@ -53,27 +55,29 @@ class Test implements MouseListener {
     public void mouseExited(MouseEvent e) {;}
     @Override
     public void mousePressed(MouseEvent e) {
-        A3Object a3 = w.pickA3(e.getX(),e.getY());
-        if (a3 != null) {
-            PVEPart p = (PVEPart)a3.getUserData();
-            selectedObj = p.getObject();
-            if (selectedObj != null) {
-                Vector3d cameraV = w.getCameraLoc();
-                Vector3d a3V = a3.getLoc();
-                a3V.sub(cameraV);
-                depth = a3V.length();
-                start = w.canvasToVirtualCS(e.getX(),e.getY(),depth);
+        int x = e.getX();
+        int y = e.getY();
+        PVEPart p = world.pick(x,y);
+        if (p != null) {
+            PVEObject o = p.getObject();
+            if (o instanceof BoxObj) {
+                Vector3d cameraV = window.getCameraLoc();
+                Vector3d objV = o.getLoc();
+                objV.sub(cameraV);
+                depth = objV.length();
+                start = window.canvasToVirtualCS(x,y,depth);
+                selectedObj = o;
             }
         }
     }
     @Override
     public void mouseReleased(MouseEvent e) {
         if (selectedObj!=null) {
-            Vector3d cameraV = w.getCameraLoc();
-            Vector3d a3V = selectedObj.getMainA3().getLoc();
-            a3V.sub(cameraV);
-            depth = a3V.length();
-            end = w.canvasToVirtualCS(e.getX(),e.getY(),depth);
+            Vector3d cameraV = window.getCameraLoc();
+            Vector3d objV = selectedObj.getLoc();
+            objV.sub(cameraV);
+            depth = objV.length();
+            end = window.canvasToVirtualCS(e.getX(),e.getY(),depth);
             end.sub(start);
             end.scale(10);
             selectedObj.setVel(end.x,end.y,end.z);
@@ -81,6 +85,3 @@ class Test implements MouseListener {
         }
     }
 }
-/*
-まだ未完成
- */

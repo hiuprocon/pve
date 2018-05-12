@@ -460,4 +460,31 @@ public class PVEWorld implements Runnable {
             }
         }
     }
+    public PVEPart pick(Vector3f origin,Vector3f dir) {
+        //GAHAたぶんマルチスレッド的に問題あり．
+        Vector3f to = new Vector3f(dir);
+        to.normalize();
+        to.scale(10000);//ここどうにかならないか？
+        to.add(origin);
+        ClosestRayResultCallback rayRC =
+            new ClosestRayResultCallback(origin,to);
+        dynamicsWorld.rayTest(origin,to,rayRC);
+        if (rayRC.hasHit()) {
+            RigidBody rb = RigidBody.upcast(rayRC.collisionObject);
+            for (PVEObject o : objects)
+                for (PVEPart p : o.parts)
+                    if (rb == p.body)
+                        return p;
+            return null;
+        }
+        return null;
+    }
+    public PVEPart pick(int x,int y) {
+        Vector3f origin = new Vector3f(mainCanvas.getCameraLoc());
+        Point3d target = mainCanvas.canvasToVirtualCS(x,y,2.0);
+        Vector3f dir = new Vector3f();
+        dir.set(target);
+        dir.sub(origin);
+        return pick(origin,dir);
+    }
 }

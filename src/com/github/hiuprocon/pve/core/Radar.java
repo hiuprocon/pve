@@ -46,7 +46,7 @@ public class Radar extends PVEPart {
 
     public void getFromAndTo(Vector3f f,Vector3f t) {
         f.set(getLoc());
-        t.set(Util.trans(getQuat(),new Vector3d(0,0,100)));
+        t.set(Util.trans(getQuat(),new Vector3d(0,0,100)));//GAHAここどうにかならないか？
         t.add(f);
     }
 }

@@ -17,7 +17,7 @@ class Test implements MouseListener, MouseMotionListener {
         window.setCameraLocNow(0,6,8);
         window.setCameraLookAtPointNow(0,0,0);
         //window.setNavigationMode(A3CanvasInterface.NaviMode.SIMPLE,10.0);
-        Test t = new Test(window);
+        Test t = new Test(world,window);
         window.getA3Canvas().addMouseListener(t);
         window.getA3Canvas().addMouseMotionListener(t);
 
@@ -34,13 +34,15 @@ class Test implements MouseListener, MouseMotionListener {
         }
     }
 
-    A3Window w;
+    PVEWorld world;
+    A3Window window;
     PVEObject selectedObj = null;
     int nowX,nowY,oldX,oldY;
     double depth;
 
-    Test(A3Window window) {
-        this.w = window;
+    Test(PVEWorld world,A3Window window) {
+        this.world = world;
+        this.window = window;
     }
 
     @Override
@@ -51,18 +53,17 @@ class Test implements MouseListener, MouseMotionListener {
     public void mouseExited(MouseEvent e) {;}
     @Override
     public void mousePressed(MouseEvent e) {
-        //Point3d p = w.canvasToVirtualCS(e.getX(),e.getY(),2.0);
-        A3Object a3 = w.pickA3(e.getX(),e.getY());
-        if (a3 != null) {
-            PVEPart p = (PVEPart)a3.getUserData();
-            selectedObj = p.getObject();
-            if (selectedObj != null) {
+        PVEPart p = world.pick(e.getX(),e.getY());
+        if (p != null) {
+            PVEObject o = p.getObject();
+            if (o instanceof BoxObj) {
                 nowX = e.getX();
                 nowY = e.getY();
-                Vector3d cameraV = w.getCameraLoc();
-                Vector3d a3V = a3.getLoc();
-                a3V.sub(cameraV);
-                depth = a3V.length();
+                Vector3d cameraV = window.getCameraLoc();
+                Vector3d objV = o.getLoc();
+                objV.sub(cameraV);
+                depth = objV.length();
+                selectedObj = o;
             }
         }
     }
@@ -76,12 +77,10 @@ class Test implements MouseListener, MouseMotionListener {
         oldX = nowX; oldY = nowY;
         nowX = e.getX(); nowY = e.getY();
         if (selectedObj!=null) {
-            Point3d p = w.canvasToVirtualCS(nowX,nowY,depth);
+            Point3d p = window.canvasToVirtualCS(nowX,nowY,depth);
             selectedObj.setLocRev(p.x,p.y,p.z, 0,0,0);
         }
     }
     @Override
     public void mouseMoved(MouseEvent e) {;}
 }
-/*
- */
