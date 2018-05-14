@@ -15,6 +15,7 @@ public class MyController extends A3Controller implements Runnable {
     public void init() {
         stopRequest = false;
         a3canvas.setCameraRev(-60,0,0);
+        a3canvas.setCameraScale(10.0);//ん?これが無いとちらつく時ある
         Thread t = new Thread(this);
         t.start();
     }

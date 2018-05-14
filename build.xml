@@ -55,6 +55,11 @@
                 <file file="res/prototype/list.txt"/>
             </resourcelist>
         </get>
+        <get dest="res/se" usetimestamp="true">
+            <resourcelist>
+                <file file="res/se/list.txt"/>
+            </resourcelist>
+        </get>
     </target>
 
     <target name="compile">
