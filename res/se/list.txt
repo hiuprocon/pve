@@ -1,0 +1,10 @@
+https://s314.do-johodai.ac.jp/pve/res/se/bom25.t.wav
+https://s314.do-johodai.ac.jp/pve/res/se/coin03.t.wav
+https://s314.do-johodai.ac.jp/pve/res/se/cursor08.t.wav
+https://s314.do-johodai.ac.jp/pve/res/se/cursor29.t.wav
+https://s314.do-johodai.ac.jp/pve/res/se/cursor38.t.wav
+https://s314.do-johodai.ac.jp/pve/res/se/don19.t.wav
+https://s314.do-johodai.ac.jp/pve/res/se/jump00.t.wav
+https://s314.do-johodai.ac.jp/pve/res/se/kachi30.t.wav
+https://s314.do-johodai.ac.jp/pve/res/se/power20.t.wav
+https://s314.do-johodai.ac.jp/pve/res/se/shoot19.t.wav
