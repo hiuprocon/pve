@@ -43,6 +43,7 @@ class Test {
             }
         }
         Avatar a0 = new Avatar("x-res:///kappa.a3");
+        a0.setJumpForce(20);
         a0.setLocRev(1.0,1.5,0, 0,0,0);
         world.add(a0);
         Util.sleep(3000);
@@ -51,7 +52,7 @@ class Test {
             double goForward = 1;
             double goRight = 0;
             double turnRight = -1;
-            double jump = i%100==0?10:0;
+            boolean jump = i%100==0;
             boolean grounded = a0.getLoc().y < 0.1;
             a0.control(goForward,
                        goRight,

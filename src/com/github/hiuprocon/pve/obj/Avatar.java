@@ -12,6 +12,7 @@ public class Avatar extends PVEObject {
     double height;
     double width;
     PVEPart myBody;
+    double jumpForce = 10.0;
     double velY = 0.0;
 
     public Avatar(String a3url,double height,double width) {
@@ -23,6 +24,14 @@ public class Avatar extends PVEObject {
 
     public Avatar(String a3url) {
         this(a3url,1.65,0.5);
+    }
+
+    public void setJumpForce(double jf) {
+        this.jumpForce = jf;
+    }
+
+    public double getJumpForce() {
+        return this.jumpForce;
     }
 
     @Override
@@ -38,10 +47,9 @@ public class Avatar extends PVEObject {
         myBody = new FreeShapeD(Type.DYNAMIC,50,a3url,cs2);
         myBody.setInitLocRev(0,0,0,  0,0,0);
         myBody.disableDeactivation(true);
-        myBody.setDamping(0.5,0.5);
+        myBody.setDamping(0.1,0.1);
         myBody.setAngularFactor(0);
         return new PVEPart[]{myBody};
-
     }
 
     @Override
@@ -57,25 +65,26 @@ public class Avatar extends PVEObject {
     public void control(double goForward,
                         double goRight,
                         double turnRight,
-                        double jump, boolean grounded) {
+                        boolean jump, boolean grounded) {
         //アバターはVELでコントロールすべし．
         //重力の効果が無くなってしまうので，
         //Y方向のVELを重力を考慮して自分で計算すべし．
-        Vector3d vel = new Vector3d();
-        boolean canJump = false;
-        vel.add(new Vector3d(0,0,goForward));
-        vel.add(new Vector3d(goRight,0,0));
-        if (grounded)
-            velY = jump;
-        vel.add(new Vector3d(0,velY,0));
+        //今のところあまり汎用性はなくて二段ジャンプとか
+        //やるなら自前でこのメソッドのような物を書く
+        //必要がある．
+        if (grounded) {
+            if (jump) {
+                velY = jumpForce;
+                grounded = false;
+            } else {
+                velY = 0.0;
+            }
+        } else {
+            velY -= 1.0;
+        }
+        Vector3d vel = new Vector3d(goRight,velY,goForward);
         Vector3d angVel = new Vector3d(0,-turnRight,0);
-
         setVelInLocal(vel);
         setAngVelInLocal(angVel);
-
-        if (grounded)
-            velY = 0.0;
-        else
-            velY -= 1.0;
     }
 }
