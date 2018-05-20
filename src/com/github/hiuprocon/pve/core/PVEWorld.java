@@ -51,14 +51,19 @@ public class PVEWorld implements Runnable {
     long waitTime = 33;
     SimType simType;
     int sceneNo = 0;
+    float scale = 1.0f;
 
     // 物理世界の初期化
     public PVEWorld(CanvasType canvasType) {
         this(canvasType,SimType.AUTO_STEP);
     }
     public PVEWorld(CanvasType canvasType,SimType simType) {
+        this(canvasType,simType,1.0f);
+    }
+    public PVEWorld(CanvasType canvasType,SimType simType,float scale) {
         // mainCanvas = new A3Window(500,500);
         this.simType = simType;
+        this.scale = scale;
 
         makeDynamicsWorld();
         createMainCanvas(canvasType);
@@ -83,16 +88,17 @@ public class PVEWorld implements Runnable {
         CollisionConfiguration collisionConfiguration = new DefaultCollisionConfiguration();
         CollisionDispatcher dispatcher = new CollisionDispatcher(
                 collisionConfiguration);
-        /*
-         * Vector3f worldAabbMin = new Vector3f(-10000,-10000,-10000); Vector3f
-         * worldAabbMax = new Vector3f(10000,10000,10000); int maxProxies =
-         * MAX_PROXIES; AxisSweep3 overlappingPairCache = new
-         * AxisSweep3(worldAabbMin, worldAabbMax, maxProxies);
-         * SequentialImpulseConstraintSolver solver = new
-         * SequentialImpulseConstraintSolver();
-         */
-        BroadphaseInterface overlappingPairCache = new DbvtBroadphase();
-        ConstraintSolver solver = new SequentialImpulseConstraintSolver();
+        Vector3f worldAabbMin =
+            new Vector3f(-10000*scale,-10000*scale,-10000*scale);
+        Vector3f worldAabbMax =
+            new Vector3f(10000*scale,10000*scale,10000*scale);
+        int maxProxies = MAX_PROXIES;
+        AxisSweep3 overlappingPairCache =
+            new AxisSweep3(worldAabbMin, worldAabbMax, maxProxies);
+        SequentialImpulseConstraintSolver solver =
+            new SequentialImpulseConstraintSolver();
+        //BroadphaseInterface overlappingPairCache = new DbvtBroadphase();
+        //ConstraintSolver solver = new SequentialImpulseConstraintSolver();
 
         dynamicsWorld = new DiscreteDynamicsWorld(dispatcher,
                 overlappingPairCache, solver, collisionConfiguration);

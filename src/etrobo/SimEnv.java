@@ -9,7 +9,7 @@ public class SimEnv {
     ETRobo robo;
 
     public SimEnv() {
-        w = new PVEWorld(PVEWorld.A3CANVAS,PVEWorld.MANUAL_STEP);
+        w = new PVEWorld(PVEWorld.A3CANVAS,PVEWorld.MANUAL_STEP,0.1f);
         gui = new SimGUI(this);
         SimEnvImp imp = new SimEnvImp();
         w.addCollisionListener(imp);
