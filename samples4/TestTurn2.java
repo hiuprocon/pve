@@ -1,4 +1,4 @@
-/* 物体に力を加えて移動させる */
+/* 物体をトルクを与えて回転させる */
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 import jp.sourceforge.acerola3d.a3.*;
@@ -29,9 +29,9 @@ class Test {
         for (int i=0;i<100;i++) {
             Util.sleep(1000);
             if (i%2==0) {
-                b.setForce(30,0,0);
+                b.setTorque(0,30,0);
             } else {
-                b.setForce(-30,0,0);
+                b.setTorque(0,-30,0);
             }
         }
     }

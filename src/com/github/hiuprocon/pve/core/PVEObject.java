@@ -171,6 +171,14 @@ public abstract class PVEObject {
         setVelInLocal(v,0,0);
     }
 
+    public void goUp(double v) {
+        setVelInLocal(0,v,0);
+    }
+
+    public void goDown(double v) {
+        setVelInLocal(0,-v,0);
+    }
+
     public void turnRight(double v) {
         setAngVelInLocal(0,v,0);
     }
@@ -185,6 +193,14 @@ public abstract class PVEObject {
 
     public void turnDown(double v) {
         setAngVelInLocal(v,0,0);
+    }
+
+    public void rollRight(double v) {
+        setAngVelInLocal(0,0,v);
+    }
+
+    public void rollLeft(double v) {
+        setAngVelInLocal(0,0,-v);
     }
 
     //ラグがあるので注意

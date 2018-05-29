@@ -1,4 +1,4 @@
-/* 物体に力を加えて移動させる */
+/* 物体から見た角速度で回転させる */
 import com.github.hiuprocon.pve.core.*;
 import com.github.hiuprocon.pve.obj.*;
 import jp.sourceforge.acerola3d.a3.*;
@@ -23,15 +23,18 @@ class Test {
 
         //物体を生成して。。。
         BoxObj b = new BoxObj();
-        b.setLocRev(0,1,0, 0,0,0);
+        b.setLocRev(0,1,0, 90,0,0); //物体をはらばい(?)にする
         world.add(b);
-        //1秒おきに右，左，右・・・と移動させる
+        //1秒おきにへそから前に出る軸(ローカルの
+        //Z軸)右ネジ方向，左ネジ方向，右ネジ方向・・・と回転させる
+        //その結果ワールド座標のY軸周りに左ネジ方向，右ネジ方向・・・と
+        //回転する。わかりずらくて<(_ _)>。
         for (int i=0;i<100;i++) {
             Util.sleep(1000);
             if (i%2==0) {
-                b.setForce(30,0,0);
+                b.setAngVelInLocal(0,0,3);
             } else {
-                b.setForce(-30,0,0);
+                b.setAngVelInLocal(0,0,-3);
             }
         }
     }
