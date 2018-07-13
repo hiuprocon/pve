@@ -37,12 +37,12 @@ class Test {
         //アバター
         for (int i=-4;i<=4;i++) {
             for (int j=-4;j<=4;j++) {
-                Avatar a = new Avatar("x-res:///kappa.a3");
+                Avatar a = new Avatar("x-res:///res/kappa.a3");
                 a.setLocRev(0.5*i,0.5,0.5*j, 0,0,0);
                 world.add(a);
             }
         }
-        Avatar a0 = new Avatar("x-res:///kappa.a3");
+        Avatar a0 = new Avatar("x-res:///res/kappa.a3");
         a0.setJumpForce(20);
         a0.setLocRev(1.0,1.5,0, 0,0,0);
         world.add(a0);

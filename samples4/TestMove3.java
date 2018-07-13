@@ -22,7 +22,7 @@ class Test {
         world.add(ground);
 
         //物体を生成して。。。
-        Avatar a = new Avatar("x-res:///kappa.a3");
+        Avatar a = new Avatar("x-res:///res/kappa.a3");
         a.setLocRev(0,1,0, 0,90,0);//左向け左させる
         world.add(a);
         //1秒おきにキャラクターの右手側，左手側，右手側・・・

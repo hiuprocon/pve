@@ -23,3 +23,7 @@ https://s314.do-johodai.ac.jp/pve/res/WhiteBox.wrl
 https://s314.do-johodai.ac.jp/pve/res/Corner.wrl
 https://s314.do-johodai.ac.jp/pve/res/Empty.wrl
 https://s314.do-johodai.ac.jp/pve/res/broken_glass.ogg
+https://s314.do-johodai.ac.jp/pve/res/DirectionalLightSet.a3
+https://s314.do-johodai.ac.jp/pve/res/PointLightSet.a3
+https://s314.do-johodai.ac.jp/pve/res/SpotLightSet.a3
+https://s314.do-johodai.ac.jp/pve/res/kappa.a3
