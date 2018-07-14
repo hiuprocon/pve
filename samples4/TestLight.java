@@ -39,8 +39,8 @@ class Test {
         //DirectionalLightsSet.a3には0.0から1.0までの
         //色々な強さの光源が入っていてlights.change("dl0.5");
         //のようにして光源から一つ選ぶようになってます．
-        Action3D lights = new Action3D("x-res:///res/DirectionalLightSet.a3");
-        lights.change("dl0.0");
+        Action3D lights = new Action3D("x-res:///DirectionalLightSet.a3");
+        lights.change("0.0");
         lights.setLoc(0,10,5);
         lights.setRev(0,0,-30);
         window.add(lights);
@@ -54,9 +54,12 @@ class Test {
             Util.sleep(1000);
             window.setHeadLightEnable(true);
             Util.sleep(1000);
-            lights.change("dl1.0");
-            Util.sleep(1000);
-            lights.change("dl0.0");
+            for (int i=10;i>=0;i--) {
+                String s = String.format("%3.1f",0.1*i);
+                System.out.println(s);
+                lights.change(s);
+                Util.sleep(100);
+            }
         }
     }
 }
