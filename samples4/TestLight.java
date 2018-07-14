@@ -49,12 +49,11 @@ class Test {
             //window.setHeadLightEnable(boolean)で
             //カメラについてるライトをつけたり
             //消したりできます．
+            window.setHeadLightEnable(true);
             Util.sleep(1000);
             window.setHeadLightEnable(false);
             Util.sleep(1000);
-            window.setHeadLightEnable(true);
-            Util.sleep(1000);
-            for (int i=10;i>=0;i--) {
+            for (int i=0;i<=10;i++) {
                 String s = String.format("%3.1f",0.1*i);
                 System.out.println(s);
                 lights.change(s);
