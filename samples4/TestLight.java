@@ -39,7 +39,7 @@ class Test {
         //DirectionalLightsSet.a3には0.0から1.0までの
         //色々な強さの光源が入っていてlights.change("dl0.5");
         //のようにして光源から一つ選ぶようになってます．
-        Action3D lights = new Action3D("x-res:///DirectionalLightSet.a3");
+        Action3D lights = new Action3D("x-res:///res/DirectionalLightSet.a3");
         lights.change("0.0");
         lights.setLoc(0,10,5);
         lights.setRev(0,0,-30);
