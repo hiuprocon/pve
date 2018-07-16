@@ -122,7 +122,7 @@ public abstract class PVEPart {
 
     public void setInitLocRev(Vector3d l, Vector3d r) {
         Vector3d rr = new Vector3d(r);
-        rr.scale(180.0 / Math.PI);
+        rr.scale(Math.PI / 180.0);
         setInitLocRot(l, rr);
     }
 
