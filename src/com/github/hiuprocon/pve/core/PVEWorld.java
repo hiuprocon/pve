@@ -105,6 +105,10 @@ public class PVEWorld implements Runnable {
         dynamicsWorld.setGravity(new Vector3f(0, -10, 0));
     }
 
+    public void setGravity(Vector3d g) {
+        dynamicsWorld.setGravity(new Vector3f(g));
+    }
+
     void createMainCanvas(CanvasType canvasType) {
         if (canvasType == A3CANVAS) {
             mainCanvas = A3Canvas.createA3Canvas(300, 300);
