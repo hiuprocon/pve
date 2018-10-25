@@ -88,6 +88,8 @@ public class PVEWorld implements Runnable {
         CollisionConfiguration collisionConfiguration = new DefaultCollisionConfiguration();
         CollisionDispatcher dispatcher = new CollisionDispatcher(
                 collisionConfiguration);
+
+        /* */
         Vector3f worldAabbMin =
             new Vector3f(-10000*scale,-10000*scale,-10000*scale);
         Vector3f worldAabbMax =
@@ -97,8 +99,11 @@ public class PVEWorld implements Runnable {
             new AxisSweep3(worldAabbMin, worldAabbMax, maxProxies);
         SequentialImpulseConstraintSolver solver =
             new SequentialImpulseConstraintSolver();
-        //BroadphaseInterface overlappingPairCache = new DbvtBroadphase();
-        //ConstraintSolver solver = new SequentialImpulseConstraintSolver();
+        /* */
+        /*
+        BroadphaseInterface overlappingPairCache = new DbvtBroadphase();
+        ConstraintSolver solver = new SequentialImpulseConstraintSolver();
+        */
 
         dynamicsWorld = new DiscreteDynamicsWorld(dispatcher,
                 overlappingPairCache, solver, collisionConfiguration);
@@ -296,8 +301,13 @@ public class PVEWorld implements Runnable {
             PersistentManifold contactManifold = dynamicsWorld
                     .getDispatcher().getManifoldByIndexInternal(ii);
             int numContacts = contactManifold.getNumContacts();
-            if (numContacts == 0)
-                continue;
+            //2018,10/25: 以下2行をコメントアウトした。
+            //簡単なサンプルプログラムの実験では，これによって
+            //衝突が検知されないことはなくなったけど
+            //2回衝突しているように検知されることが出てくる。
+            //これが正解なのかは良くわからない。
+            //if (numContacts == 0)
+            //    continue;
             CollisionObject obA = (CollisionObject) contactManifold
                     .getBody0();
             CollisionObject obB = (CollisionObject) contactManifold
