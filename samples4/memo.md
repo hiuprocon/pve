@@ -16,7 +16,7 @@ pve-res.jarに入っているファイルを読み込ませるように
 
 ### 基本のサンプル
 
-* TestBase.java
+* [TestBase.java](./TestBase.java)
     + タイトル：ベースのプログラム
     + 説明：ProconVEの動作を確認できる最小のプログラム。
       以下のサンプルプログラムは，このプログラムに
