@@ -11,9 +11,34 @@ import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSo
 import com.bulletphysics.linearmath.*;
 import com.bulletphysics.dynamics.vehicle.DefaultVehicleRaycaster;
 import com.bulletphysics.dynamics.vehicle.RaycastVehicle;
+import com.bulletphysics.BulletGlobals;
+import com.bulletphysics.ContactProcessedCallback;
+import com.bulletphysics.collision.narrowphase.ManifoldPoint;
 import java.util.*;
 import javax.vecmath.*;
 import jp.sourceforge.acerola3d.a3.*;
+
+class CollisionDetector extends ContactProcessedCallback {
+    PVEWorld world;
+    public CollisionDetector(PVEWorld world) {
+        this.world = world;
+    }
+
+    @Override
+    public boolean contactProcessed(ManifoldPoint cp,
+                                    Object bodyA,Object bodyB) {
+        PVEPart pA = (PVEPart)(((RigidBody)bodyA).getUserPointer());
+        PVEPart pB = (PVEPart)(((RigidBody)bodyB).getUserPointer());
+
+        // ロックしすぎ？
+        synchronized (world.collisionListeners) {
+            for (CollisionListener cl : world.collisionListeners) {
+                cl.collided(pA,pB);
+            }
+        }
+        return true;
+    }
+}
 
 //物理計算をしてくれるクラス
 public class PVEWorld implements Runnable {
@@ -73,6 +98,7 @@ public class PVEWorld implements Runnable {
             Thread t = new Thread(this);
             t.start();
         }
+        BulletGlobals.setContactProcessedCallback(new CollisionDetector(this));
     }
 
     public void setStepTime(float st) {
@@ -296,6 +322,9 @@ public class PVEWorld implements Runnable {
         // System.out.println("PhysicalWorld:-----gaha-----2");
 
         // 衝突
+        /*
+        2019,02/06: 衝突判定をContactProcessedCallbackで行うことにした。
+        その方が断然良いことが判明！
         int numManifolds = dynamicsWorld.getDispatcher().getNumManifolds();
         for (int ii = 0; ii < numManifolds; ii++) {
             PersistentManifold contactManifold = dynamicsWorld
@@ -312,18 +341,18 @@ public class PVEWorld implements Runnable {
                     .getBody0();
             CollisionObject obB = (CollisionObject) contactManifold
                     .getBody1();
-            /*
-             * for (int j=0;j<numContacts;j++) { ManifoldPoint pt =
-             * contactManifold.getContactPoint(j); if
-             * (pt.getDistance()<0.0f) {
-             * System.out.println("-----------------");
-             * System.out.println("ii:"+ii+"    j:"+j);
-             * System.out.println("getLifeTime:"+pt.getLifeTime());
-             * System.out.println("PositionWorldOnA:"+pt.positionWorldOnA);
-             * System.out.println("PositionWorldOnB:"+pt.positionWorldOnB);
-             * System.out.println("normalWorldOnB:"+pt.normalWorldOnB);
-             * System.out.println("-----------------"); } }
-             */
+            //
+            // for (int j=0;j<numContacts;j++) { ManifoldPoint pt =
+            // contactManifold.getContactPoint(j); if
+            // (pt.getDistance()<0.0f) {
+            // System.out.println("-----------------");
+            // System.out.println("ii:"+ii+"    j:"+j);
+            // System.out.println("getLifeTime:"+pt.getLifeTime());
+            // System.out.println("PositionWorldOnA:"+pt.positionWorldOnA);
+            // System.out.println("PositionWorldOnB:"+pt.positionWorldOnB);
+            // System.out.println("normalWorldOnB:"+pt.normalWorldOnB);
+            // System.out.println("-----------------"); } }
+            //
 
             // ロックしすぎ？
             synchronized (collisionListeners) {
@@ -333,6 +362,7 @@ public class PVEWorld implements Runnable {
                 }
             }
         }
+        */
 
         for (PVEObject o : objects) {
             for (PVEPart p : o.parts) {
