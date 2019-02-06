@@ -97,7 +97,25 @@ public class PVEWorld implements Runnable {
         if (simType==SimType.AUTO_STEP) { 
             Thread t = new Thread(this);
             t.start();
+        } else if (simType==SimType.MANUAL_STEP) { 
+            initCollisionDetector();
         }
+    }
+
+    /**
+     * 当り判定を有効化するためのメソッドだが，
+     * このメソッドは普通は使う必要ない。
+     * もし使うならば，stepForward()を実行する
+     * のと同じThreadで実行する必要がある。
+     * PVEWorld.AUTO_STEPの場合はPVEWorldが
+     * 作る自前のスレッドで自動で呼び出される。
+     * PVEWorld.MANUAL_STEPの場合はPVEWorldの
+     * コンストラクタの中で自動で呼び出される。
+     * このメソッド呼び出しが必要となってくるのは，
+     * stepForward()を自分で作った新しいThreadで
+     * 実行するような場合。
+     */
+    public void initCollisionDetector() {
         BulletGlobals.setContactProcessedCallback(new CollisionDetector(this));
     }
 
@@ -226,6 +244,9 @@ public class PVEWorld implements Runnable {
     // 物理計算を進める処理
     // 座標を変更するのがちょっとやっかい
     public void run() {
+        if (simType==SimType.AUTO_STEP) { // このifいらないか。。。
+            initCollisionDetector();
+        }
         while (true) {
             stepForward();
             if (fastForward == false) {
