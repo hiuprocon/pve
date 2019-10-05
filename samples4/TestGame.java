@@ -24,20 +24,27 @@ class MyComponent2D extends Component2D {
     }
 }
 
-class Test extends KeyAdapter {
+class Test extends KeyAdapter implements CollisionListener {
     static int score = 0;
     static boolean spaceKey = false;
+    static boolean leftKey = false;
+    static PVEObject b1;
+    static PVEObject b2;
+    static boolean gameEnd = false;
 
     public static void main(String args[]) {
+        Test t = new Test(); //イベントリスナーとなるオブジェクト
+
         /***** 物理エンジンや付随する基本的な初期化をする部分 *****/
         //仮想環境生成
         PVEWorld world = new PVEWorld(PVEWorld.A3WINDOW,
                                       PVEWorld.MANUAL_STEP);
         world.resume();
+        world.addCollisionListener(t);
         //表示用のウィンドウの処理
         A3Window window = (A3Window)world.getMainCanvas();
         window.setSize(800,500);
-        window.addKeyListener(new Test());
+        window.addKeyListener(t);
         //メインのシーンとなる1番シーンを準備して
         //物理エンジンはこのシーンを使うように指定
         window.prepareScene(1);
@@ -63,8 +70,10 @@ class Test extends KeyAdapter {
         //必要な処理は後でやる。
         Ground ground = new Ground();
         world.add(ground);
-        BoxObj b = new BoxObj();
-        world.add(b);
+        b1 = new BoxObj();
+        world.add(b1);
+        b2 = new BoxObj();
+        world.add(b2);
 
         /***** ゲームが終った時に表示する2番シーンの準備をする *****/
         A3Text3D text2 = new A3Text3D("Game Over");
@@ -82,7 +91,9 @@ class Test extends KeyAdapter {
         /***** ここからがゲーム毎のループ *****/
         while (true) {
             /***** ゲーム毎にやらなければなない初期化 *****/
-            b.setLocRev(0,2,0, 5,5,5);
+            gameEnd= false;
+            b1.setLocRev( 2,2,0, 5,5,5);
+            b2.setLocRev(-2,2,0, 5,5,5);
 
             //スペースキーが押されるまでまつ
             while (spaceKey==false) {
@@ -94,7 +105,9 @@ class Test extends KeyAdapter {
             while (true) {
                 world.stepForward();
                 counter++;
-                if (counter==300)
+                if (leftKey==true)
+                    b1.setVel(-3,0,0);
+                if (gameEnd==true)
                     break; //ゲームオーバーやクリアしたらbreak
                 Util.sleep(16);
             }
@@ -115,6 +128,8 @@ class Test extends KeyAdapter {
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode()==KeyEvent.VK_SPACE) {
             spaceKey = true;
+        } else if (e.getKeyCode()==KeyEvent.VK_LEFT) {
+            leftKey = true;
         }
     }
 
@@ -122,6 +137,17 @@ class Test extends KeyAdapter {
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode()==KeyEvent.VK_SPACE) {
             spaceKey = false;
+        } else if (e.getKeyCode()==KeyEvent.VK_LEFT) {
+            leftKey = false;
+        }
+    }
+
+    @Override
+    public void collided(PVEPart a, PVEPart b) {
+        // b1とb2が衝突したらgameEnd
+        if ((a.getObject()==b1 && b.getObject()==Test.b2)||
+            (a.getObject()==b2 && b.getObject()==b1)) {
+            gameEnd = true;
         }
     }
 }
