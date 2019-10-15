@@ -25,6 +25,8 @@ class MyComponent2D extends Component2D {
 }
 
 class Test extends KeyAdapter implements CollisionListener {
+    // mainメソッド以外の場所でも使うデーターやオブジェクトを
+    // 入れておく変数は，ここで宣言する。
     static int score = 0;
     static boolean spaceKey = false;
     static boolean leftKey = false;
@@ -145,7 +147,7 @@ class Test extends KeyAdapter implements CollisionListener {
     @Override
     public void collided(PVEPart a, PVEPart b) {
         // b1とb2が衝突したらgameEnd
-        if ((a.getObject()==b1 && b.getObject()==Test.b2)||
+        if ((a.getObject()==b1 && b.getObject()==b2)||
             (a.getObject()==b2 && b.getObject()==b1)) {
             gameEnd = true;
         }

@@ -16,11 +16,9 @@ FreeObjA, FreeObjB, FreeObjC, FreeObjDの
   衝突判定が低コストでできるのでお勧め。
 * FreeObjC: 生成後に形が変えられるjbulletの
   GImpactMeshShapeで実装されているのだが，
-  形を変えるAPIが無いので意味無し。
-* FreeObjD: jbulletのCollisionShapeを元に生成
-  するPVEPart。特にCollisionShapeのサブクラスの
-  CompoundShapeを使って形を組合せて新しい形を
-  作る時に有用。
+  形を変えるAPIが無いのであまり意味ないけど，
+  FreeObjAやFreeObjBで上手くいかないとき使って
+  みると上手くいくことがたまにある。
 */
 
 class Test {
