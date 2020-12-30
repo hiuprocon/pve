@@ -263,4 +263,10 @@ public abstract class PVEObject {
             p.setFriction(f);
         }
     }
+
+    public void disableDeactivation(boolean b) {
+        for (PVEPart p : parts) {
+            p.disableDeactivation(b);
+        }
+    }
 }
