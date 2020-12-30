@@ -47,4 +47,25 @@ public class Camera extends PVEPart {
     public void renderOffscreenBuffer(BufferedImage image) {
         ((A3VideoCamera)a3).renderOffscreenBuffer(image);
     }
+
+    //A3VideoCameraのsetProjectionMode(m)のラッパー
+    public void setProjectionMode(ProjectionMode m) {
+        ((A3VideoCamera)a3).setProjectionMode(m);
+    }
+
+    //A3VideoCameraのsetCanvasWidthInPWorld(s)のラッパー
+    public void setCanvasWidthInPWorld(double s) {
+        ((A3VideoCamera)a3).setCanvasWidthInPWorld(s);
+    }
+
+    //A3VideoCameraのsetFieldOfView(f)のラッパー
+    public void setFieldOfView(double f) {
+        ((A3VideoCamera)a3).setFieldOfView(f);
+    }
+
+    //A3VideoCameraのgetDepthData()のラッパー
+    //ただし，Acerola3Dの方でまだ未実装
+    public float[] getDepthData() {
+        return ((A3VideoCamera)a3).getDepthData();
+    }
 }

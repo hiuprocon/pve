@@ -27,3 +27,4 @@ https://s314.do-johodai.ac.jp/pve/res/DirectionalLightSet.a3
 https://s314.do-johodai.ac.jp/pve/res/PointLightSet.a3
 https://s314.do-johodai.ac.jp/pve/res/SpotLightSet.a3
 https://s314.do-johodai.ac.jp/pve/res/kappa.a3
+https://s314.do-johodai.ac.jp/pve/res/ColoredBlocks.a3
